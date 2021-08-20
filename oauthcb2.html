@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Kitten Locks Auth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <h3>Sucessfully loged in with Chaster!</h3>
+    <h5>This window should close immediately.</h5>
+    <script>
+      const searchParams = new URLSearchParams(window.location.search);
+      const authCode = searchParams.get('code');
+      const state = searchParams.get('state');
+      window.opener.postMessage({ authCode, state }, 'http://localhost:5000');
+    </script>
+  </body>
+</html>
