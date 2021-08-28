@@ -34,7 +34,7 @@ webpack(
     },
     plugins: [
       new webpack.EnvironmentPlugin(["NODE_ENV"]),
-      new HtmlWebpackPlugin({title: "Kitten Locks"}
+      new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: '/'}
         /*{
         scriptLoading: "defer",
         favicon: "./favicon.ico",
@@ -84,7 +84,7 @@ webpack(
 `
       }*/)
     ],
-    /*optimization: {
+    optimization: {
       splitChunks: {
         cacheGroups: {
           commons: {
@@ -93,7 +93,7 @@ webpack(
           }
         }
       }
-    }*/
+    }
   },
   (err, stats) => {
     // Stats Object

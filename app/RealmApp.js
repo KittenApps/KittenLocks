@@ -43,16 +43,16 @@ export const RealmAppProvider = ({ appId, children }) => {
   }, [app.currentUser])
 
   async function getAccessToken(){
-    if (!accessToken) return { error: "Login required" };
-    if ((accessExpires - new Date())/60000 > 3) return { error: null, accessToken, accessExpires };
+    if (!accessToken) throw new Error("Login required");
+    if ((accessExpires - new Date())/60000 > 3) return { accessToken, accessExpires };
     const { error, access_token, access_expires } = await currentUser.functions.getAccessToken();
     if (error === 'Invalid refresh token'){
       await logOut();
-      return { error: "refresh token expired" };
+      throw new Error("refresh token expired");
     }
     setAccessToken(access_token);
     setAccessExpires(new Date(access_expires));
-    return { error: null, accessToken: access_token, accessExpires: new Date(access_expires) };
+    return { accessToken: access_token, accessExpires: new Date(access_expires) };
   }
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };

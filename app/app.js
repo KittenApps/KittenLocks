@@ -5,6 +5,12 @@ import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, Menu
 import { Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RequireLoggedInScope, { LoginScreen } from './RealmLogin';
+const MyLock = React.lazy(() =>
+  import(/* webpackChunkName: "myLock" */ "./components/MyLock")
+);
+const PublicLocks = React.lazy(() =>
+  import(/* webpackChunkName: "publicLocks" */ "./components/PublicLocks")
+);
 
 function ScopeBadges(props){
   const p = props.scopes.includes('profile') ? 'blue' : 'grey';
@@ -23,7 +29,6 @@ function ScopeBadges(props){
 
 export default function App(){
   const app = useRealmApp();
-  app.getAccessToken();  // ToDo: Remove
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const handleProfileMenuOpen = (e) => setProfileMenuAnchorEl(e.currentTarget);
@@ -72,10 +77,16 @@ export default function App(){
       <Paper elevation={6} sx={{ margin: 1, padding: 2, height: "calc(100% - 160px)", overflow: "auto" }} >
         <Switch>
           <Route path="/lock">
-            <h2>About your lock profile! (WIP)</h2>
+            <RequireLoggedInScope scopes={["profile", "locks"]}>
+              <React.Suspense fallback={<p>loading...</p>} >
+                <MyLock/>
+              </React.Suspense>
+            </RequireLoggedInScope>
           </Route>
-          <Route path="/locks">
-          <h2>About public lock profiles! (WIP)</h2>
+          <Route path={["/locks/:name", "/locks"]}>
+            <React.Suspense fallback={<p>loading...</p>} >
+              <PublicLocks/>
+            </React.Suspense>
           </Route>
           <Route path="/trans">
             <RequireLoggedInScope scopes={["profile", "locks"]}>
