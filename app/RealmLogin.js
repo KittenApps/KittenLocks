@@ -2,7 +2,26 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import * as Realm from "realm-web";
 import { useRealmApp } from "./RealmApp";
-import { Button, Paper, Stack } from '@material-ui/core';
+import { Button, Paper, Stack, Avatar } from '@material-ui/core';
+
+// ToDo: Select scopes beyond required scopes
+// ToDo: Keeps at least all old scopes
+
+export function ScopeBadges(props){
+  const p = props.scopes.includes('profile') ? 'blue' : 'grey';
+  const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
+  const k = props.scopes.includes('keyholder') ? 'purple' : 'grey';
+  const m = props.scopes.includes('messaging') ? 'green' : 'grey';
+  return (
+    <Stack direction="row" spacing={0.5}>
+      { props.title && (<strong>{props.title} </strong>) }
+      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
+      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: l }} >L</Avatar>
+      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: k }} >K</Avatar>
+      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: m }} >M</Avatar>
+    </Stack>
+  )
+}
 
 export function LoginScreen(props) {
   const app = useRealmApp();
@@ -35,8 +54,8 @@ export default function RequireLoggedInScope (props){
   return (
     <Paper elevation={3} >
       <Stack spacing={2}>
-        <span>{app.currentUser ? `Provided scopes: ${app.currentUser.customData.scopes.join(' ')}` : 'Login required!'}</span>
-        <span>Needed scopes: {props.scopes.join(' ')}</span>
+        <span>{ app.currentUser ? <ScopeBadges scopes={app.currentUser.customData.scopes} title="Provided scopes:"></ScopeBadges> : <strong>'Login required!'</strong> }</span>
+        <ScopeBadges scopes={props.scopes} title="Needed scopes:"></ScopeBadges>
         <LoginScreen scopes={props.scopes}/>
       </Stack>
     </Paper>

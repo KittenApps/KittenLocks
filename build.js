@@ -16,6 +16,7 @@ webpack(
       filename: "[name].js",
       chunkFilename: "[name].js"
     },
+    stats: 'detailed',
     resolve: { extensions: [".js"] },
     module: {
       rules: [

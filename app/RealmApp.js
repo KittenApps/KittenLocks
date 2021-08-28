@@ -40,7 +40,7 @@ export const RealmAppProvider = ({ appId, children }) => {
   React.useEffect(() => {
     setAccessToken(currentUser?.customData?.access_token);
     setAccessExpires(new Date(parseInt(currentUser?.customData?.access_expires.$date.$numberLong)));
-  }, [app.currentUser])
+  }, [currentUser]);
 
   async function getAccessToken(){
     if (!accessToken) throw new Error("Login required");
@@ -52,6 +52,7 @@ export const RealmAppProvider = ({ appId, children }) => {
     }
     setAccessToken(access_token);
     setAccessExpires(new Date(access_expires));
+    currentUser.refreshCustomData();
     return { accessToken: access_token, accessExpires: new Date(access_expires) };
   }
 

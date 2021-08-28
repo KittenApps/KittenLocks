@@ -2,38 +2,28 @@ import * as React from "react";
 import { useState } from "react";
 import { useRealmApp } from "./RealmApp";
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Tabs, Tab, Stack, Paper } from '@material-ui/core';
-import { Switch, Route, Link, useRouteMatch } from "react-router-dom";
+import { Switch, Route, Link, useRouteMatch, useHistory } from "react-router-dom";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import RequireLoggedInScope, { LoginScreen } from './RealmLogin';
+import RequireLoggedInScope, { LoginScreen, ScopeBadges } from './RealmLogin';
 const MyLock = React.lazy(() =>
-  import(/* webpackChunkName: "myLock" */ "./components/MyLock")
+  import(/* webpackChunkName: "my_lock" */ "./components/MyLock")
 );
 const PublicLocks = React.lazy(() =>
-  import(/* webpackChunkName: "publicLocks" */ "./components/PublicLocks")
+  import(/* webpackChunkName: "public_locks" */ "./components/PublicLocks")
 );
-
-function ScopeBadges(props){
-  const p = props.scopes.includes('profile') ? 'blue' : 'grey';
-  const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
-  const k = props.scopes.includes('keyholder') ? 'purple' : 'grey';
-  const m = props.scopes.includes('messaging') ? 'green' : 'grey';
-  return (
-    <Stack direction="row" spacing={0.5}>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: l }} >L</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: k }} >K</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: m }} >M</Avatar>
-    </Stack>
-  )
-}
+const LockTransfer = React.lazy(() =>
+  import(/* webpackChunkName: "lock_transfer" */ "./components/LockTransfer")
+);
 
 export default function App(){
   const app = useRealmApp();
+  const history = useHistory();
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const handleProfileMenuOpen = (e) => setProfileMenuAnchorEl(e.currentTarget);
   const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
   const handleProfileMenuLogout = () => {
+    history.push('/');
     app.logOut();
     setProfileMenuAnchorEl(null);
   };
@@ -66,7 +56,7 @@ export default function App(){
           }
         </Toolbar>
       </AppBar>
-      <Tabs value={currentTab}>
+      <Tabs value={currentTab} variant="scrollable">
         <Tab label="Home" value="/" to="/" component={Link} />
         <Tab label="My lock profile" value="/lock" to="/lock" component={Link} />
         <Tab label="Public lock profiles" value="/locks" to="/locks" component={Link} />
@@ -88,10 +78,11 @@ export default function App(){
               <PublicLocks/>
             </React.Suspense>
           </Route>
-          <Route path="/trans">
+          <Route path={["/trans/:lock", "/trans"]}>
             <RequireLoggedInScope scopes={["profile", "locks"]}>
-              <p>Welcome to Kitten Trans(fer)! 🏳️‍⚧️</p>
-              <div>{JSON.stringify(app.currentUser?.customData, null, '  ')}</div> 
+              <React.Suspense fallback={<p>loading...</p>} >
+                <LockTransfer/>
+              </React.Suspense>
             </RequireLoggedInScope>
           </Route>
           <Route path="/discord">

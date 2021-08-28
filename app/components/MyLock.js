@@ -38,10 +38,10 @@ export default function MyLock(){
   return (
     <React.Fragment>
       <h2>My lock information ({app.currentUser.customData.username}):</h2>
-      { lockJSON ? <ReactJson src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} />
+      { lockJSON ? <ReactJson src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} />
                   : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
       <h2>My lock history ({app.currentUser.customData.username}):</h2>
-      { historyJSON ? <ReactJson src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} />
+      { historyJSON ? <ReactJson src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} />
               : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
     </React.Fragment>
   );

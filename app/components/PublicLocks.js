@@ -42,10 +42,10 @@ export default function PublicLocks(){
       { (isSearching || profileJSON) &&
         <React.Fragment>
           <h2>Public profile of {profileJSON?.user?.username || username}</h2>
-          { profileJSON ? <ReactJson src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} />
+          { profileJSON ? <ReactJson src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} />
                       : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
           <h2>Public locks of {profileJSON?.user?.username || username}</h2>
-          { locksJSON ? <ReactJson src={locksJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} />
+          { locksJSON ? <ReactJson src={locksJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} />
                   : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
         </React.Fragment>
       }
