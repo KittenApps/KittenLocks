@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Skeleton } from '@material-ui/core';
+import { Skeleton } from '@mui/material';
 import ReactJson from 'react-json-view';
 import { useRealmApp } from "../RealmApp";
 

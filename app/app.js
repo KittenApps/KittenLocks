@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { useRealmApp } from "./RealmApp";
-import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Tabs, Tab, Stack, Paper } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Tabs, Tab, Stack, Paper } from '@mui/material';
 import { Switch, Route, Link, useRouteMatch, useHistory } from "react-router-dom";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RequireLoggedInScope, { LoginScreen, ScopeBadges } from './RealmLogin';
 const MyLock = React.lazy(() =>
   import(/* webpackChunkName: "my_lock" */ "./components/MyLock")

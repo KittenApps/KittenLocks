@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Button, TextField, Skeleton } from '@material-ui/core';
+import { Button, TextField, Skeleton } from '@mui/material';
 import ReactJson from 'react-json-view';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 import { useParams, useHistory } from "react-router-dom";
 
 export default function PublicLocks(){

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import * as Realm from "realm-web";
 import { useRealmApp } from "./RealmApp";
-import { Button, Paper, Stack, Avatar } from '@material-ui/core';
+import { Button, Paper, Stack, Avatar } from '@mui/material';
 
 // ToDo: Select scopes beyond required scopes
 // ToDo: Keeps at least all old scopes
