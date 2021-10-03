@@ -13,6 +13,9 @@ function VerifyLock(props){
     if (!props.lock.keyholder){
       setResult(<p>✅ in self lock</p>);
       props.setLockOkay(true); 
+    } else if (props.lock.keyholder.lastSeen > 7*24*60*60) {
+      setResult(<p>✅ keyholder inactive for more than 1 week</p>);
+      props.setLockOkay(true); 
     } else {
       const timerVisible = props.lock.isAllowedToViewTime;
       const remainingTime = timerVisible && (new Date(props.lock.endDate) - new Date())/3600000 < 2;
@@ -81,7 +84,12 @@ export default function LockTransfer(){
           <li>start a new lock with the combination copied over from the given shared lock</li>
         </ul>
         Please not doing so will reset your current locked time and you'll start from 0 again. (Copying time over would require official support from Chaster).<br/>
-        Requirements for a lock transfer are, that you're either in a self lock or your keyholder has approved the transfer by setting your lock to below 2 hours with visible timer and frozen (recommended).
+        To be able to transfer you lock, you're required to fullfil either:
+        <ul style={{margin: '3px 0'}}>
+          <li>you're in a self lock or</li>
+          <li>your keyholder was inactive for over 1 week or</li>
+          <li>your keyholder agreed to the transfer by setting your lock with visible timer to less than 2 hours remaining (preferably frozen)</li>
+        </ul>
       </Alert>
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key="currentLock">
