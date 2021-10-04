@@ -10,7 +10,9 @@ function VerifyLock(props){
   const [result, setResult] = useState(null);
 
   useEffect(() => {
-    if (!props.lock.keyholder){
+    if (props.lock.status !== "locked"){
+      setResult(<p>❌ lock already unlocked</p>);
+    } else if (!props.lock.keyholder){
       setResult(<p>✅ in self lock</p>);
       props.setLockOkay(true); 
     } else if (props.lock.keyholder.lastSeen > 7*24*60*60) {
@@ -69,7 +71,8 @@ export default function LockTransfer(){
   }, [sharedLockID])
 
   const handleTransferLock = () => {
-    app.currentUser.functions.transferLock(oldLockID, sharedLock._id).then(console.log);
+    app.currentUser.functions.transferLock(oldLockID, sharedLock._id, password || '')
+      .then(r => r.error ? alert(`Error: ${r.error}`) : alert('Success: Lock sucessfully transfered!'));
   };
 
 
@@ -90,6 +93,8 @@ export default function LockTransfer(){
           <li>your keyholder was inactive for over 1 week or</li>
           <li>your keyholder agreed to the transfer by setting your lock with visible timer to less than 2 hours remaining (preferably frozen)</li>
         </ul>
+        Also you can't transfer to your own shared lock obviously.<br/>
+        If you want to transfer someones lock from an external other keyholding site to Chaster, please message Silizia#8216 on Discord.
       </Alert>
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key="currentLock">
@@ -114,7 +119,7 @@ export default function LockTransfer(){
               { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" />}
             </FormControl>
             { sharedLock._id && <ReactJson src={sharedLock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />}
-            { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === locks[0].user._id || (sharedLock.requirePassword && !password) } sx={{ marginTop: 2 }} variant="contained">Transfer Lock ...</Button> }
+            { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === locks[0].user._id || (sharedLock.requirePassword && !password) } sx={{ marginTop: 2 }} variant="contained">[BETA] Transfer Lock</Button> }
           </StepContent>
         </Step>
       </Stepper>
