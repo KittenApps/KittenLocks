@@ -44,7 +44,7 @@ export default function PublicLocks(){
   const [locksJSON, setLocksJSON] = useState(null);
   const [isSearching, setSearching] = useState(false);
 
-  const onChangeUsername = e => setUsername(e.target.value);
+  const onChangeUsername = e => setUsername(e.target.value.trim());
   const handleUsernameSearch = async (e) => {
     const user = e.name || username;
     setProfileJSON(null);

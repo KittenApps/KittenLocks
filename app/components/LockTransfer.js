@@ -62,8 +62,8 @@ export default function LockTransfer(){
   const [sharedLock, setSharedLock] = useState({});
   const [password, setPassword] = useState('');
   
-  const handleChangeSharedLockID = (e) => setSharedLockID(e.target.value);
-  const handleChangePassword = e => setPassword(e.target.value);
+  const handleChangeSharedLockID = (e) => setSharedLockID(e.target.value.trim());
+  const handleChangePassword = e => setPassword(e.target.value.trim());
   useEffect(() => {
     if (/^[0-9a-f]{24}$/.test(sharedLockID)){
       fetch(`https://api.chaster.app/public-locks/${sharedLockID}`).then(d => d.json()).then(j => setSharedLock(j));
