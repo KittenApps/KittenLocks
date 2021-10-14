@@ -11,14 +11,12 @@ export function ScopeBadges(props){
   const p = props.scopes.includes('profile') ? 'blue' : 'grey';
   const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
   const k = props.scopes.includes('keyholder') ? 'purple' : 'grey';
-  const m = props.scopes.includes('messaging') ? 'green' : 'grey';
   return (
     <Stack direction="row" spacing={0.5}>
       { props.title && (<strong>{props.title} </strong>) }
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: l }} >L</Avatar>
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: k }} >K</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: m }} >M</Avatar>
     </Stack>
   )
 }
