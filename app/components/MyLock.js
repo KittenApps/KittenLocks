@@ -1,11 +1,71 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { Skeleton, FormControl, InputLabel, Select, MenuItem, Grid, Button } from '@mui/material';
+import { Skeleton, FormControl, InputLabel, Select, MenuItem, Grid, Button, Accordion, AccordionSummary, AccordionDetails,
+         TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import ReactJson from 'react-json-view';
 import { useRealmApp } from "../RealmApp";
 import '../bootstrap.scss';
+
+function LocktoberCalc(props){
+  const today = new Date(Date.now() - 1000*60*60*8).getUTCDate();
+  const [calc, setCalc] = useState({});
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    props.app.getAccessToken().then(({accessToken}) => {
+      const headers = { "Authorization": `Bearer ${accessToken}` , "Content-Type": "application/json" };
+      let arr = [];
+      for (let i = 0; i < today; i++) arr[i] = i+1;
+      return Promise.all(arr.map(i => fetch('https://api.chaster.app/locktober/details', { headers, signal, method: 'POST',
+        body: JSON.stringify({"date": `2021-10-${(i < 10) ? '0'+i : i}T23:00:00.000Z`})}).then(d => d.json()).then(d => {
+          const p = d.categories;
+          setCalc(c => { return {...c, [i]: p.extensions+p.peer_verifications+p.receive_votes+p.task_votes+p.votes, [i+'e']: p.discord_events};});
+        })
+      ));
+    });
+    return () => controller.abort();
+  }, []);
+
+  const handleClick = d => props.setDay(d);
+
+  return (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">Monday</TableCell>
+            <TableCell align="center">Tuesday</TableCell>
+            <TableCell align="center">Wednesday</TableCell>
+            <TableCell align="center">Thursday</TableCell>
+            <TableCell align="center">Friday</TableCell>
+            <TableCell align="center">Saturday</TableCell>
+            <TableCell align="center">Sunday</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {[0,1,2,3,4].map((i) => (
+            <TableRow key={i}>
+              {[0,1,2,3,4,5,6].map((j) => (
+                <TableCell align="center" key={j} onClick={() => handleClick(i*7+j-3)}>
+                  {i*7+j-3 > 0 ? (
+                    <React.Fragment>
+                      <b>{i*7+j-3}.: </b>{calc[i*7+j-3]}/610{calc[i*7+j-3+'e']>0 ? ` + ${calc[i*7+j-3+'e']}`: ''}
+                      <ProgressBar variant={calc[i*7+j-3] === 610 ? 'success' : (calc[i*7+j-3] >= 350 ? 'warning' : 'danger' )} now={calc[i*7+j-3]} max={610} animated={calc[i*7+j-3+'e']>0} />
+                    </React.Fragment>
+                  ) : null }
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
 
 function Locktober(props){
   const today = new Date(Date.now() - 1000*60*60*8).getUTCDate();
@@ -71,6 +131,10 @@ function Locktober(props){
         <Grid item xs={3}><b>Discord Events:</b></Grid>
         <Grid item xs={9}><ProgressBar variant="success" now={progress.discord_event > 0 ? 100 : 0} animated label={`${progress.discord_event}`} /></Grid>
       </Grid>
+      <Accordion TransitionProps={{ mountOnEnter: true }} sx={{marginTop: 2}}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}><b>Locktober points calendar 🎃🔒📆</b></AccordionSummary>
+        <AccordionDetails><LocktoberCalc app={props.app} setDay={setDay}/></AccordionDetails>
+      </Accordion>
     </React.Fragment>
   );
 }
