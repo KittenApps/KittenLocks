@@ -34,6 +34,9 @@ export function LoginScreen(props) {
       if (e.data.authCode && state === e.data.state){
         e.source.close();
         app.logIn(Realm.Credentials.function({ authCode: e.data.authCode, redUrl }));
+      } else {
+        e.source.close();
+        alert('Login failed: You need to accept the Chaster OAuth request!');
       }
     }, false);
   }
