@@ -10,7 +10,7 @@ import { useRealmApp } from "../RealmApp";
 import '../bootstrap.scss';
 
 function LocktoberCalc(props){
-  const today = new Date(Date.now() - 1000*60*60*8).getUTCDate();
+  const today = 31;
   const [calc, setCalc] = useState({});
 
   useEffect(() => {
@@ -68,7 +68,7 @@ function LocktoberCalc(props){
 }
 
 function Locktober(props){
-  const today = new Date(Date.now() - 1000*60*60*8).getUTCDate();
+  const today = 31;
   const [day, setDay] = useState(today);
   const [progress, setProgress] = useState(null); 
 
