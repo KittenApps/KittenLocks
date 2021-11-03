@@ -39,7 +39,7 @@ webpack(
     },
     plugins: [
       new webpack.EnvironmentPlugin(["NODE_ENV"]),
-      new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: '/'}
+      new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: '/', meta: {'apple-mobile-web-app-capable': 'yes'}}
         /*{
         scriptLoading: "defer",
         favicon: "./favicon.ico",

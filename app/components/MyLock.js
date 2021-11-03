@@ -143,7 +143,7 @@ export default function MyLock(){
   const app = useRealmApp();
 
   const [lockJSON, setLockJSON] = useState(null);
-  const [historyJSON, setHistoryJSOn] = useState(null);
+  const [historyJSON, setHistoryJSON] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -164,7 +164,7 @@ export default function MyLock(){
       return fetch('https://api.chaster.app/locks', { headers, signal });
     }).then(d => d.json()).then(j => {
       setLockJSON(j.length === 1 ? j[0]: j);
-      return Promise.all(j.map(l => fetchHistory(l._id))).then(j => setHistoryJSOn(j.length === 1 ? j[0]: j));
+      return Promise.all(j.map(l => fetchHistory(l._id))).then(j => setHistoryJSON(j.length === 1 ? j[0]: j));
     });
     return () => controller.abort();
   }, []);
