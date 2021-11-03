@@ -49,11 +49,4 @@ link.rel = "stylesheet";
 link.href = "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap";
 document.body.appendChild(link);
 
-document.body.style.margin = 0;
-div.style.position = 'absolute';
-div.style.top = 0;
-div.style.right = 0;
-div.style.bottom = 0;
-div.style.left = 0;
-
 render(<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}><App/></RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
