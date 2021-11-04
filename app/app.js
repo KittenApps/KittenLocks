@@ -28,7 +28,7 @@ const LockTransfer = React.lazy(() =>
 );
 
 const Link = React.forwardRef(
-  ({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? '.Mui-selected' : null].filter(Boolean).join(' ')}/>
+  ({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>
 );
 
 const drawerWidth = 240;
