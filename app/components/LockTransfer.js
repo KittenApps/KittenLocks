@@ -34,7 +34,7 @@ function VerifyLock(props){
   return (
     <React.Fragment>
       {result}
-      <ReactJson src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />
+      <ReactJson style={{fontSize: 13}} src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />
     </React.Fragment>
   );
 }
@@ -118,7 +118,7 @@ export default function LockTransfer(){
               <TextField label="shared lock ID" value={sharedLockID} onChange={handleChangeSharedLockID} variant="outlined" />
               { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" />}
             </FormControl>
-            { sharedLock._id && <ReactJson src={sharedLock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />}
+            { sharedLock._id && <ReactJson style={{fontSize: 13}} src={sharedLock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />}
             { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === locks[0].user._id || (sharedLock.requirePassword && !password) } sx={{ marginTop: 2 }} variant="contained">[BETA] Transfer Lock</Button> }
           </StepContent>
         </Step>

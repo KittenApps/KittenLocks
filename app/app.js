@@ -130,7 +130,8 @@ export default function App(){
       <ResponsiveAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: 2, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Avatar src="/appicon.png" sx={{ width: 32, height: 32 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, marginLeft: 1 }}>
             KittenLocks
           </Typography>
           {app.currentUser
@@ -216,6 +217,8 @@ export default function App(){
             <Paper elevation={6} sx={{ padding: 2 }} >
               <h2>Welcome to KittenLocks!</h2>
               <p>You will find exactly no introduction here for the moment! 😸</p>
+              <Avatar src="/appicon.png" sx={{ width: 192, height: 192, marginLeft: 15 }} />
+              <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <a href="https://pngtree.com">Pngtree.com</a></Typography>
             </Paper>
           } />
         </Routes>
