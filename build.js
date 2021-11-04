@@ -17,7 +17,7 @@ webpack(
       chunkFilename: "[name].js"
     },
     stats: 'detailed',
-    resolve: { extensions: [".js"] },
+    resolve: { extensions: [".js"], fallback: { "crypto": false } },
     module: {
       rules: [
         {

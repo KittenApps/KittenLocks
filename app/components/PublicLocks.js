@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button, TextField, Skeleton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import ReactJson from 'react-json-view';
 import SearchIcon from '@mui/icons-material/Search';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function VerficationPictureGalery(props){
   const [pics, setPics] = useState(null);
@@ -38,7 +38,7 @@ export default function PublicLocks(){
       handleUsernameSearch({name});
     }
   }, []);
-  const history = useHistory();
+  const navigate = useNavigate();
   const [username, setUsername] = useState(name || '');
   const [profileJSON, setProfileJSON] = useState(null);
   const [locksJSON, setLocksJSON] = useState(null);
@@ -53,7 +53,7 @@ export default function PublicLocks(){
     const pjson = await fetch(`https://api.chaster.app/users/profile/${user}/details`).then(d => d.json());
     setProfileJSON(pjson);
     if (pjson.statusCode > 400) return setSearching(false);
-    history.push(`/locks/${user}`);
+    navigate(`/locks/${user}`);
     const ljson = await fetch(`https://api.chaster.app/locks/user/${pjson.user._id}`).then(d => d.json());
     setLocksJSON(ljson);
     setSearching(false);

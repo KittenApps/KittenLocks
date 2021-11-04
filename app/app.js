@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRealmApp } from "./RealmApp";
 import { styled, useTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery,
-         Paper, Drawer, CssBaseline, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
-import { Switch, Route, Link, useRouteMatch, useHistory } from "react-router-dom";
+         Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -25,6 +25,10 @@ const PublicLocks = React.lazy(() =>
 );
 const LockTransfer = React.lazy(() =>
   import(/* webpackChunkName: "lock_transfer" */ "./components/LockTransfer")
+);
+
+const Link = React.forwardRef(
+  ({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? '.Mui-selected' : null].filter(Boolean).join(' ')}/>
 );
 
 const drawerWidth = 240;
@@ -74,7 +78,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function App(){
   const app = useRealmApp();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(useMediaQuery(useTheme().breakpoints.up('md'), {noSsr: true}));
@@ -85,13 +89,10 @@ export default function App(){
   const handleProfileMenuOpen = (e) => setProfileMenuAnchorEl(e.currentTarget);
   const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
   const handleProfileMenuLogout = () => {
-    history.push('/');
+    navigate('/');
     app.logOut();
     setProfileMenuAnchorEl(null);
   };
-
-  const routeMatch = useRouteMatch(['/trans', '/locks', '/lock', '/discord', '/']);
-  const currentTab = routeMatch?.path;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -128,50 +129,66 @@ export default function App(){
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem button key={0} component={Link} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItem>
+          <ListItemButton key={0} component={Link} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
           <Divider key={-1}/>
-          <ListItem button key={1} component={Link} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My lock profile"/></ListItem>
-          <ListItem button key={2} component={Link} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public lock profiles"/></ListItem>
+          <ListItemButton key={1} component={Link} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My lock profile"/></ListItemButton>
+          <ListItemButton key={2} component={Link} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public lock profiles"/></ListItemButton>
           <Divider key={-2}/>
-          <ListItem disabled button key={3} component={Link} to="/"><ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public lock charts"/></ListItem>
-          <ListItem disabled button key={4} component={Link} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItem>
-          <ListItem button key={5} component={Link} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItem>
+          <ListItemButton disabled key={3} component={Link} to="/"><ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public lock charts"/></ListItemButton>
+          <ListItemButton disabled key={4} component={Link} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+          <ListItemButton key={5} component={Link} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
           <Divider key={-3}/>
-          <ListItem button key={6} component={Link} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItem>
+          <ListItemButton key={6} component={Link} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
         </List>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Paper elevation={6} sx={{ margin: 1, padding: 2 }} >
-          <Switch>
-            <Route path="/lock">
-              <RequireLoggedInScope scopes={["profile", "locks"]}>
-                <React.Suspense fallback={<p>loading...</p>} >
-                  <MyLock/>
-                </React.Suspense>
-              </RequireLoggedInScope>
-            </Route>
-            <Route path={["/locks/:name", "/locks"]}>
+        <Routes>
+          <Route path="lock" element={
+            <RequireLoggedInScope scopes={["profile", "locks"]}>
               <React.Suspense fallback={<p>loading...</p>} >
-                <PublicLocks/>
+                <Paper elevation={6} sx={{ margin: 1, padding: 2 }} ><MyLock/></Paper>
               </React.Suspense>
-            </Route>
-            <Route path={["/trans/:lock", "/trans"]}>
-              <RequireLoggedInScope scopes={["profile", "locks"]}>
-                <React.Suspense fallback={<p>loading...</p>} >
-                  <LockTransfer/>
-                </React.Suspense>
-              </RequireLoggedInScope>
-            </Route>
-            <Route path="/discord">
-              <div style={{ height: '100%' }} ><iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe></div>
-            </Route>
-            <Route path="/">
+            </RequireLoggedInScope>
+          } />
+          <Route path="locks" element={
+            <React.Suspense fallback={<p>loading...</p>} >
+              <Paper elevation={6} sx={{ margin: 1, padding: 2 }} ><PublicLocks/></Paper>
+            </React.Suspense>
+          } >
+            <Route path=":name" element={
+              <React.Suspense fallback={<p>loading...</p>} >
+                <Paper elevation={6} sx={{ margin: 1, padding: 2 }} ><PublicLocks/></Paper>
+              </React.Suspense>
+            } />
+          </Route>
+          <Route path="trans" element={
+            <RequireLoggedInScope scopes={["profile", "locks"]}>
+              <React.Suspense fallback={<p>loading...</p>} >
+                <Paper elevation={6} sx={{ margin: 1, padding: 2 }} ><LockTransfer/></Paper>
+              </React.Suspense>
+            </RequireLoggedInScope>
+          } >
+            <Route path=":lock" element={
+            <RequireLoggedInScope scopes={["profile", "locks"]}>
+              <React.Suspense fallback={<p>loading...</p>} >
+                <Paper elevation={6} sx={{ margin: 1, padding: 2 }} ><LockTransfer/></Paper>
+              </React.Suspense>
+            </RequireLoggedInScope>
+          } />
+          </Route>
+          <Route path="discord" element={
+            <Paper elevation={6} sx={{ position: 'absolute', top: 80, left: open ? 256 : 16, right: 16, bottom: 16, padding: 2 }} >
+              <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe>
+            </Paper>
+          } />
+          <Route path="*" element={
+            <Paper elevation={6} sx={{ margin: 1, padding: 2 }} >
               <h2>Welcome to KittenLocks!</h2>
               <p>You will find exactly no introduction here for the moment! 😸</p>
-            </Route>
-          </Switch>
-        </Paper>
+            </Paper>
+          } />
+        </Routes>
       </Main>
     </Box>
   );
