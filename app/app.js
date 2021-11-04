@@ -113,7 +113,8 @@ export default function App(){
   const [open, setOpen] = React.useState(isDesktop);
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
-
+  const handleListClick = () => !isDesktop && setOpen(false);
+ 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const handleProfileMenuOpen = (e) => setProfileMenuAnchorEl(e.currentTarget);
   const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
@@ -151,7 +152,7 @@ export default function App(){
         </Toolbar>
       </ResponsiveAppBar>
       <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
-        <List>
+        <List onClick={handleListClick}>
           <ListItemButton key={0} component={Link} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
           <Divider key={-1}/>
           <ListItemButton key={1} component={Link} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My lock profile"/></ListItemButton>

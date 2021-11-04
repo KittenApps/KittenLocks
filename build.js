@@ -39,55 +39,7 @@ webpack(
     },
     plugins: [
       new webpack.EnvironmentPlugin(["NODE_ENV"]),
-      new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: '/', meta: {'apple-mobile-web-app-capable': 'yes'}}
-        /*{
-        scriptLoading: "defer",
-        favicon: "./favicon.ico",
-        inject: false,
-        meta: { description: "A simple kitten push notification service." },
-        templateContent: ({ htmlWebpackPlugin }) =>
-          `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Purrer 😺💌</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="favicon.ico" />
-  <link rel="preload" href="/index.js" as="script" />
-  <link rel="preload" href="/commons~index.js" as="script" />
-  <link rel="preload" href="/notificationEditor.js" as="script" />
-  <link
-    rel="preload"
-    href="/commons~notificationEditor~themeEditor.js"
-    as="script"
-  />
-  <link rel="preload" href="/commons~notificationFeed.js" as="script" />
-  <link
-    rel="preload"
-    href="/commons~notificationEditor~notificationFeed~themeEditor.js"
-    as="script"
-  />
-  <link
-    rel="preload"
-    href="/commons~notificationEditor~notificationFeed.js"
-    as="script"
-  />
-  <link
-    rel="preload"
-    href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"
-    as="style"
-  />
-  <link rel="prefetch" href="/commons~themeEditor.js" as="script" />
-</head>
-<body>
-  <div id="main"></div>
-  <script defer="defer" src="/commons~index.js"></script>
-  <script defer="defer" src="/index.js"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" />
-</body>
-</html>
-`
-      }*/)
+      new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: "/", favicon: "favicon.png"})
     ],
     optimization: {
       splitChunks: {
@@ -112,6 +64,7 @@ webpack(
     }
     console.log(stats.toString("normal"));
     fs.copyFileSync(env == "production" ? "oauthcb.html" : "oauthcb2.html", "public/oauthcb.html");
+    fs.copyFileSync("appicon.png", "public/appicon.png");
     console.log("finished webpack");
   }
 );

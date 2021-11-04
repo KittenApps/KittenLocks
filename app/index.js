@@ -1,7 +1,8 @@
 import * as React from "react";
 import { render } from "react-dom";
-import { useRealmApp, RealmAppProvider } from "./RealmApp.js";
+import { RealmAppProvider } from "./RealmApp.js";
 import App from "./app";
+import { Helmet } from 'react-helmet';
 import { BrowserRouter } from "react-router-dom";
 
 export const APP_ID = "kittenlocks-gcfgb";
@@ -44,9 +45,20 @@ class ErrorBoundary extends React.PureComponent {
 const div = document.createElement('div');
 document.body.appendChild(div);
 
-const link = document.createElement('link');
-link.rel = "stylesheet";
-link.href = "https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap";
-document.body.appendChild(link);
-
-render(<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}><App/></RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
+render(
+<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}>
+<Helmet>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="theme-color" content="#1976d2"/>
+    <meta name="description" content="a pawtastic WebApp to enchance your Chaster experience"/>
+    <meta property="og:title" content="KittenLocks"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://kittenlocks.netlify.app/"/>
+    <meta property="og:image" content="https://kittenlocks.netlify.app/appicon.png"/>
+    <meta property="og:description" content="KittenLocks is a pawtastic WebApp to enchance your Chaster experience."/>
+    <link rel="apple-touch-icon" sizes="192x192" href="/appicon.png"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
+  </Helmet>
+  <App/>
+</RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
