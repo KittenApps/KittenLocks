@@ -2,7 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import { RealmAppProvider } from "./RealmApp.js";
 import App from "./app";
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from "react-router-dom";
 
 export const APP_ID = "kittenlocks-gcfgb";
@@ -46,7 +46,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}>
+<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}><HelmetProvider>
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
@@ -61,4 +61,4 @@ render(
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
   </Helmet>
   <App/>
-</RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
+</HelmetProvider></RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
