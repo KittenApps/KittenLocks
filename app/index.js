@@ -46,7 +46,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-<React.StrictMode><BrowserRouter><ErrorBoundary><RealmAppProvider appId={APP_ID}><HelmetProvider>
+<React.StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider appId={APP_ID}><HelmetProvider>
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
@@ -61,4 +61,4 @@ render(
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
   </Helmet>
   <App/>
-</HelmetProvider></RealmAppProvider></ErrorBoundary></BrowserRouter></React.StrictMode>, div);
+</HelmetProvider></RealmAppProvider></BrowserRouter></ErrorBoundary></React.StrictMode>, div);

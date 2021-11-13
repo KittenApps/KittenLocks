@@ -13,12 +13,18 @@ export const useRealmApp = () => {
   return app;
 };
 
+let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) } ;
+
 export const RealmAppProvider = ({ appId, children }) => {
   const [app, setApp] = React.useState(new Realm.App(appId));
   React.useEffect(() => setApp(new Realm.App(appId)), [appId]);
 
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = React.useState(app.currentUser);
+
+  React.useEffect(() => {
+    currentUser?.refreshCustomData();
+  }, [currentUser]);
 
   async function logIn(credentials){
     const user = await app.logIn(credentials);
@@ -34,26 +40,20 @@ export const RealmAppProvider = ({ appId, children }) => {
     setCurrentUser(app.currentUser);
   }
 
-  const [accessToken, setAccessToken] = React.useState(null);
-  const [accessExpires, setAccessExpires] = React.useState(null);
-
-  React.useEffect(() => {
-    setAccessToken(currentUser?.customData?.access_token);
-    setAccessExpires(new Date(parseInt(currentUser?.customData?.access_expires.$date.$numberLong)));
-  }, [currentUser]);
-
-  async function getAccessToken(){
-    if (!accessToken) throw new Error("Login required");
-    if ((accessExpires - new Date())/60000 > 3) return { accessToken, accessExpires };
-    const { error, access_token, access_expires } = await currentUser.functions.getAccessToken();
-    if (error === 'Invalid refresh token'){
-      await logOut();
-      throw new Error("refresh token expired");
-    }
-    setAccessToken(access_token);
-    setAccessExpires(new Date(access_expires));
-    currentUser.refreshCustomData();
-    return { accessToken: access_token, accessExpires: new Date(access_expires) };
+  function getAccessToken(){
+    if (!currentUser) throw new Error("Login required");
+    const cDaT = currentUser?.customData?.access_token;
+    const cDaE = currentUser?.customData?.access_expires.$date.$numberLong;
+    if ((cDaE - Date.now())/60000 > 3) return Promise.resolve({ accessToken: cDaT, accessExpires: new Date(cDaE) });
+    if (accessTokenPromise.then) return accessTokenPromise;
+    const {accessToken, accessExpires} = accessTokenPromise;
+    if ((accessExpires - new Date())/60000 > 3) return Promise.resolve({ accessToken, accessExpires });
+    accessTokenPromise = currentUser.functions.getAccessToken().then(({access_token, access_expires, error}) => {
+      if (error === 'Invalid refresh token') logOut();
+      accessTokenPromise = { accessToken: access_token, accessExpires: access_expires };;
+      return accessTokenPromise;
+    });
+    return accessTokenPromise;
   }
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
