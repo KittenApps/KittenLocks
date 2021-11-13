@@ -99,9 +99,9 @@ function ResponsiveMain(props){
 
 function ResponsiveAppBar(props){
   if (props.isDesktop){
-    return <StyledAppBar open={props.open} position="fixed">{props.children}</StyledAppBar>;
+    return <StyledAppBar open={props.open} position="fixed" color="appBar" enableColorOnDark>{props.children}</StyledAppBar>;
   }
-  return <AppBar position="fixed">{props.children}</AppBar>;
+  return <AppBar position="fixed" color="appBar" enableColorOnDark>{props.children}</AppBar>;
 }
 
 export default function App(){
@@ -113,6 +113,12 @@ export default function App(){
       primary: {
         main: '#6d7dd1'
       },
+      secondary: {
+        main: '#6d7dd1'
+      },
+      appBar: {
+        main: '#1a1629'
+      },
       background: {
         default: '#272533',
         paper: '#1f1d2b'
@@ -120,7 +126,7 @@ export default function App(){
       mode: 'dark'
     },
   });
-  console.log(theme);
+
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'), {noSsr: true});
   const [open, setOpen] = React.useState(isDesktop);
   const handleDrawerOpen = () => setOpen(true);
@@ -182,7 +188,7 @@ export default function App(){
         <DrawerHeader />
         <Routes>
           <Route path="lock" element={
-            <Paper elevation={6} sx={{ padding: 2 }} >
+            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
                 <React.Suspense fallback={<p>loading...</p>} >
                   <MyLock/>
@@ -192,17 +198,17 @@ export default function App(){
           } />
           <Route path="locks" element={
             <React.Suspense fallback={<p>loading...</p>} >
-              <Paper elevation={6} sx={{ padding: 2 }} ><PublicLocks/></Paper>
+              <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
             </React.Suspense>
           } >
             <Route path=":name" element={
               <React.Suspense fallback={<p>loading...</p>} >
-                <Paper elevation={6} sx={{ padding: 2 }} ><PublicLocks/></Paper>
+                <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
               </React.Suspense>
             } />
           </Route>
           <Route path="trans" element={
-            <Paper elevation={6} sx={{ padding: 2 }} >
+            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
                 <React.Suspense fallback={<p>loading...</p>} >
                   <LockTransfer/>
@@ -211,7 +217,7 @@ export default function App(){
             </Paper>
           } >
             <Route path=":lock" element={
-              <Paper elevation={6} sx={{ padding: 2 }} >
+              <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
                 <RequireLoggedInScope scopes={["profile", "locks"]}>
                   <React.Suspense fallback={<p>loading...</p>} >
                     <LockTransfer/>
@@ -221,12 +227,12 @@ export default function App(){
             } />
           </Route>
           <Route path="discord" element={
-            <Paper elevation={6} sx={{ position: 'absolute', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, padding: 2 }} >
+            <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, padding: 2 }} >
               <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe>
             </Paper>
           } />
           <Route path="*" element={
-            <Paper elevation={6} sx={{ padding: 2 }} >
+            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <h2>Welcome to KittenLocks!</h2>
               <p>You will find exactly no introduction here for the moment! 😸</p>
               <Avatar src="/appicon.png" sx={{ width: 192, height: 192, marginLeft: 15 }} />
