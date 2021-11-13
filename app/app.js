@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { useRealmApp } from "./RealmApp";
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer,
-         Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
+         Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider, Link } from '@mui/material';
 import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -26,7 +26,7 @@ const LockTransfer = React.lazy(() =>
   import(/* webpackChunkName: "lock_transfer" */ "./components/LockTransfer")
 );
 
-const Link = React.forwardRef(
+const NLink = React.forwardRef(
   ({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>
 );
 
@@ -108,8 +108,20 @@ export default function App(){
   const app = useRealmApp();
   const navigate = useNavigate();
 
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(useTheme().breakpoints.up('md'), {noSsr: true});
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#6d7dd1'
+      },
+      background: {
+        default: '#272533',
+        paper: '#1f1d2b'
+      },
+      mode: 'dark'
+    },
+  });
+  console.log(theme);
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), {noSsr: true});
   const [open, setOpen] = React.useState(isDesktop);
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -125,7 +137,7 @@ export default function App(){
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <ThemeProvider theme={theme}><Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <ResponsiveAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
@@ -154,16 +166,16 @@ export default function App(){
       </ResponsiveAppBar>
       <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
         <List onClick={handleListClick}>
-          <ListItemButton key={0} component={Link} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
+          <ListItemButton key={0} component={NLink} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
           <Divider key={-1}/>
-          <ListItemButton key={1} component={Link} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My lock profile"/></ListItemButton>
-          <ListItemButton key={2} component={Link} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public lock profiles"/></ListItemButton>
+          <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My lock profile"/></ListItemButton>
+          <ListItemButton key={2} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public lock profiles"/></ListItemButton>
           <Divider key={-2}/>
-          <ListItemButton disabled key={3} component={Link} to="/"><ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public lock charts"/></ListItemButton>
-          <ListItemButton disabled key={4} component={Link} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
-          <ListItemButton key={5} component={Link} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
+          <ListItemButton disabled key={3} component={NLink} to="/"><ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public lock charts"/></ListItemButton>
+          <ListItemButton disabled key={4} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+          <ListItemButton key={5} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
           <Divider key={-3}/>
-          <ListItemButton key={6} component={Link} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
+          <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
         </List>
       </ResponsiveDrawer>
       <ResponsiveMain open={open} isDesktop={isDesktop} >
@@ -218,11 +230,11 @@ export default function App(){
               <h2>Welcome to KittenLocks!</h2>
               <p>You will find exactly no introduction here for the moment! 😸</p>
               <Avatar src="/appicon.png" sx={{ width: 192, height: 192, marginLeft: 15 }} />
-              <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <a href="https://pngtree.com">Pngtree.com</a></Typography>
+              <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
             </Paper>
           } />
         </Routes>
       </ResponsiveMain>
-    </Box>
+    </Box></ThemeProvider>
   );
 }

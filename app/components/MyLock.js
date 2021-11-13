@@ -175,10 +175,10 @@ export default function MyLock(){
       <h2>My Locktober progress</h2>
       <Locktober app={app}/>
       <h2>My lock information ({app.currentUser.customData.username}):</h2>
-      { lockJSON ? <ReactJson style={{fontSize: 13}} src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} />
+      { lockJSON ? <ReactJson style={{fontSize: 13}} src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
                   : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
       <h2>My lock history ({app.currentUser.customData.username}):</h2>
-      { historyJSON ? <ReactJson style={{fontSize: 13}} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} />
+      { historyJSON ? <ReactJson style={{fontSize: 13}} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
               : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
     </React.Fragment>
   );

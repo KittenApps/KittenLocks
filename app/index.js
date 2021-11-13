@@ -50,7 +50,7 @@ render(
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-    <meta name="theme-color" content="#1976d2"/>
+    <meta name="theme-color" content="#1f1d2b"/>
     <meta name="description" content="a pawtastic WebApp to enchance your Chaster experience"/>
     <meta property="og:title" content="KittenLocks"/>
     <meta property="og:type" content="website"/>

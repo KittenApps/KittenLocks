@@ -34,7 +34,7 @@ function VerifyLock(props){
   return (
     <React.Fragment>
       {result}
-      <ReactJson style={{fontSize: 13}} src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} />
+      <ReactJson style={{fontSize: 13}} src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} theme="harmonic"/>
     </React.Fragment>
   );
 }

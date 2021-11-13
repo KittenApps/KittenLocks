@@ -67,10 +67,10 @@ export default function PublicLocks(){
       { (isSearching || profileJSON) &&
         <React.Fragment>
           <h2>Public profile of {profileJSON?.user?.username || username}</h2>
-          { profileJSON ? <ReactJson style={{fontSize: 13}} src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} />
+          { profileJSON ? <ReactJson style={{fontSize: 13}} src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} theme="harmonic"/>
                       : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
           <h2>Public locks of {profileJSON?.user?.username || username}</h2>
-          { locksJSON ? <ReactJson style={{fontSize: 13}} src={locksJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} />
+          { locksJSON ? <ReactJson style={{fontSize: 13}} src={locksJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} theme="harmonic"/>
                   : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
           <h2>Verification Pictures of {profileJSON?.user?.username || username}</h2>
           { locksJSON ? <VerficationPictureGalery data={locksJSON[0]?.extensions.find(e => e.slug === 'verification-picture')?.userData.history} />

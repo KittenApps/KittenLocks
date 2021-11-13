@@ -8,9 +8,9 @@ import { Button, Paper, Stack, Avatar } from '@mui/material';
 // ToDo: Keeps at least all old scopes
 
 export function ScopeBadges(props){
-  const p = props.scopes.includes('profile') ? 'blue' : 'grey';
+  const p = props.scopes.includes('profile') ? 'lightblue' : 'grey';
   const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
-  const k = props.scopes.includes('keyholder') ? 'purple' : 'grey';
+  const k = props.scopes.includes('keyholder') ? 'violet' : 'grey';
   return (
     <Stack direction="row" spacing={0.5}>
       { props.title && (<strong>{props.title} </strong>) }
