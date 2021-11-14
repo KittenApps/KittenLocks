@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "additional Stats and Charts for your Chaster",
   "scripts": {
-    "build": "node build.js"
+    "start": "webpack serve --port=5000",
+    "build": "webpack"
   },
   "engines": {
     "node": ">=12"
@@ -48,5 +49,9 @@
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.64.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.5.0"
   }
 }
