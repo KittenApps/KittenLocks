@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRealmApp } from "../RealmApp";
 import { useParams } from "react-router-dom";
 import { Alert, AlertTitle, Stepper, Step, StepLabel, StepContent, Select, MenuItem, InputLabel, FormControl, Button, TextField } from '@mui/material';
@@ -22,20 +21,20 @@ function VerifyLock(props){
       const timerVisible = props.lock.isAllowedToViewTime;
       const remainingTime = timerVisible && (new Date(props.lock.endDate) - new Date())/3600000 < 2;
       setResult(
-        <React.Fragment>
+        <Fragment>
           <p>{timerVisible ? '✅' : '❌' } in keyholder lock with visible timer</p>
           <p>{remainingTime ? '✅' : '❌' } timer is less than 2 hours</p>
-        </React.Fragment>
+        </Fragment>
       );
       if (timerVisible && remainingTime) props.setLockOkay(true);
     }
   }, [props.lock]);
   
   return (
-    <React.Fragment>
+    <Fragment>
       {result}
       <ReactJson style={{fontSize: 13}} src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={true} name={false} theme="harmonic"/>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
@@ -77,7 +76,7 @@ export default function LockTransfer(){
 
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Alert severity="info">
         <AlertTitle>About Kitten Trans(fer) 🏳️‍⚧️:</AlertTitle>
         KittenTransfer allows to transfer the lock of a wearer (you) over to another shared lock without exposing the combination picture to the wearer. To do so it will:
@@ -123,6 +122,6 @@ export default function LockTransfer(){
           </StepContent>
         </Step>
       </Stepper>
-    </React.Fragment>
+    </Fragment>
   );
 }

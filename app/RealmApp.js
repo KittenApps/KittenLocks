@@ -1,10 +1,10 @@
-import React from "react";
+import { useState, useEffect, useContext, createContext} from "react";
 import * as Realm from "realm-web";
 
-const RealmAppContext = React.createContext();
+const RealmAppContext = createContext();
 
 export const useRealmApp = () => {
-  const app = React.useContext(RealmAppContext);
+  const app = useContext(RealmAppContext);
   if (!app) {
     throw new Error(
       `You must call useRealmApp() inside of a <RealmAppProvider />`
@@ -16,13 +16,13 @@ export const useRealmApp = () => {
 let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) } ;
 
 export const RealmAppProvider = ({ appId, children }) => {
-  const [app, setApp] = React.useState(new Realm.App(appId));
-  React.useEffect(() => setApp(new Realm.App(appId)), [appId]);
+  const [app, setApp] = useState(new Realm.App(appId));
+  useEffect(() => setApp(new Realm.App(appId)), [appId]);
 
   // Wrap the Realm.App object's user state with React state
-  const [currentUser, setCurrentUser] = React.useState(app.currentUser);
+  const [currentUser, setCurrentUser] = useState(app.currentUser);
 
-  React.useEffect(() => {
+  useEffect(() => {
     currentUser?.refreshCustomData();
   }, [currentUser]);
 

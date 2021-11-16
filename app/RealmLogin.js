@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
 import * as Realm from "realm-web";
 import { useRealmApp } from "./RealmApp";

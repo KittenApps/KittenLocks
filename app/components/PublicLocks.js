@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Button, TextField, Skeleton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import ReactJson from 'react-json-view';
 import SearchIcon from '@mui/icons-material/Search';
@@ -60,12 +59,12 @@ export default function PublicLocks(){
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       <h1>Public Lock Profiles Search:</h1>
       <TextField label="Username" variant="outlined" value={username} onChange={onChangeUsername} size="small"/>
       <Button variant="contained" startIcon={<SearchIcon/>} onClick={handleUsernameSearch} disabled={isSearching}>Search</Button>
       { (isSearching || profileJSON) &&
-        <React.Fragment>
+        <Fragment>
           <h2>Public profile of {profileJSON?.user?.username || username}</h2>
           { profileJSON ? <ReactJson style={{fontSize: 13}} src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} theme="harmonic"/>
                       : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
@@ -75,8 +74,8 @@ export default function PublicLocks(){
           <h2>Verification Pictures of {profileJSON?.user?.username || username}</h2>
           { locksJSON ? <VerficationPictureGalery data={locksJSON[0]?.extensions.find(e => e.slug === 'verification-picture')?.userData.history} />
                   : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
-        </React.Fragment>
+        </Fragment>
       }
-    </React.Fragment>
+    </Fragment>
   );
 }

@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState } from "react";
+import { useState, lazy, forwardRef, Fragment, Suspense } from "react";
 import { useRealmApp } from "./RealmApp";
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer,
@@ -16,17 +15,17 @@ import ChartIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/CompareArrows';
 import ChatIcon from '@mui/icons-material/ChatTwoTone';
 import RequireLoggedInScope, { LoginScreen, ScopeBadges } from './RealmLogin';
-const MyLock = React.lazy(() =>
+const MyLock = lazy(() =>
   import(/* webpackChunkName: "my_lock" */ "./components/MyLock")
 );
-const PublicLocks = React.lazy(() =>
+const PublicLocks = lazy(() =>
   import(/* webpackChunkName: "public_locks" */ "./components/PublicLocks")
 );
-const LockTransfer = React.lazy(() =>
+const LockTransfer = lazy(() =>
   import(/* webpackChunkName: "lock_transfer" */ "./components/LockTransfer")
 );
 
-const NLink = React.forwardRef(
+const NLink = forwardRef(
   ({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>
 );
 
@@ -128,7 +127,7 @@ export default function App(){
   });
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'), {noSsr: true});
-  const [open, setOpen] = React.useState(isDesktop);
+  const [open, setOpen] = useState(isDesktop);
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
   const handleListClick = () => !isDesktop && setOpen(false);
@@ -156,12 +155,12 @@ export default function App(){
             ? <CardHeader sx={{ padding: 0 }}
                 avatar={<Avatar src={app.currentUser.customData.avatarUrl} />}
                 action={
-                  <React.Fragment>
+                  <Fragment>
                     <IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon /></IconButton>
                     <Menu anchorEl={profileMenuAnchorEl} open={Boolean(profileMenuAnchorEl)} onClose={handleProfileMenuClose} >
                       <MenuItem onClick={handleProfileMenuLogout}>Log out</MenuItem>
                     </Menu>
-                  </React.Fragment>
+                  </Fragment>
                 }
                 title={app.currentUser.customData.username}
                 subheader={<ScopeBadges scopes={app.currentUser.customData.scopes} />}
@@ -190,38 +189,38 @@ export default function App(){
           <Route path="lock" element={
             <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
-                <React.Suspense fallback={<p>loading...</p>} >
+                <Suspense fallback={<p>loading...</p>} >
                   <MyLock/>
-                </React.Suspense>
+                </Suspense>
               </RequireLoggedInScope>
             </Paper>
           } />
           <Route path="locks" element={
-            <React.Suspense fallback={<p>loading...</p>} >
+            <Suspense fallback={<p>loading...</p>} >
               <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
-            </React.Suspense>
+            </Suspense>
           } >
             <Route path=":name" element={
-              <React.Suspense fallback={<p>loading...</p>} >
+              <Suspense fallback={<p>loading...</p>} >
                 <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
-              </React.Suspense>
+              </Suspense>
             } />
           </Route>
           <Route path="trans" element={
             <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
-                <React.Suspense fallback={<p>loading...</p>} >
+                <Suspense fallback={<p>loading...</p>} >
                   <LockTransfer/>
-                </React.Suspense>
+                </Suspense>
               </RequireLoggedInScope>
             </Paper>
           } >
             <Route path=":lock" element={
               <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
                 <RequireLoggedInScope scopes={["profile", "locks"]}>
-                  <React.Suspense fallback={<p>loading...</p>} >
+                  <Suspense fallback={<p>loading...</p>} >
                     <LockTransfer/>
-                  </React.Suspense>
+                  </Suspense>
                 </RequireLoggedInScope>
               </Paper>
             } />

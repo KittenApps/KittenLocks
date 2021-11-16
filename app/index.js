@@ -1,4 +1,4 @@
-import * as React from "react";
+import { Fragment, PureComponent, StrictMode } from "react";
 import { render } from "react-dom";
 import { RealmAppProvider } from "./RealmApp.js";
 import App from "./app";
@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 
 export const APP_ID = "kittenlocks-gcfgb";
 
-class ErrorBoundary extends React.PureComponent {
+class ErrorBoundary extends PureComponent {
   constructor(props){
     super(props);
     this.state = { error: null, stack: null };
@@ -20,7 +20,7 @@ class ErrorBoundary extends React.PureComponent {
   render(){
     if (this.state.error !== null) {
       return (
-        <React.Fragment>
+        <Fragment>
           <h1>Oops, something went wrong! :(</h1>
           <p>
             <b>
@@ -35,7 +35,7 @@ class ErrorBoundary extends React.PureComponent {
             <u>Stack: </u>
             {this.state.stack}
           </p>
-        </React.Fragment>
+        </Fragment>
       );
     }
     return this.props.children;
@@ -46,7 +46,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-<React.StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider appId={APP_ID}><HelmetProvider>
+<StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider appId={APP_ID}><HelmetProvider>
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
@@ -61,4 +61,4 @@ render(
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
   </Helmet>
   <App/>
-</HelmetProvider></RealmAppProvider></BrowserRouter></ErrorBoundary></React.StrictMode>, div);
+</HelmetProvider></RealmAppProvider></BrowserRouter></ErrorBoundary></StrictMode>, div);

@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Skeleton, FormControl, InputLabel, Select, MenuItem, Grid, Button, Accordion, AccordionSummary, AccordionDetails,
          TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -52,10 +51,10 @@ function LocktoberCalc(props){
               {[0,1,2,3,4,5,6].map((j) => (
                 <TableCell align="center" key={j} onClick={() => handleClick(i*7+j-3)}>
                   {i*7+j-3 > 0 ? (
-                    <React.Fragment>
+                    <Fragment>
                       <b>{i*7+j-3}.: </b>{calc[i*7+j-3]}/610{calc[i*7+j-3+'e']>0 ? ` + ${calc[i*7+j-3+'e']}`: ''}
                       <ProgressBar variant={calc[i*7+j-3] === 610 ? 'success' : (calc[i*7+j-3] >= 350 ? 'warning' : 'danger' )} now={calc[i*7+j-3]} max={610} animated={calc[i*7+j-3+'e']>0} />
-                    </React.Fragment>
+                    </Fragment>
                   ) : null }
                 </TableCell>
               ))}
@@ -94,7 +93,7 @@ function Locktober(props){
     items.push(<MenuItem value={i} key={i}>{i}</MenuItem>);
   }
   return (
-    <React.Fragment>
+    <Fragment>
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs={3}>
           <FormControl fullWidth>
@@ -135,7 +134,7 @@ function Locktober(props){
         <AccordionSummary expandIcon={<ExpandMoreIcon />}><b>Locktober points calendar 🎃🔒📆</b></AccordionSummary>
         <AccordionDetails><LocktoberCalc app={props.app} setDay={setDay}/></AccordionDetails>
       </Accordion>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
@@ -171,7 +170,7 @@ export default function MyLock(){
 
 
   return (
-    <React.Fragment>
+    <Fragment>
       <h2>My Locktober progress</h2>
       <Locktober app={app}/>
       <h2>My lock information ({app.currentUser.customData.username}):</h2>
@@ -180,6 +179,6 @@ export default function MyLock(){
       <h2>My lock history ({app.currentUser.customData.username}):</h2>
       { historyJSON ? <ReactJson style={{fontSize: 13}} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
               : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
-    </React.Fragment>
+    </Fragment>
   );
 }
