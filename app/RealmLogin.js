@@ -26,7 +26,7 @@ export function LoginScreen(props) {
 
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
-    const redUrl = process.env.NODE_ENV === 'production' ? 'https://kittenlocks.netlify.app/oauthcb' : 'http://localhost:5000/oauthcb';
+    const redUrl = process.env.NODE_ENV === 'production' ? 'https://kittenlocks.netlify.app/static/html/oauthcb' : 'http://localhost:8080/static/html/oauthcb';
     window.open('https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-870504' +
                 `&redirect_uri=${encodeURIComponent(redUrl)}&response_type=code&scope=${props.scopes.join('%20')}&state=${state}`,
                 'Chaster Login', 'scrollbars=on,location=off,width=1000,height=500,left=200,top=200');
