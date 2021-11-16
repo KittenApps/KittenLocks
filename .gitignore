@@ -4,3 +4,4 @@ public
 node_modules
 # Local Netlify folder
 .netlify
+stats.json

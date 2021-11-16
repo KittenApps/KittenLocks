@@ -5,7 +5,8 @@
   "scripts": {
     "start": "webpack serve",
     "build": "webpack",
-    "serve": "webpack && npx serve -s -p 8080 public"
+    "serve": "webpack && npx serve -s -p 8080 public",
+    "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public"
   },
   "engines": {
     "node": ">=12"
