@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, createContext} from "react";
-import * as Realm from "realm-web";
+import { App as RealmApp } from "realm-web";
 
 const RealmAppContext = createContext();
 
@@ -16,8 +16,8 @@ export const useRealmApp = () => {
 let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) } ;
 
 export const RealmAppProvider = ({ appId, children }) => {
-  const [app, setApp] = useState(new Realm.App(appId));
-  useEffect(() => setApp(new Realm.App(appId)), [appId]);
+  const [app, setApp] = useState(new RealmApp(appId));
+  useEffect(() => setApp(new RealmApp(appId)), [appId]);
 
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = useState(app.currentUser);

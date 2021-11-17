@@ -29,7 +29,7 @@
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
     "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.16.0",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
@@ -47,7 +47,7 @@
     "react-helmet-async": "^1.1.2",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.0.2",
-    "realm-web": "^1.5.0",
+    "realm-web": "^1.5.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "style-loader": "^3.3.1",

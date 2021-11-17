@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import * as Realm from "realm-web";
+import { Credentials } from "realm-web";
 import { useRealmApp } from "./RealmApp";
 import { Button, Paper, Stack, Avatar } from '@mui/material';
 
@@ -32,7 +32,7 @@ export function LoginScreen(props) {
     window.addEventListener('message', e => {
       if (e.data.authCode && state === e.data.state){
         e.source.close();
-        app.logIn(Realm.Credentials.function({ authCode: e.data.authCode, redUrl }));
+        app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl }));
       } else if ( e.data.authCode === null ) {
         e.source.close();
         setTimeout(() => alert('Login failed: You need to accept the Chaster OAuth request!'), 1);
