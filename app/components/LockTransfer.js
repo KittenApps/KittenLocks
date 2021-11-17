@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
 import { useRealmApp } from "../RealmApp";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Alert, AlertTitle, Stepper, Step, StepLabel, StepContent, Select, MenuItem, InputLabel, FormControl, Button, TextField } from '@mui/material';
 import ReactJson from 'react-json-view';
 
@@ -40,7 +40,7 @@ function VerifyLock(props){
 
 export default function LockTransfer(){
   const app = useRealmApp();
-  const { lock } = useParams();
+  let [searchParams, setSearchParams] = useSearchParams();
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -57,7 +57,7 @@ export default function LockTransfer(){
   const handleChangeLock = e => {setOldLockID(e.target.value); setLockOkay(false)};
   const handleNext = () => isLockOkay && setActiveStep(s => s + 1 );
 
-  const [sharedLockID, setSharedLockID] = useState(lock || '');
+  const [sharedLockID, setSharedLockID] = useState(searchParams.get('lock') || '');
   const [sharedLock, setSharedLock] = useState({});
   const [password, setPassword] = useState('');
   
