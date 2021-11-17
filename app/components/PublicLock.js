@@ -1,8 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
-import { Button, TextField, Skeleton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
+import { Skeleton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import ReactJson from 'react-json-view';
-import SearchIcon from '@mui/icons-material/Search';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function VerficationPictureGalery(props){
   const [pics, setPics] = useState(null);
