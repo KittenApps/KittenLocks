@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "description": "additional Stats and Charts for your Chaster",
   "scripts": {
-    "start": "webpack serve",
+    "start": "NODE_ENV=development webpack serve",
     "build": "webpack",
-    "serve": "webpack && npx serve -s -p 8080 public",
+    "serve": "NODE_ENV=production webpack && npx serve -s -p 8080 public",
     "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public"
   },
   "engines": {

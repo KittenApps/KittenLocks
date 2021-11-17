@@ -21,6 +21,9 @@ const MyLock = lazy(() =>
 const PublicLocks = lazy(() =>
   import(/* webpackChunkName: "public_locks" */ "./components/PublicLocks")
 );
+const PublicLock = lazy(() =>
+  import(/* webpackChunkName: "public_locks" */ "./components/PublicLock")
+);
 const LockTransfer = lazy(() =>
   import(/* webpackChunkName: "lock_transfer" */ "./components/LockTransfer")
 );
@@ -200,11 +203,7 @@ export default function App(){
               <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
             </Suspense>
           } >
-            <Route path=":name" element={
-              <Suspense fallback={<p>loading...</p>} >
-                <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
-              </Suspense>
-            } />
+            <Route path=":username" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> } />
           </Route>
           <Route path="trans" element={
             <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
