@@ -5,10 +5,10 @@ import { Alert, AlertTitle, Stepper, Step, StepLabel, StepContent, Select, MenuI
 import ReactJson from 'react-json-view';
 
 function VerifyLock(props){
-  if (!props.lock) return null;
   const [result, setResult] = useState(null);
 
   useEffect(() => {
+    if (!props.lock) return;
     if (props.lock.status !== "locked"){
       setResult(<p>❌ lock already unlocked</p>);
     } else if (!props.lock.keyholder){
@@ -29,6 +29,8 @@ function VerifyLock(props){
       if (timerVisible && remainingTime) props.setLockOkay(true);
     }
   }, [props.lock]);
+
+  if (!props.lock) return null;
   
   return (
     <Fragment>

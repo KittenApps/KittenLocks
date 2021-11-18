@@ -1,11 +1,10 @@
 const path = require("path");
-const env = process.env.NODE_ENV = process.env.NODE_ENV || "development";
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  mode: env,
+  mode: process.env.NODE_ENV || "development",
   context: path.join(__dirname, "./"),
   entry: { index: "./app/index.js" },
   output: {
@@ -30,13 +29,13 @@ module.exports = {
       },
       {
         test: /\.scss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
+        use: ["style-loader", "css-loader", "sass-loader"]
+      }
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin(["NODE_ENV"]),
-    new HtmlWebpackPlugin({title: "Kitten Locks", publicPath: "/", favicon: "favicon.png"}),
+    new webpack.EnvironmentPlugin({ CI: "" }),
+    new HtmlWebpackPlugin({ title: "Kitten Locks", publicPath: "/", favicon: "favicon.png" }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: "/static/html/oauthcb", templateContent: ({htmlWebpackPlugin}) => `
       <!DOCTYPE html>
       <html>
@@ -52,7 +51,7 @@ module.exports = {
             const searchParams = new URLSearchParams(window.location.search);
             const authCode = searchParams.get('code');
             const state = searchParams.get('state');
-            window.opener.postMessage({ authCode, state }, '${env === 'production' ? 'https://kittenlocks.netlify.app' : 'http://localhost:8080'}' );
+            window.opener.postMessage({ authCode, state }, '${process.env.CI ? 'https://kittenlocks.netlify.app' : 'http://localhost:8080'}' );
           </script>
         </body>
       </html>
