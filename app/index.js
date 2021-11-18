@@ -1,5 +1,5 @@
 import { Fragment, PureComponent, StrictMode } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom";
 import { RealmAppProvider } from "./RealmApp.js";
 import App from "./app";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -45,7 +45,7 @@ class ErrorBoundary extends PureComponent {
 const div = document.createElement('div');
 document.body.appendChild(div);
 
-render(
+createRoot(div).render(
 <StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider appId={APP_ID}><HelmetProvider>
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -61,4 +61,4 @@ render(
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
   </Helmet>
   <App/>
-</HelmetProvider></RealmAppProvider></BrowserRouter></ErrorBoundary></StrictMode>, div);
+</HelmetProvider></RealmAppProvider></BrowserRouter></ErrorBoundary></StrictMode>);

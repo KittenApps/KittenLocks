@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=development webpack serve",
     "build": "webpack",
-    "serve": "webpack && npx http-server --proxy=http://127.0.0.1:8080?",
+    "serve": "NODE_ENV=production webpack && npx http-server --proxy=http://127.0.0.1:8080?",
     "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public"
   },
   "engines": {
@@ -41,9 +41,9 @@
     "css-loader": "^6.5.1",
     "highcharts": "^9.3.1",
     "html-webpack-plugin": "^5.5.0",
-    "react": "^17.0.2",
+    "react": "^18.0.0-beta-fdc1d617a-20211118",
     "react-bootstrap": "^2.0.2",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.0.0-beta-fdc1d617a-20211118",
     "react-helmet-async": "^1.1.2",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.0.2",
