@@ -59,12 +59,7 @@ module.exports = {
   ],
   optimization: {
     splitChunks: {
-      cacheGroups: {
-        commons: {
-          chunks: "all",
-          minChunks: 1
-        }
-      }
+      chunks: 'all',
     }
   },
   devServer: {
