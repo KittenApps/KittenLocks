@@ -14,6 +14,9 @@ function VerifyLock(props){
     } else if (!props.lock.keyholder){
       setResult(<p>✅ in self lock</p>);
       props.setLockOkay(true); 
+    } else if (props.lock.keyholder.isDisabled) {
+      setResult(<p>✅ keyholder is suspended</p>);
+      props.setLockOkay(true); 
     } else if (props.lock.keyholder.lastSeen > 7*24*60*60) {
       setResult(<p>✅ keyholder inactive for more than 1 week</p>);
       props.setLockOkay(true); 
@@ -91,7 +94,7 @@ export default function LockTransfer(){
         To be able to transfer you lock, you're required to fullfil either:
         <ul style={{margin: '3px 0'}}>
           <li>you're in a self lock or</li>
-          <li>your keyholder was inactive for over 1 week or</li>
+          <li>your keyholder was inactive for over 1 week (or their account was suspended) or</li>
           <li>your keyholder agreed to the transfer by setting your lock with visible timer to less than 2 hours remaining (preferably frozen)</li>
         </ul>
         Also you can't transfer to your own shared lock obviously.<br/>

@@ -12,7 +12,6 @@ module.exports = {
     filename: "static/js/[name].js",
     chunkFilename: "static/js/[name].js"
   },
-  stats: 'detailed',
   resolve: { extensions: [".js"], fallback: { "crypto": false } },
   module: {
     rules: [
