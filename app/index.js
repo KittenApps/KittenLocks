@@ -54,7 +54,7 @@ render(
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="https://kittenlocks.netlify.app/"/>
     <meta property="og:image" content="https://kittenlocks.netlify.app/appicon.png"/>
-    <meta property="og:description" content="KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with <3 by Silizia ~ Stella."/>
+    <meta property="og:description" content="KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella."/>
     <link rel="apple-touch-icon" sizes="192x192" href="/appicon.png"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
   </Helmet>

@@ -32,6 +32,7 @@ export const RealmAppProvider = (props) => {
     } else { // user logged in / switching users
       setCurrentUser(app.currentUser);
     }
+    return app.currentUser.customData;
   }
   async function logOut(){
     await app.currentUser?.logOut();

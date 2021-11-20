@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import { Credentials } from "realm-web";
 import { useRealmApp } from "../RealmApp";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Avatar, FormGroup, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
          Stack, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -30,6 +30,7 @@ export function RequireLoggedInScope(props){
   }
   return (
     <Fragment>
+      <h2><Skeleton variant="text"/></h2>
       <Skeleton variant="rectangular" width={'100%'} height="300px"/>
       <Login scopes={props.scopes}/>
     </Fragment>
@@ -55,7 +56,8 @@ export default function Login(props){
 
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
-    const sc = ['profile', 'offline_access', ...scopes];
+    const ks = ['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging'];
+    const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.includes(x));
     const redUrl = process.env.CI ? 'https://kittenlocks.netlify.app/static/html/oauthcb' : 'http://localhost:8080/static/html/oauthcb';
     window.open('https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-870504' +
                 `&redirect_uri=${encodeURIComponent(redUrl)}&response_type=code&scope=${sc.join('%20')}&state=${state}`,
@@ -63,17 +65,17 @@ export default function Login(props){
     window.addEventListener('message', e => {
       if (e.data.authCode && state === e.data.state){
         e.source.close();
-        app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl }));
+        app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl })).then(u => console.log(u.scopes, u.grantedScopes));
         localStorage.setItem('scopes', [...scopes].join(','));
+        props.showLogin && props.showLogin(false);
       } else if ( e.data.authCode === null ) {
         e.source.close();
         setTimeout(() => alert('Login failed: You need to accept the Chaster OAuth request!'), 1);
       }
     }, false);
   }
-  const handleAbort = () => navigate('/');
+  const handleAbort = () => props.showLogin ? props.showLogin(false) : navigate('/');
   // if component info box with requires scopes
-  // ToDo: Select scopes beyond required scopes
   // ToDo: Warn if not having all granted scopes
   return (
     <Dialog fullScreen={fullScreen} open={true}>

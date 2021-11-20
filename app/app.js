@@ -3,7 +3,7 @@ import { useRealmApp } from "./RealmApp";
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer, Backdrop,
          Button, Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider, Link } from '@mui/material';
-import { Routes, Route, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, NavLink, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -149,12 +149,19 @@ export default function App(){
     setProfileMenuAnchorEl(null);
   };
 
-  const handleLogin = () => navigate(`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ks = ['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging'];
+  let logScopes = searchParams.get('login')?.split(',').filter(x => ks.includes(x)) || [];
+  if (app.currentUser?.customData?.scopes) logScopes = logScopes.filter(x => !app.currentUser?.customData?.scopes.includes(x));
+
+  const [openLogin, showLogin] = useState(logScopes.length > 0);
+  const handleLogin = () => showLogin(true);
   const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
 
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{zIndex: 1201}}/><Box sx={{ display: 'flex' }}>
       <CssBaseline/>
+      {openLogin && <Login showLogin={showLogin} scopes={logScopes}/>}
       <ResponsiveAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: {xs: 0, sm: 2}, ...(open && {display: 'none'}) }}><MenuIcon /></IconButton>
@@ -201,7 +208,7 @@ export default function App(){
         <Routes>
           <Route path="lock/*" element={
             <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-              <RequireLoggedInScope scopes={["profile", "locks"]} component="lock">
+              <RequireLoggedInScope scopes={["locks"]} component="lock">
                 <Suspense fallback={<p>loading...</p>}>
                   <MyLock/>
                 </Suspense>
@@ -217,7 +224,7 @@ export default function App(){
           </Route>
           <Route path="trans/*" element={
             <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
-              <RequireLoggedInScope scopes={["profile", "locks"]} component="trans">
+              <RequireLoggedInScope scopes={["locks"]} component="trans">
                 <Suspense fallback={<p>loading...</p>} >
                   <LockTransfer/>
                 </Suspense>
@@ -228,12 +235,6 @@ export default function App(){
             <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
               <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe>
             </Paper>
-          } />
-          <Route path="login/*" element={
-            <Suspense fallback={<p>loading...</p>} >
-              <Home/>
-              <Login/>
-            </Suspense>
           } />
           <Route path="*" element={<Home/>} />
         </Routes>
