@@ -14,7 +14,7 @@ import AddLockItem from '@mui/icons-material/EnhancedEncryptionTwoTone';
 import ChartIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/CompareArrows';
 import ChatIcon from '@mui/icons-material/ChatTwoTone';
-import RequireLoggedInScope, { LoginScreen, ScopeBadges } from './RealmLogin';
+import { RequireLoggedInScope, LoginButton, ScopeBadges } from './RealmLogin';
 const MyLock = lazy(() =>
   import(/* webpackChunkName: "my_lock" */ "./components/MyLock")
 );
@@ -168,7 +168,7 @@ export default function App(){
                 title={app.currentUser.customData.username}
                 subheader={<ScopeBadges scopes={app.currentUser.customData.scopes} />}
               />
-            : <LoginScreen scopes={['profile']}/>
+            : <LoginButton scopes={['profile']}/>
           }
         </Toolbar>
       </ResponsiveAppBar>

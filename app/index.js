@@ -5,8 +5,6 @@ import App from "./app";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from "react-router-dom";
 
-export const APP_ID = "kittenlocks-gcfgb";
-
 class ErrorBoundary extends PureComponent {
   constructor(props){
     super(props);
@@ -46,7 +44,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-<StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider appId={APP_ID}><HelmetProvider>
+<StrictMode><ErrorBoundary><BrowserRouter><RealmAppProvider><HelmetProvider>
 <Helmet>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>

@@ -20,7 +20,7 @@ export function ScopeBadges(props){
   )
 }
 
-export function LoginScreen(props) {
+export function LoginButton(props){
   const app = useRealmApp();
 
   const handleLogin = () => {
@@ -42,12 +42,9 @@ export function LoginScreen(props) {
   return <Button variant="contained" onClick={handleLogin}>Login with Chaster ...</Button>;
 }
 
-export default function RequireLoggedInScope (props){
+export function RequireLoggedInScope(props){
   const app = useRealmApp();
-  const [scopes, setScopes] = useState(app.currentUser?.customData?.scopes);
-  useEffect(() => {
-    setScopes(app.currentUser?.customData?.scopes);
-  }, [app.currentUser]);
+  const scopes = app.currentUser?.customData?.scopes;
   if (scopes && props.scopes.every(s => scopes.includes(s))){
     return props.children;
   }
@@ -56,7 +53,7 @@ export default function RequireLoggedInScope (props){
       <Stack spacing={2}>
         <span>{ app.currentUser ? <ScopeBadges scopes={app.currentUser.customData.scopes} title="Provided scopes:"></ScopeBadges> : <strong>'Login required!'</strong> }</span>
         <ScopeBadges scopes={props.scopes} title="Needed scopes:"></ScopeBadges>
-        <LoginScreen scopes={props.scopes}/>
+        <LoginButton scopes={props.scopes}/>
       </Stack>
     </Paper>
   );

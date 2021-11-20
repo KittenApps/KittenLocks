@@ -5,6 +5,8 @@
   "scripts": {
     "start": "NODE_ENV=development webpack serve",
     "build": "webpack",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:prod": "NODE_ENV=production webpack",
     "serve": "NODE_ENV=production webpack && npx http-server --proxy=http://127.0.0.1:8080?",
     "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public"
   },

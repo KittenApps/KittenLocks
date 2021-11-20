@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, createContext} from "react";
+import { useState, useEffect, useMemo, useContext, createContext} from "react";
 import { App as RealmApp } from "realm-web";
 
 const RealmAppContext = createContext();
@@ -13,32 +13,32 @@ export const useRealmApp = () => {
   return app;
 };
 
-let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) } ;
-
-export const RealmAppProvider = ({ appId, children }) => {
-  const [app, setApp] = useState(new RealmApp(appId));
-  useEffect(() => setApp(new RealmApp(appId)), [appId]);
+export const RealmAppProvider = (props) => {
+  const app = useMemo(() => new RealmApp("kittenlocks-gcfgb"), []);
 
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = useState(app.currentUser);
+  const [u, update] = useState(0);
 
   useEffect(() => {
     currentUser?.refreshCustomData();
   }, [currentUser]);
 
   async function logIn(credentials){
-    const user = await app.logIn(credentials);
-    if (currentUser) setCurrentUser(null);
-    // If successful, app.currentUser is the user that just logged in
-    setCurrentUser(app.currentUser);
+    await app.logIn(credentials);
+    if (currentUser == app.currentUser) { // scope upgrade
+      await currentUser?.refreshCustomData();
+      update(u + 1);
+    } else { // user logged in / switching users
+      setCurrentUser(app.currentUser);
+    }
   }
   async function logOut(){
-    // Log out the currently active user
     await app.currentUser?.logOut();
-    // If another user was logged in too, they're now the current user.
-    // Otherwise, app.currentUser is null.
-    setCurrentUser(app.currentUser);
+    setCurrentUser(app.currentUser); // other logged in user or null
   }
+
+  let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) } ;
 
   function getAccessToken(){
     if (!currentUser) throw new Error("Login required");
@@ -58,5 +58,5 @@ export const RealmAppProvider = ({ appId, children }) => {
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
 
-  return <RealmAppContext.Provider value={wrapped}>{children}</RealmAppContext.Provider>;
+  return <RealmAppContext.Provider value={wrapped}>{props.children}</RealmAppContext.Provider>;
 };
