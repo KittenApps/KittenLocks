@@ -111,7 +111,7 @@ export default function LockTransfer(){
               </Select>
             </FormControl>
             <VerifyLock lock={locks.find(l => l._id === oldLockID)} setLockOkay={setLockOkay} />
-            <Button onClick={handleNext} disabled={!isLockOkay} sx={{ marginTop: 2 }} variant="contained">Select shared lock</Button>
+            <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: 2 }} variant="contained">Select shared lock</Button>
           </StepContent>
         </Step>
         <Step key="sharedLock">

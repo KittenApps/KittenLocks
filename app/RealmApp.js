@@ -18,7 +18,7 @@ export const RealmAppProvider = (props) => {
 
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = useState(app.currentUser);
-  const [u, update] = useState(0);
+  const [u, update] = useState(true);
 
   useEffect(() => {
     currentUser?.refreshCustomData();
@@ -28,7 +28,7 @@ export const RealmAppProvider = (props) => {
     await app.logIn(credentials);
     if (currentUser == app.currentUser) { // scope upgrade
       await currentUser?.refreshCustomData();
-      update(u + 1);
+      update(!u);
     } else { // user logged in / switching users
       setCurrentUser(app.currentUser);
     }

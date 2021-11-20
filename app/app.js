@@ -1,9 +1,9 @@
 import { useState, lazy, forwardRef, Fragment, Suspense } from "react";
 import { useRealmApp } from "./RealmApp";
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
-import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer,
-         Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider, Link } from '@mui/material';
-import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer, Backdrop,
+         Button, Paper, Drawer, CssBaseline, List, ListItemButton, ListItemIcon, ListItemText, Divider, Link } from '@mui/material';
+import { Routes, Route, NavLink, useNavigate, useLocation } from "react-router-dom";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -14,7 +14,11 @@ import AddLockItem from '@mui/icons-material/EnhancedEncryptionTwoTone';
 import ChartIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/CompareArrows';
 import ChatIcon from '@mui/icons-material/ChatTwoTone';
-import Login, { RequireLoggedInScope, LoginButton, ScopeBadges } from './components/Login'; // ToDo: lazy
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import Login, { RequireLoggedInScope, ScopeBadges } from './components/Login'; // ToDo: lazy
+import Home from "./components/Home";
 const MyLock = lazy(() =>
   import(/* webpackChunkName: "my_lock" */ "./components/MyLock")
 );
@@ -109,6 +113,7 @@ function ResponsiveAppBar(props){
 export default function App(){
   const app = useRealmApp();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const theme = createTheme({
     palette: {
@@ -144,32 +149,37 @@ export default function App(){
     setProfileMenuAnchorEl(null);
   };
 
+  const handleLogin = () => navigate(`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`);
+  const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
+
   return (
-    <ThemeProvider theme={theme}><Box sx={{ display: 'flex' }}>
-      <CssBaseline />
+    <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{zIndex: 1201}}/><Box sx={{ display: 'flex' }}>
+      <CssBaseline/>
       <ResponsiveAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: 2, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
-          <Avatar src="/appicon.png" sx={{ width: 32, height: 32 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, marginLeft: 1 }}>
+          <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: {xs: 0, sm: 2}, ...(open && {display: 'none'}) }}><MenuIcon /></IconButton>
+          <Avatar src="/appicon.png" sx={{ width: 32, height: 32, display: {xs: 'none', sm: 'block'} }}/>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
             KittenLocks
           </Typography>
           {app.currentUser
-            ? <CardHeader sx={{ padding: 0 }}
-                avatar={<Avatar src={app.currentUser.customData.avatarUrl} />}
-                action={
-                  <Fragment>
-                    <IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon /></IconButton>
-                    <Menu anchorEl={profileMenuAnchorEl} open={Boolean(profileMenuAnchorEl)} onClose={handleProfileMenuClose} >
-                      <MenuItem onClick={handleProfileMenuLogout}>Log out</MenuItem>
-                    </Menu>
-                  </Fragment>
-                }
+            ? <CardHeader sx={{ p: 0, '& .MuiCardHeader-action': { mt: 0 }}}
+                avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
+                onClick={handleProfileMenuOpen}
+                action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon/></IconButton>}
                 title={app.currentUser.customData.username}
-                subheader={<ScopeBadges scopes={app.currentUser.customData.scopes} />}
+                titleTypographyProps={{fontSize: 16 }}
+                subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
               />
-            : <LoginButton scopes={['profile']}/>
+            : <Button variant="contained" onClick={handleLogin} size="small">Login with Chaster</Button>
           }
+          <Menu anchorEl={profileMenuAnchorEl} open={Boolean(profileMenuAnchorEl)} onClose={handleProfileMenuClose} sx={{ mt: 1 }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }} anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
+            <MenuItem onClick={handleManage}><ListItemIcon><ManageAccountsIcon/></ListItemIcon>Manage scopes</MenuItem>
+            <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><SettingsIcon/></ListItemIcon>Chaster settings</MenuItem>
+            <Divider/>
+            <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><LogoutIcon/></ListItemIcon>Log out</MenuItem>
+          </Menu>
         </Toolbar>
       </ResponsiveAppBar>
       <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
@@ -190,8 +200,8 @@ export default function App(){
         <DrawerHeader />
         <Routes>
           <Route path="lock/*" element={
-            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
-              <RequireLoggedInScope scopes={["profile", "locks"]}>
+            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
+              <RequireLoggedInScope scopes={["profile", "locks"]} component="lock">
                 <Suspense fallback={<p>loading...</p>} >
                   <MyLock/>
                 </Suspense>
@@ -200,14 +210,14 @@ export default function App(){
           } />
           <Route path="locks" element={
             <Suspense fallback={<p>loading...</p>} >
-              <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
+              <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
             </Suspense>
           } >
             <Route path=":username/*" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> } />
           </Route>
           <Route path="trans/*" element={
-            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
-              <RequireLoggedInScope scopes={["profile", "locks"]}>
+            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
+              <RequireLoggedInScope scopes={["profile", "locks"]} component="trans">
                 <Suspense fallback={<p>loading...</p>} >
                   <LockTransfer/>
                 </Suspense>
@@ -215,18 +225,17 @@ export default function App(){
             </Paper>
           } />
           <Route path="discord/*" element={
-            <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, padding: 2 }} >
+            <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
               <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe>
             </Paper>
           } />
-          <Route path="*" element={
-            <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
-              <h2>Welcome to KittenLocks!</h2>
-              <p>You will find exactly no introduction here for the moment! 😸</p>
-              <Avatar src="/appicon.png" sx={{ width: 192, height: 192, marginLeft: 15 }} />
-              <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
-            </Paper>
+          <Route path="login/*" element={
+            <Suspense fallback={<p>loading...</p>} >
+              <Home/>
+              <Login/>
+            </Suspense>
           } />
+          <Route path="*" element={<Home/>} />
         </Routes>
       </ResponsiveMain>
     </Box></ThemeProvider>

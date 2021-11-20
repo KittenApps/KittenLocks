@@ -130,7 +130,7 @@ function Locktober(props){
         <Grid item xs={3}><b>Discord Events:</b></Grid>
         <Grid item xs={9}><ProgressBar variant="success" now={progress.discord_event > 0 ? 100 : 0} animated label={`${progress.discord_event}`} /></Grid>
       </Grid>
-      <Accordion TransitionProps={{ mountOnEnter: true }} sx={{marginTop: 2}}>
+      <Accordion TransitionProps={{ mountOnEnter: true }} sx={{mt: 2}}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}><b>Locktober points calendar 🎃🔒📆</b></AccordionSummary>
         <AccordionDetails><LocktoberCalc app={props.app} setDay={setDay}/></AccordionDetails>
       </Accordion>
