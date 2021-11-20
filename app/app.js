@@ -14,7 +14,7 @@ import AddLockItem from '@mui/icons-material/EnhancedEncryptionTwoTone';
 import ChartIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/CompareArrows';
 import ChatIcon from '@mui/icons-material/ChatTwoTone';
-import { RequireLoggedInScope, LoginButton, ScopeBadges } from './RealmLogin';
+import Login, { RequireLoggedInScope, LoginButton, ScopeBadges } from './components/Login'; // ToDo: lazy
 const MyLock = lazy(() =>
   import(/* webpackChunkName: "my_lock" */ "./components/MyLock")
 );
@@ -189,7 +189,7 @@ export default function App(){
       <ResponsiveMain open={open} isDesktop={isDesktop} >
         <DrawerHeader />
         <Routes>
-          <Route path="lock" element={
+          <Route path="lock/*" element={
             <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
                 <Suspense fallback={<p>loading...</p>} >
@@ -203,9 +203,9 @@ export default function App(){
               <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
             </Suspense>
           } >
-            <Route path=":username" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> } />
+            <Route path=":username/*" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> } />
           </Route>
-          <Route path="trans" element={
+          <Route path="trans/*" element={
             <Paper elevation={6} sx={{ padding: 2, backgroundColor: '#1b192a' }} >
               <RequireLoggedInScope scopes={["profile", "locks"]}>
                 <Suspense fallback={<p>loading...</p>} >
@@ -214,7 +214,7 @@ export default function App(){
               </RequireLoggedInScope>
             </Paper>
           } />
-          <Route path="discord" element={
+          <Route path="discord/*" element={
             <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, padding: 2 }} >
               <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"></iframe>
             </Paper>

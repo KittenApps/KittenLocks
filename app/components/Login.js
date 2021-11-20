@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, Fragment } from "react";
 import { Credentials } from "realm-web";
-import { useRealmApp } from "./RealmApp";
+import { useRealmApp } from "../RealmApp";
+import { useSearchParams } from "react-router-dom";
 import { Button, Paper, Stack, Avatar } from '@mui/material';
 
 // ToDo: Select scopes beyond required scopes
@@ -56,5 +57,14 @@ export function RequireLoggedInScope(props){
         <LoginButton scopes={props.scopes}/>
       </Stack>
     </Paper>
+  );
+}
+
+export default function Login(){
+  let [searchParams, setSearchParams] = useSearchParams();
+  return (
+    <Fragment>
+      <h2>Login with Chaster</h2>
+    </Fragment>
   );
 }
