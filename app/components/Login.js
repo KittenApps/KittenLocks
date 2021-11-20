@@ -2,9 +2,10 @@ import { useState, Fragment } from "react";
 import { Credentials } from "realm-web";
 import { useRealmApp } from "../RealmApp";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Button, Stack, Avatar, FormGroup, FormControlLabel, Switch, Skeleton,
-         Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery } from '@mui/material';
+import { Button, Avatar, FormGroup, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
+         Stack, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export function ScopeBadges(props){
   const p = props.scopes.includes('profile') ? 'lightblue' : 'grey';
@@ -37,7 +38,8 @@ export function RequireLoggedInScope(props){
 
 export default function Login(props){
   const app = useRealmApp();
-  const exScopes = app.currentUser?.customData?.scopes || [];
+  const savScopes = localStorage.getItem('scopes')?.split(',');
+  const exScopes = app.currentUser?.customData?.scopes || savScopes || [];
   const reqScopes = props.scopes || [];
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md')); 
@@ -62,6 +64,7 @@ export default function Login(props){
       if (e.data.authCode && state === e.data.state){
         e.source.close();
         app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl }));
+        localStorage.setItem('scopes', [...scopes].join(','));
       } else if ( e.data.authCode === null ) {
         e.source.close();
         setTimeout(() => alert('Login failed: You need to accept the Chaster OAuth request!'), 1);
@@ -75,16 +78,25 @@ export default function Login(props){
   return (
     <Dialog fullScreen={fullScreen} open={true}>
       <DialogTitle>Login with Chaster</DialogTitle>
-      <DialogContent><FormGroup>
-        <FormControlLabel disabled control={<Switch defaultChecked />} label="Profile" />
-        <FormControlLabel disabled={reqScopes.includes('locks')} control={<Switch onChange={handleChange('locks')} checked={scopes.has('locks')}/>} label="Locks" />
-        <FormControlLabel disabled={reqScopes.includes('keyholder')} control={<Switch onChange={handleChange('keyholder')} checked={scopes.has('keyholder')}/>} label="Keyholder" />
-        <FormControlLabel disabled={reqScopes.includes('shared_locks')} control={<Switch onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')}/>} label="Shared Locks" />
-        <FormControlLabel disabled={reqScopes.includes('messaging')} control={<Switch onChange={handleChange('messaging')} checked={scopes.has('messaging')}/>} label="Messaging" />
-      </FormGroup></DialogContent>
+      <DialogContent>
+        <FormGroup>
+          <FormControlLabel disabled control={<Switch defaultChecked />} label="Profile" />
+          <FormControlLabel disabled={reqScopes.includes('locks')} control={<Switch onChange={handleChange('locks')} checked={scopes.has('locks')}/>} label="Locks" />
+          <FormControlLabel disabled={reqScopes.includes('keyholder')} control={<Switch onChange={handleChange('keyholder')} checked={scopes.has('keyholder')}/>} label="Keyholder" />
+        </FormGroup>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel disabled={reqScopes.includes('shared_locks')} control={<Switch onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')}/>} label="Shared Locks" />
+              <FormControlLabel disabled={reqScopes.includes('messaging')} control={<Switch onChange={handleChange('messaging')} checked={scopes.has('messaging')}/>} label="Messaging" />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+      </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={handleLogin}>Login with Chaster...</Button>
-        <Button variant="outlined" onClick={handleAbort}>Abort</Button>
+        <Button variant="outlined" onClick={handleAbort}>Cancel</Button>
       </DialogActions>
     </Dialog>
   );

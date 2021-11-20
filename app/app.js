@@ -1,4 +1,4 @@
-import { useState, lazy, forwardRef, Fragment, Suspense } from "react";
+import { useState, lazy, forwardRef, Suspense } from "react";
 import { useRealmApp } from "./RealmApp";
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, IconButton, CardHeader, Avatar, Menu, MenuItem, Box, useMediaQuery, SwipeableDrawer, Backdrop,
@@ -196,13 +196,13 @@ export default function App(){
           <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
         </List>
       </ResponsiveDrawer>
-      <ResponsiveMain open={open} isDesktop={isDesktop} >
-        <DrawerHeader />
+      <ResponsiveMain open={open} isDesktop={isDesktop}>
+        <DrawerHeader/>
         <Routes>
           <Route path="lock/*" element={
-            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
+            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
               <RequireLoggedInScope scopes={["profile", "locks"]} component="lock">
-                <Suspense fallback={<p>loading...</p>} >
+                <Suspense fallback={<p>loading...</p>}>
                   <MyLock/>
                 </Suspense>
               </RequireLoggedInScope>
