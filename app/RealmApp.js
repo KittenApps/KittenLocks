@@ -44,7 +44,7 @@ export function RealmAppProvider(props){
     if ((cDaE - Date.now()) / 60000 > 3) return Promise.resolve({ accessToken: cDaT, accessExpires: new Date(cDaE) });
     if (accessTokenPromise.then) return accessTokenPromise;
     const { accessToken, accessExpires } = accessTokenPromise;
-    if ((accessExpires - new Date()) / 60000 > 3) return Promise.resolve({ accessToken, accessExpires });
+    if ((accessExpires.getTime() - Date.now()) / 60000 > 3) return Promise.resolve({ accessToken, accessExpires });
     accessTokenPromise = currentUser.functions.getAccessToken().then(res => {
       if (res.error === 'Invalid refresh token') logOut();
       accessTokenPromise = { accessToken: res.accessToken, accessExpires: res.accessExpires };

@@ -22,7 +22,7 @@ function VerifyLock(props){
       props.setLockOkay(true);
     } else {
       const timerVisible = props.lock.isAllowedToViewTime;
-      const remainingTime = timerVisible && (new Date(props.lock.endDate) - new Date()) / 3600000 < 2;
+      const remainingTime = timerVisible && (new Date(props.lock.endDate).getTime() - Date.now()) / 3600000 < 2;
       setResult(
         <>
           <p>{timerVisible ? '✅' : '❌' } in keyholder lock with visible timer</p>

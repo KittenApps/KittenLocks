@@ -1,7 +1,7 @@
 import { PureComponent, StrictMode } from 'react';
 import { render } from 'react-dom';
 import { RealmAppProvider } from './RealmApp.js';
-import App from './app';
+import App from './App';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -39,7 +39,7 @@ class ErrorBoundary extends PureComponent{
 }
 
 const div = document.createElement('div');
-document.body.appendChild(div);
+document.body.append(div);
 
 render(
   <StrictMode>

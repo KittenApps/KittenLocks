@@ -125,8 +125,8 @@ export default function App(){
   };
 
   const [searchParams] = useSearchParams();
-  const ks = ['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging'];
-  let logScopes = searchParams.get('login')?.split(',').filter(x => ks.includes(x)) || [];
+  const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
+  let logScopes = searchParams.get('login')?.split(',').filter(x => ks.has(x)) || [];
   if (app.currentUser?.customData?.scopes) logScopes = logScopes.filter(x => !app.currentUser?.customData?.scopes.includes(x));
 
   const [openLogin, showLogin] = useState(logScopes.length > 0);

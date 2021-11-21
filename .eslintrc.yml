@@ -3,6 +3,7 @@ plugins:
   - react-hooks
   - import
   - jsx-a11y
+  - unicorn
 extends:
   - eslint:recommended
   - plugin:react/recommended
@@ -10,6 +11,7 @@ extends:
   - plugin:react-hooks/recommended
   - plugin:import/recommended
   - plugin:jsx-a11y/strict
+  - plugin:unicorn/all
 root: true
 env:
   browser: true
@@ -308,3 +310,12 @@ rules:
   import/no-webpack-loader-syntax: error
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
+  unicorn/prefer-module: 'off'
+  unicorn/prevent-abbreviations: 'off'
+  unicorn/no-null: 'off'
+  unicorn/filename-case:
+    - error
+    - case: pascalCase
+  unicorn/numeric-separators-style:
+    - error
+    - onlyIfContainsSeparator: true

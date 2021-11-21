@@ -154,7 +154,7 @@ export default function MyLock(){
       const ch = await fetch(`https://api.chaster.app/locks/${id}/history`, { headers, signal, method: 'POST', body: JSON.stringify({ lastId, limit: 100 }) }).then(d => d.json());
       if (ch.hasMore){
         const rch = await fetchHistory(id, ch.results[99]._id);
-        return ch.results.concat(rch);
+        return [...ch.results, ...rch];
       }
       return ch.results;
     };
