@@ -207,29 +207,17 @@ export default function App(){
         <DrawerHeader/>
         <Routes>
           <Route path="lock/*" element={
-            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-              <RequireLoggedInScope scopes={["locks"]} component="lock">
-                <Suspense fallback={<p>loading...</p>}>
-                  <MyLock/>
-                </Suspense>
-              </RequireLoggedInScope>
-            </Paper>
+            <RequireLoggedInScope scopes={["locks"]} component="lock">
+              <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
+            </RequireLoggedInScope>
           } />
-          <Route path="locks" element={
-            <Suspense fallback={<p>loading...</p>} >
-              <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} ><PublicLocks/></Paper>
-            </Suspense>
-          } >
-            <Route path=":username/*" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> } />
+          <Route path="locks" element={ <Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense> }>
+            <Route path=":username/*" element={ <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> }/>
           </Route>
           <Route path="trans/*" element={
-            <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
-              <RequireLoggedInScope scopes={["locks"]} component="trans">
-                <Suspense fallback={<p>loading...</p>} >
-                  <LockTransfer/>
-                </Suspense>
-              </RequireLoggedInScope>
-            </Paper>
+            <RequireLoggedInScope scopes={["locks"]} component="trans">
+              <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
+            </RequireLoggedInScope>
           } />
           <Route path="discord/*" element={
             <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? ( open ? 256 : 16 ) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >

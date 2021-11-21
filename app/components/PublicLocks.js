@@ -1,5 +1,5 @@
-import { useState, Fragment } from "react";
-import { Button, TextField } from '@mui/material';
+import { useState } from "react";
+import { Button, TextField, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, Outlet } from "react-router-dom";
 
@@ -13,11 +13,11 @@ export default function PublicLocks(){
   const handleUsernameSearch = (e) => navigate(`/locks/${username}`);
 
   return (
-    <Fragment>
+    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <h1>Public Lock Profiles Search:</h1>
       <TextField label="Username" variant="outlined" value={username} onChange={onChangeUsername} size="small"/>
       <Button variant="contained" startIcon={<SearchIcon/>} onClick={handleUsernameSearch} disabled={isSearching}>Search</Button>
       <Outlet />
-    </Fragment>
+    </Paper>
   );
 }

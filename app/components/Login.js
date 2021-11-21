@@ -1,9 +1,9 @@
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import { Credentials } from "realm-web";
 import { useRealmApp } from "../RealmApp";
 import { useNavigate } from "react-router-dom";
 import { Button, Avatar, FormGroup, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
-         Stack, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery } from '@mui/material';
+         Stack, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -29,11 +29,11 @@ export function RequireLoggedInScope(props){
     return props.children;
   }
   return (
-    <Fragment>
+    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <h2><Skeleton variant="text"/></h2>
       <Skeleton variant="rectangular" width={'100%'} height="300px"/>
       <Login scopes={props.scopes}/>
-    </Fragment>
+    </Paper>
   );
 }
 

@@ -1,7 +1,8 @@
 import { useState, useEffect, Fragment } from "react";
 import { useRealmApp } from "../RealmApp";
 import { useSearchParams } from "react-router-dom";
-import { Alert, AlertTitle, Stepper, Step, StepLabel, StepContent, Select, MenuItem, InputLabel, FormControl, Button, TextField } from '@mui/material';
+import { Alert, AlertTitle, Stepper, Step, StepLabel, StepContent, Select, MenuItem,
+         InputLabel, FormControl, Button, TextField, Paper } from '@mui/material';
 import ReactJson from 'react-json-view';
 
 function VerifyLock(props){
@@ -81,7 +82,7 @@ export default function LockTransfer(){
 
 
   return (
-    <Fragment>
+    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <Alert severity="info">
         <AlertTitle>About Kitten Trans(fer) 🏳️‍⚧️:</AlertTitle>
         KittenTransfer allows to transfer the lock of a wearer (you) over to another shared lock without exposing the combination picture to the wearer. To do so it will:
@@ -127,6 +128,6 @@ export default function LockTransfer(){
           </StepContent>
         </Step>
       </Stepper>
-    </Fragment>
+    </Paper>
   );
 }
