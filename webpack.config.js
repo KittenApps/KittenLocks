@@ -1,41 +1,42 @@
-const path = require("path");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+/* eslint-env node */
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: process.env.NODE_ENV || "development",
-  context: path.join(__dirname, "./"),
-  entry: { index: "./app/index.js" },
+  mode: process.env.NODE_ENV || 'development',
+  context: path.join(__dirname, './'),
+  entry: { index: './app/index.js' },
   output: {
-    path: path.join(__dirname, "public"),
-    filename: "static/js/[name].js",
-    chunkFilename: "static/js/[name].js"
+    path: path.join(__dirname, 'public'),
+    filename: 'static/js/[name].js',
+    chunkFilename: 'static/js/[name].js'
   },
-  resolve: { extensions: [".js"], fallback: { "crypto": false } },
+  resolve: { extensions: ['.js'], fallback: { 'crypto': false } },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        include: path.join(__dirname, "app"),
+        test: /\.jsx?$/u,
+        exclude: /node_modules/u,
+        include: path.join(__dirname, 'app'),
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env", ["@babel/preset-react", {"runtime": "automatic"}]]
+            presets: ['@babel/preset-env', ['@babel/preset-react', { 'runtime': 'automatic' }]]
           }
         }
       },
       {
-        test: /\.scss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        test: /\.scss$/iu,
+        use: ['style-loader', 'css-loader', 'sass-loader']
       }
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin({ CI: "" }),
-    new HtmlWebpackPlugin({ title: "Kitten Locks", publicPath: "/", favicon: "favicon.png" }),
-    new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: "/static/html/oauthcb", templateContent: ({htmlWebpackPlugin}) => `
+    new webpack.EnvironmentPlugin({ CI: '' }),
+    new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/', favicon: 'favicon.png' }),
+    new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
       <html>
         <head>
@@ -54,15 +55,15 @@ module.exports = {
           </script>
         </body>
       </html>
-  `}),
-    new CopyPlugin({patterns: [{ from: "appicon.png", to: "." }]})
+  ` }),
+    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }] })
   ],
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      chunks: 'all'
     }
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: true
   }
 };

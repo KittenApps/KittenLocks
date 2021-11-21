@@ -1,34 +1,40 @@
-import { Typography, Avatar, Paper, Link, Grid } from '@mui/material';
+import { Avatar, Grid, Link, Paper, Typography } from '@mui/material';
 
 export default function Home(){
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} lg={4}><Paper elevation={6} sx={{textAlign: 'center', p: 2, backgroundColor: '#1b192a'}}>
-        <h2>Welcome to KittenLocks!</h2>
-        <p>A pawtastic WebApp to enchance your Chaster experience, <Link href="https://github.com/KittenApps/KittenLocks" target="_blank" rel="noreferrer">built with</Link> ❤ <Link href="https://chaster.app/user/Silizia" target="_blank" rel="noopener">by Silizia ~ Stella</Link>.</p>
-        <Avatar src="/appicon.png" sx={{ width: 192, height: 192, m: 'auto' }} />
-        <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
-      </Paper></Grid>
-      <Grid item xs={12} sm={6} lg={4}><Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a'}}>
-        <h3>Changelog v0.1:</h3>
-        <ul>
-          <li key="1">stabilized backend API</li>
-          <li key="2">improved login / scopes management</li>
-          <li key="3">new Chaster like theme</li>
-          <li key="4">lock transfer</li>
-          <li key="5">removed Locktober stats (<Link href="https://619987cd8725fb0007c961d8--kittenlocks.netlify.app/" target="_blank" rel="noopener">old version</Link>)</li>
-          <li key="6">lots of optimisations and bug fixes</li>
-        </ul>
-      </Paper></Grid>
-      <Grid item xs={12} sm={6} lg={4}><Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a'}}>
-        <h3>Roadmap:</h3>
-        <ul>
-          <li key="1">improved GUI for lock details (instead of pure JSON)</li>
-          <li key="2">Lock Charts (visualize your unlock date over time)</li>
-          <li key="3">Voting Game (vote for other lockees with this game)</li>
-          <li key="4">Multiplayer Extensions (once the API is released)</li>
-        </ul>
-      </Paper></Grid>
+      <Grid item xs={12} lg={4}>
+        <Paper elevation={6} sx={{ textAlign: 'center', p: 2, backgroundColor: '#1b192a' }}>
+          <h2>Welcome to KittenLocks!</h2>
+          <p>A pawtastic WebApp to enchance your Chaster experience, <Link href="https://github.com/KittenApps/KittenLocks" target="_blank" rel="noreferrer">built with</Link> ❤ <Link href="https://chaster.app/user/Silizia" target="_blank" rel="noopener">by Silizia ~ Stella</Link>.</p>
+          <Avatar src="/appicon.png" sx={{ width: 192, height: 192, m: 'auto' }} />
+          <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} sm={6} lg={4}>
+        <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
+          <h3>Changelog v0.1:</h3>
+          <ul>
+            <li key="1">stabilized backend API</li>
+            <li key="2">improved login / scopes management</li>
+            <li key="3">new Chaster like theme</li>
+            <li key="4">lock transfer</li>
+            <li key="5">removed Locktober stats (<Link href="https://619a8eda8725fb0007da5b6b--kittenlocks.netlify.app/" target="_blank" rel="noopener">old version</Link>)</li>
+            <li key="6">lots of optimisations and bug fixes</li>
+          </ul>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} sm={6} lg={4}>
+        <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
+          <h3>Roadmap:</h3>
+          <ul>
+            <li key="1">improved GUI for lock details (instead of pure JSON)</li>
+            <li key="2">Lock Charts (visualize your unlock date over time)</li>
+            <li key="3">Voting Game (vote for other lockees with this game)</li>
+            <li key="4">Multiplayer Extensions (once the API is released)</li>
+          </ul>
+        </Paper>
+      </Grid>
     </Grid>
   );
-};
+}

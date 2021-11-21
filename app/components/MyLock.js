@@ -1,11 +1,11 @@
-import { useState, useEffect, Fragment } from "react";
-import { Skeleton, FormControl, InputLabel, Select, MenuItem, Grid, Button, Accordion, AccordionSummary, AccordionDetails,
-         TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select,
+         Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import ReactJson from 'react-json-view';
-import { useRealmApp } from "../RealmApp";
+import { useRealmApp } from '../RealmApp';
 import '../bootstrap.scss';
 
 function LocktoberCalc(props){
@@ -14,20 +14,19 @@ function LocktoberCalc(props){
 
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal;
-    props.app.getAccessToken().then(({accessToken}) => {
-      const headers = { "Authorization": `Bearer ${accessToken}` , "Content-Type": "application/json" };
-      let arr = [];
-      for (let i = 0; i < today; i++) arr[i] = i+1;
+    const { signal } = controller;
+    props.app.getAccessToken().then(({ accessToken }) => {
+      const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
+      const arr = [];
+      for (let i = 0; i < today; i++) arr[i] = i + 1;
       return Promise.all(arr.map(i => fetch('https://api.chaster.app/locktober/details', { headers, signal, method: 'POST',
-        body: JSON.stringify({"date": `2021-10-${(i < 10) ? '0'+i : i}T23:00:00.000Z`})}).then(d => d.json()).then(d => {
+        body: JSON.stringify({ 'date': `2021-10-${(i < 10) ? `0${i}` : i}T23:00:00.000Z` }) }).then(d => d.json()).then(d => {
           const p = d.categories;
-          setCalc(c => { return {...c, [i]: p.extensions+p.peer_verifications+p.receive_votes+p.task_votes+p.votes, [i+'e']: p.discord_events};});
-        })
-      ));
+          setCalc(c => ({ ...c, [i]: p.extensions + p.peer_verifications + p.receive_votes + p.task_votes + p.votes, [`${i}e`]: p.discord_events }));
+        })));
     });
     return () => controller.abort();
-  }, []);
+  }, [props.app]);
 
   const handleClick = d => props.setDay(d);
 
@@ -46,15 +45,15 @@ function LocktoberCalc(props){
           </TableRow>
         </TableHead>
         <TableBody>
-          {[0,1,2,3,4].map((i) => (
+          {[0, 1, 2, 3, 4].map(i => (
             <TableRow key={i}>
-              {[0,1,2,3,4,5,6].map((j) => (
-                <TableCell align="center" key={j} onClick={() => handleClick(i*7+j-3)}>
-                  {i*7+j-3 > 0 ? (
-                    <Fragment>
-                      <b>{i*7+j-3}.: </b>{calc[i*7+j-3]}/610{calc[i*7+j-3+'e']>0 ? ` + ${calc[i*7+j-3+'e']}`: ''}
-                      <ProgressBar variant={calc[i*7+j-3] === 610 ? 'success' : (calc[i*7+j-3] >= 350 ? 'warning' : 'danger' )} now={calc[i*7+j-3]} max={610} animated={calc[i*7+j-3+'e']>0} />
-                    </Fragment>
+              {[0, 1, 2, 3, 4, 5, 6].map(j => (
+                <TableCell align="center" key={j} onClick={() => handleClick(i * 7 + j - 3)}>
+                  {i * 7 + j - 3 > 0 ? (
+                    <>
+                      <b>{i * 7 + j - 3}.: </b>{calc[i * 7 + j - 3]}/610{calc[`${i * 7 + j - 3}e`] > 0 ? ` + ${calc[`${i * 7 + j - 3}e`]}` : ''}
+                      <ProgressBar variant={calc[i * 7 + j - 3] === 610 ? 'success' : (calc[i * 7 + j - 3] >= 350 ? 'warning' : 'danger')} now={calc[i * 7 + j - 3]} max={610} animated={calc[`${i * 7 + j - 3}e`] > 0} />
+                    </>
                   ) : null }
                 </TableCell>
               ))}
@@ -69,31 +68,31 @@ function LocktoberCalc(props){
 function Locktober(props){
   const today = 31;
   const [day, setDay] = useState(today);
-  const [progress, setProgress] = useState(null); 
+  const [progress, setProgress] = useState(null);
 
   useEffect(() => {
     if (day > 0){
       const controller = new AbortController();
-      const signal = controller.signal;
-      props.app.getAccessToken().then(({accessToken}) => {
-        const headers = { "Authorization": `Bearer ${accessToken}` , "Content-Type": "application/json" };
+      const { signal } = controller;
+      props.app.getAccessToken().then(({ accessToken }) => {
+        const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
         return fetch('https://api.chaster.app/locktober/details', { headers, signal, method: 'POST',
-          body: JSON.stringify({"date": `2021-10-${day < 10 ? '0'+day : day}T23:00:00.000Z`})}).then(d => d.json()).then(d => setProgress(d.actions));
+          body: JSON.stringify({ 'date': `2021-10-${day < 10 ? `0${day}` : day}T23:00:00.000Z` }) }).then(d => d.json()).then(d => setProgress(d.actions));
       });
       return () => controller.abort();
     }
-  }, [day]);
+  }, [day, props.app]);
 
   const handleChangeDay = e => setDay(e.target.value);
-  const handleRefresh = () => {setDay(0);setTimeout(() => setDay(today), 1);};
+  const handleRefresh = () => {setDay(0); setTimeout(() => setDay(today), 1);};
 
-  if (!progress || day === 0) return (<Skeleton variant="rectangular" width={'100%'} height={300} />);
-  const items = []
+  if (!progress || day === 0) return (<Skeleton variant="rectangular" width="100%" height={300} />);
+  const items = [];
   for (let i = 1; i <= 31; i++){
     items.push(<MenuItem value={i} key={i}>{i}</MenuItem>);
   }
   return (
-    <Fragment>
+    <>
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs={3}>
           <FormControl fullWidth>
@@ -104,9 +103,11 @@ function Locktober(props){
           </FormControl>
         </Grid>
         <Grid item xs><b>Locktober 2021 🎃🔒</b></Grid>
-        <Grid item xs={3}><FormControl fullWidth>
-          <Button onClick={handleRefresh} startIcon={<RefreshIcon/>} variant="outlined">{today !== day ? 'today' : 'refresh'}</Button>
-        </FormControl></Grid>
+        <Grid item xs={3}>
+          <FormControl fullWidth>
+            <Button onClick={handleRefresh} startIcon={<RefreshIcon/>} variant="outlined">{today === day ? 'refresh' : 'today'}</Button>
+          </FormControl>
+        </Grid>
       </Grid>
       <br/>
       <Grid container spacing={1}>
@@ -130,11 +131,11 @@ function Locktober(props){
         <Grid item xs={3}><b>Discord Events:</b></Grid>
         <Grid item xs={9}><ProgressBar variant="success" now={progress.discord_event > 0 ? 100 : 0} animated label={`${progress.discord_event}`} /></Grid>
       </Grid>
-      <Accordion TransitionProps={{ mountOnEnter: true }} sx={{mt: 2}}>
+      <Accordion TransitionProps={{ mountOnEnter: true }} sx={{ mt: 2 }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}><b>Locktober points calendar 🎃🔒📆</b></AccordionSummary>
         <AccordionDetails><LocktoberCalc app={props.app} setDay={setDay}/></AccordionDetails>
       </Accordion>
-    </Fragment>
+    </>
   );
 }
 
@@ -146,27 +147,27 @@ export default function MyLock(){
 
   useEffect(() => {
     const controller = new AbortController();
-    const signal = controller.signal;
+    const { signal } = controller;
     let headers;
-    const fetchHistory = async (id, lastId) => {
-      headers["Content-Type"] = "application/json";
+    const fetchHistory = async(id, lastId) => {
+      headers['Content-Type'] = 'application/json';
       const ch = await fetch(`https://api.chaster.app/locks/${id}/history`, { headers, signal, method: 'POST', body: JSON.stringify({ lastId, limit: 100 }) }).then(d => d.json());
       if (ch.hasMore){
         const rch = await fetchHistory(id, ch.results[99]._id);
         return ch.results.concat(rch);
       }
       return ch.results;
-    }
+    };
 
-    app.getAccessToken().then(({accessToken}) => {
-      headers = { "Authorization": `Bearer ${accessToken}` };
+    app.getAccessToken().then(({ accessToken }) => {
+      headers = { 'Authorization': `Bearer ${accessToken}` };
       return fetch('https://api.chaster.app/locks', { headers, signal });
     }).then(d => d.json()).then(j => {
-      setLockJSON(j.length === 1 ? j[0]: j);
-      return Promise.all(j.map(l => fetchHistory(l._id))).then(j => setHistoryJSON(j.length === 1 ? j[0]: j));
+      setLockJSON(j.length === 1 ? j[0] : j);
+      return Promise.all(j.map(l => fetchHistory(l._id))).then(h => setHistoryJSON(h.length === 1 ? h[0] : h));
     });
     return () => controller.abort();
-  }, []);
+  }, [app]);
 
 
   return (
@@ -174,11 +175,11 @@ export default function MyLock(){
       <h2>My Locktober progress</h2>
       <Locktober app={app}/>
       <h2>My lock information ({app.currentUser.customData.username}):</h2>
-      { lockJSON ? <ReactJson style={{fontSize: 13}} src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
-                  : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
+      { lockJSON ? <ReactJson style={{ fontSize: 13 }} src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
+                  : <Skeleton variant="rectangular" width="100%" height={300} /> }
       <h2>My lock history ({app.currentUser.customData.username}):</h2>
-      { historyJSON ? <ReactJson style={{fontSize: 13}} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
-              : <Skeleton variant="rectangular" width={'100%'} height={300} /> }
+      { historyJSON ? <ReactJson style={{ fontSize: 13 }} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
+              : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
 }
