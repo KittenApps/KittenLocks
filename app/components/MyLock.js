@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select,
-         Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Grid, InputLabel, LinearProgress, MenuItem,
+         Paper, Select, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -143,20 +143,18 @@ export default function MyLock(){
   const app = useRealmApp();
 
   const [lockJSON, setLockJSON] = useState(null);
-  const [historyJSON, setHistoryJSON] = useState(null);
+  const [historyJSON, setHistoryJSON] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
     let headers;
-    const fetchHistory = async(id, lastId) => {
+    const fetchHistory = async(id, index, lastId) => {
       headers['Content-Type'] = 'application/json';
       const ch = await fetch(`https://api.chaster.app/locks/${id}/history`, { headers, signal, method: 'POST', body: JSON.stringify({ lastId, limit: 100 }) }).then(d => d.json());
-      if (ch.hasMore){
-        const rch = await fetchHistory(id, ch.results[99]._id);
-        return [...ch.results, ...rch];
-      }
-      return ch.results;
+      setHistoryJSON(h => {h[index] = [...(h[index] || []), ...ch.results]; return [...h];});
+      if (ch.hasMore) await fetchHistory(id, index, ch.results[99]._id);
     };
 
     app.getAccessToken().then(({ accessToken }) => {
@@ -164,7 +162,7 @@ export default function MyLock(){
       return fetch('https://api.chaster.app/locks', { headers, signal });
     }).then(d => d.json()).then(j => {
       setLockJSON(j.length === 1 ? j[0] : j);
-      return Promise.all(j.map(l => fetchHistory(l._id))).then(h => setHistoryJSON(h.length === 1 ? h[0] : h));
+      return Promise.all(j.map((l, i) => fetchHistory(l._id, i))).then(() => setLoading(false));
     });
     return () => controller.abort();
   }, [app]);
@@ -178,6 +176,7 @@ export default function MyLock(){
       { lockJSON ? <ReactJson style={{ fontSize: 13 }} src={lockJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
                   : <Skeleton variant="rectangular" width="100%" height={300} /> }
       <h2>My lock history ({app.currentUser.customData.username}):</h2>
+      { loading && <LinearProgress/>}
       { historyJSON ? <ReactJson style={{ fontSize: 13 }} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
               : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
