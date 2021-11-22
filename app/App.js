@@ -141,11 +141,17 @@ export default function App(){
   const handlePWAClose = () => setInstallPrompt(null);
   const handlePWAInstall = () => {installPrompt.prompt(); setInstallPrompt(null);};
 
+  const [isAlert, setAlert] = useState(null);
+  const handleAlertClose = () => setAlert(null);
+
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201 }}/>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
-        <Login open={openLogin} showLogin={showLogin} scopes={logScopes}/>
+        <Login open={openLogin} showLogin={showLogin} scopes={logScopes} setAlert={setAlert}/>
+        <Snackbar open={Boolean(isAlert)} autoHideDuration={15000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={handleAlertClose}>
+          <Alert severity={isAlert?.type || 'info'} onClose={handleAlertClose}>{isAlert?.child || 'Unknown Error'}</Alert>
+        </Snackbar>
         <Snackbar open={Boolean(installPrompt)} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} onClose={handlePWAClose}>
           <Alert
             severity="warning"
@@ -212,7 +218,7 @@ export default function App(){
             <Route
               path="lock/*"
               element={
-                <RequiredScopes scopes={['locks']} component="lock">
+                <RequiredScopes scopes={['locks']} component="lock" setAlert={setAlert}>
                   <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
                 </RequiredScopes>
               }
@@ -223,8 +229,8 @@ export default function App(){
             <Route
               path="trans/*"
               element={
-                <RequiredScopes scopes={['locks']} component="trans">
-                  <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
+                <RequiredScopes scopes={['locks']} component="trans" setAlert={setAlert}>
+                  <Suspense fallback={<p>loading...</p>} ><LockTransfer setAlert={setAlert}/></Suspense>
                 </RequiredScopes>
               }
             />

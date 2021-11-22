@@ -43,7 +43,7 @@ function VerifyLock(props){
   );
 }
 
-export default function LockTransfer(){
+export default function LockTransfer(props){
   const app = useRealmApp();
   const [searchParams] = useSearchParams();
 
@@ -76,9 +76,8 @@ export default function LockTransfer(){
 
   const handleTransferLock = () => {
     app.currentUser.functions.transferLock(oldLockID, sharedLock._id, password || '')
-      .then(r => (r.error ? alert(`Error: ${r.error}`) : alert('Success: Lock sucessfully transfered!')));
+      .then(r => props.setAlert(r.error ? { type: 'error', child: <><b>Error:</b>{r.error}</> } : { type: 'success', child: <><b>Success:</b>Lock sucessfully transfered!</> }));
   };
-
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
@@ -106,7 +105,7 @@ export default function LockTransfer(){
           <StepContent>
             <FormControl fullWidth>
               <InputLabel id="select-label">Your current lock:</InputLabel>
-              <Select labelId="select-label" value={oldLockID} label="Your current lock:" onChange={handleChangeLock}>
+              <Select labelId="select-label" value={oldLockID} label="Your current lock:" onChange={handleChangeLock} disabled={locks.length === 0}>
                 {locks.map(l => <MenuItem value={l._id} key={l._id}>{l.title} ({l._id})</MenuItem>)}
               </Select>
             </FormControl>

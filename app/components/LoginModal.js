@@ -43,7 +43,7 @@ export default function Login(props){
         if (props.showLogin) props.showLogin(false);
       } else if (e.data.authCode === null){
         e.source.close();
-        setTimeout(() => alert('Login failed: You need to accept the Chaster OAuth request!'), 1);
+        props.setAlert({ type: 'error', child: <><b>Login failed:</b>You need to accept the Chaster OAuth request!</> });
       }
     }, false);
   };

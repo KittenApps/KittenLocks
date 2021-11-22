@@ -11,7 +11,7 @@ export default function RequiredScopes(props){
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <h2><Skeleton variant="text"/></h2>
       <Skeleton variant="rectangular" width="100%" height="300px"/>
-      <LoginModal scopes={props.scopes}/>
+      <LoginModal scopes={props.scopes} component={props.component} setAlert={props.setAlert}/>
     </Paper>
   );
 }
