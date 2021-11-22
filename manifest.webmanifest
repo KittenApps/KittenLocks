@@ -1,0 +1,36 @@
+{
+  "short_name": "KittenLocks",
+  "name": "KittenLocks",
+  "description": "KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "appicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "scope": "https://kittenlocks.netlify.app/",
+  "display": "standalone",
+  "theme_color": "#1f1d2b",
+  "background_color": "#1f1d2b",
+  "shortcuts" : [
+    {
+      "name": "My Lock Profile",
+      "url": "/lock"
+    },
+    {
+      "name": "Public Lock Profiles",
+      "url": "/locks"
+    },
+    {
+      "name": "Lock Transfer",
+      "url": "/trans"
+    }
+  ]
+}

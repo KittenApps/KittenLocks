@@ -1,8 +1,8 @@
-import { Suspense, forwardRef, lazy, useState } from 'react';
+import { Suspense, forwardRef, lazy, useEffect, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List,
-         ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Paper, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { Alert, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
+         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Snackbar, Stack, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -16,6 +16,7 @@ import CompareIcon from '@mui/icons-material/CompareArrows';
 import ChatIcon from '@mui/icons-material/ChatTwoTone';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CloseIcon from '@mui/icons-material/Close';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import Login, { RequireLoggedInScope, ScopeBadges } from './components/Login'; // ToDo: lazy
 import Home from './components/Home';
@@ -133,11 +134,29 @@ export default function App(){
   const handleLogin = () => showLogin(true);
   const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
 
+  const [installPrompt, setInstallPrompt] = useState(null);
+  useEffect(() => window.addEventListener('beforeinstallprompt', e => {e.preventDefault(); setInstallPrompt(e);}), []);
+  const handlePWAClose = () => setInstallPrompt(null);
+  const handlePWAInstall = () => {installPrompt.prompt(); setInstallPrompt(null);};
+
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201 }}/>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
-        {openLogin && <Login showLogin={showLogin} scopes={logScopes}/>}
+        <Login open={openLogin} showLogin={showLogin} scopes={logScopes}/>
+        <Snackbar open={Boolean(installPrompt)} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} onClose={handlePWAClose}>
+          <Alert
+            severity="warning"
+            action={
+              <Stack spacing={1} direction="row">
+                <Button color="inherit" variant="outlined" onClick={handlePWAInstall} size="small">Install now</Button>
+                <IconButton color="inherit" onClick={handlePWAClose} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+              </Stack>
+              }
+          >
+            Add KittenLocks to your HomeScreen?
+          </Alert>
+        </Snackbar>
         <StyledAppBar open={open} isDesktop={isDesktop} >
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>

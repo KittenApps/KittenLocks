@@ -57,7 +57,7 @@ module.exports = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }] })
+    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }, { from: 'manifest.webmanifest', to: '.' }] })
   ],
   optimization: {
     splitChunks: {

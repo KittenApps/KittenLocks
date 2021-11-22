@@ -79,7 +79,7 @@ export default function Login(props){
   // if component info box with requires scopes
   // ToDo: Warn if not having all granted scopes
   return (
-    <Dialog fullScreen={fullScreen} open>
+    <Dialog fullScreen={fullScreen} open={props.open !== false}>
       <DialogTitle>Login with Chaster</DialogTitle>
       <DialogContent>
         <FormGroup>
