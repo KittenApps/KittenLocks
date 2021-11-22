@@ -4,6 +4,9 @@ import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import { Alert, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
          ListItemIcon, ListItemText, Menu, MenuItem, Paper, Snackbar, Stack, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
+import RequiredScopes from './components/RequiredScopes';
+import ScopeBadges from './components/ScopeBadges';
+import Login from './components/LoginModal';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,12 +21,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import Login, { RequireLoggedInScope, ScopeBadges } from './components/Login'; // ToDo: lazy
-import Home from './components/Home';
-const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './components/MyLock'));
-const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './components/PublicLocks'));
-const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './components/PublicLock'));
-const LockTransfer = lazy(() => import(/* webpackChunkName: "lock_transfer" */ './components/LockTransfer'));
+import Home from './views/Home';
+const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
+const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
+const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
+const LockTransfer = lazy(() => import(/* webpackChunkName: "lock_transfer" */ './views/LockTransfer'));
 
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
 NLink.displayName = 'NLink';
@@ -210,9 +212,9 @@ export default function App(){
             <Route
               path="lock/*"
               element={
-                <RequireLoggedInScope scopes={['locks']} component="lock">
+                <RequiredScopes scopes={['locks']} component="lock">
                   <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
-                </RequireLoggedInScope>
+                </RequiredScopes>
               }
             />
             <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>}>
@@ -221,9 +223,9 @@ export default function App(){
             <Route
               path="trans/*"
               element={
-                <RequireLoggedInScope scopes={['locks']} component="trans">
+                <RequiredScopes scopes={['locks']} component="trans">
                   <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
-                </RequireLoggedInScope>
+                </RequiredScopes>
               }
             />
             <Route

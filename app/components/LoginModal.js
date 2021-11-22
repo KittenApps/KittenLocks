@@ -2,38 +2,10 @@ import { useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Button, Dialog, DialogActions, DialogContent,
-         DialogTitle, FormControlLabel, FormGroup, Paper, Skeleton, Stack, Switch, useMediaQuery } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent,
+         DialogTitle, FormControlLabel, FormGroup, Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-export function ScopeBadges(props){
-  const p = props.scopes.includes('profile') ? 'lightblue' : 'grey';
-  const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
-  const k = props.scopes.includes('keyholder') ? 'violet' : 'grey';
-  return (
-    <Stack direction="row" spacing={0.5}>
-      { props.title && (<strong>{props.title} </strong>) }
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: l }} >L</Avatar>
-      <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: k }} >K</Avatar>
-    </Stack>
-  );
-}
-
-export function RequireLoggedInScope(props){
-  const app = useRealmApp();
-  const scopes = app.currentUser?.customData?.scopes;
-
-  if (scopes && props.scopes.every(s => scopes.includes(s))) return props.children;
-  return (
-    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
-      <h2><Skeleton variant="text"/></h2>
-      <Skeleton variant="rectangular" width="100%" height="300px"/>
-      <Login scopes={props.scopes}/>
-    </Paper>
-  );
-}
 
 export default function Login(props){
   const app = useRealmApp();
