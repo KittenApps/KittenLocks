@@ -2,19 +2,23 @@ import { useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent,
-         DialogTitle, FormControlLabel, FormGroup, Switch, useMediaQuery } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Button, Dialog, DialogActions,
+         DialogContent, DialogTitle, FormControlLabel, FormGroup, FormHelperText, Stack, Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ScopeBadges from './ScopeBadges';
 
 export default function Login(props){
   const app = useRealmApp();
   const savScopes = localStorage.getItem('scopes')?.split(',');
   const exScopes = app.currentUser?.customData?.scopes || savScopes || [];
-  const reqScopes = props.scopes || [];
+  const reqScopes = ['profile', ...props.scopes] || [];
+  const misScopes = reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s));
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const componentMap = { lock: 'My Lock Profile', trans: 'Lock Transfer' };
+  const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
 
   const [scopes, setScopes] = useState(new Set([...exScopes, ...(reqScopes)]));
   const handleChange = s => e => {
@@ -23,6 +27,7 @@ export default function Login(props){
     set.delete(s);
     setScopes(set);
   };
+  console.log(props.component);
 
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
@@ -53,24 +58,40 @@ export default function Login(props){
   return (
     <Dialog fullScreen={fullScreen} open={props.open !== false}>
       <DialogTitle>Login with Chaster</DialogTitle>
-      <DialogContent>
-        <FormGroup>
-          <FormControlLabel disabled control={<Switch defaultChecked />} label="Profile" />
-          <FormControlLabel disabled={reqScopes.includes('locks')} control={<Switch onChange={handleChange('locks')} checked={scopes.has('locks')}/>} label="Locks" />
-          <FormControlLabel disabled={reqScopes.includes('keyholder')} control={<Switch onChange={handleChange('keyholder')} checked={scopes.has('keyholder')}/>} label="Keyholder" />
+      <DialogContent dividers>
+        { props.component && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Stack direction="row" justifyContent="space-between"><AlertTitle>{app.currentUser ? 'Missing Chaster scopes' : 'Chaster Login required'}</AlertTitle><ScopeBadges scopes={reqScopes}/></Stack>
+            You need {app.currentUser ? 'to grant these additional Chaster' : 'a Chaster Login with the following'} scopes to use <b>{componentMap[props.component]}</b>:
+            <ul style={{ margin: '7px 0' }}>
+              { misScopes.map(s => <li key={s}>{scopeMap[s]}</li>)}
+            </ul>
+          </Alert>
+        )}
+        <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Please select the <b>Chaster scopes</b> you want to grant <b>KittenLocks</b> below:</span>
+        <FormGroup sx={{ my: 2, ml: 2 }}>
+          <FormControlLabel disabled control={<Switch defaultChecked />} label={scopeMap.profile}/>
+          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account (always required to login)</FormHelperText>
+          <FormControlLabel disabled={reqScopes.includes('locks')} onChange={handleChange('locks')} checked={scopes.has('locks')} control={<Switch/>} label={scopeMap.locks}/>
+          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks</FormHelperText>
+          <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch/>} label={scopeMap.keyholder}/>
+          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees</FormHelperText>
         </FormGroup>
-        <Accordion>
+        <Accordion disableGutters>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              <FormControlLabel disabled={reqScopes.includes('shared_locks')} control={<Switch onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')}/>} label="Shared Locks" />
-              <FormControlLabel disabled={reqScopes.includes('messaging')} control={<Switch onChange={handleChange('messaging')} checked={scopes.has('messaging')}/>} label="Messaging" />
+              <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch/>} label={scopeMap.shared_locks}/>
+              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks</FormHelperText>
+              <FormControlLabel disabled={reqScopes.includes('messaging')} onChange={handleChange('messaging')} checked={scopes.has('messaging')} control={<Switch/>} label={scopeMap.messaging}/>
+              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging</FormHelperText>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
+        <FormHelperText sx={{ mt: 2 }}>By clicking <b>{app.currentUser ? 'Grant' : 'Login'} with Chaster</b>, you'll be directed to the <b>Chaster OAuth form</b> to {app.currentUser ? 'grant' : 'login'} the <b>KittenLocks</b> webapp {app.currentUser ? 'access to' : 'with'} your <b>Chaster</b> account with the selected <b>scopes</b>.</FormHelperText>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={handleLogin}>Login with Chaster...</Button>
+        <Button variant="contained" onClick={handleLogin}>{app.currentUser ? 'Grant' : 'Login'} with Chaster...</Button>
         <Button variant="outlined" onClick={handleAbort}>Cancel</Button>
       </DialogActions>
     </Dialog>

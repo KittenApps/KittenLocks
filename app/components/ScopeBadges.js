@@ -6,7 +6,6 @@ export default function ScopeBadges(props){
   const k = props.scopes.includes('keyholder') ? 'violet' : 'grey';
   return (
     <Stack direction="row" spacing={0.5}>
-      { props.title && (<strong>{props.title} </strong>) }
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: l }} >L</Avatar>
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: k }} >K</Avatar>

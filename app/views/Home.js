@@ -19,7 +19,7 @@ export default function Home(){
             <li key="2">improved login / scopes management</li>
             <li key="3">new Chaster like theme</li>
             <li key="4">lock transfer</li>
-            <li key="5">removed Locktober stats (<Link href="https://619a8eda8725fb0007da5b6b--kittenlocks.netlify.app/" target="_blank" rel="noopener">old version</Link>)</li>
+            <li key="5">removed Locktober stats (<Link href="https://619bdd4cf244d300089cfe1e--kittenlocks.netlify.app/" target="_blank" rel="noopener">old version</Link>)</li>
             <li key="6">lots of optimisations and bug fixes</li>
           </ul>
         </Paper>
