@@ -232,6 +232,8 @@ export default function App(){
             <Divider key={-3}/>
             <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
           </List>
+          <div style={{ flexGrow: 1 }}/>
+          <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v0.1 (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
         </ResponsiveDrawer>
         <Main open={open} isDesktop={isDesktop}>
           <DrawerHeader/>

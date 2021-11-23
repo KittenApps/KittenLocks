@@ -31,7 +31,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin({ CI: '' }),
+    new webpack.EnvironmentPlugin({ CI: '', COMMIT_REF: 'dev' }),
     new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/', favicon: 'favicon.png' }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
