@@ -150,7 +150,7 @@ export default function App(){
   const [installPrompt, setInstallPrompt] = useState(null);
   useEffect(() => window.addEventListener('beforeinstallprompt', e => {e.preventDefault(); setInstallPrompt(e);}), []);
   const handlePWAClose = () => setInstallPrompt(null);
-  const handlePWAInstall = () => {installPrompt.prompt(); setInstallPrompt(null);};
+  const handlePWAInstall = () => {installPrompt.prompt(); handlePWAClose();};
 
   const [isAlert, setAlert] = useState(null);
   const handleAlertClose = () => setAlert(null);
@@ -165,7 +165,7 @@ export default function App(){
             severity={isAlert?.type || 'info'}
             action={
               <Stack spacing={1} direction="row">
-                { isAlert?.scopes && <Button color="inherit" variant="outlined" onClick={() => {setLogScopes(isAlert?.scopes); showLogin(true);}} size="small">Upgrade scopes</Button>}
+                { isAlert?.scopes && <Button color="inherit" variant="outlined" onClick={() => {setLogScopes(isAlert?.scopes); showLogin(true); handleAlertClose();}} size="small">Upgrade scopes</Button>}
                 <IconButton color="inherit" onClick={handleAlertClose} size="small"><CloseIcon fontSize="inherit"/></IconButton>
               </Stack>
               }

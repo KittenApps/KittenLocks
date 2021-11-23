@@ -38,6 +38,9 @@ export default function Login(props){
     setScopes(set);
   };
 
+  const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
+  const handleAdvancedChange = () => setAdvanced(!advanced);
+
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
     const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
@@ -94,7 +97,7 @@ export default function Login(props){
           <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch color={val[2] === 0 ? 'primary' : (val[2] === 1 ? 'warning' : 'success')}/>} label={scopeMap.keyholder}/>
           <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
         </FormGroup>
-        <Accordion disableGutters>
+        <Accordion expanded={advanced} onChange={handleAdvancedChange} disableGutters>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
