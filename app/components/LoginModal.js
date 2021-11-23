@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ScopeBadges from './ScopeBadges';
 
+// eslint-disable-next-line complexity
 export default function Login(props){
   const app = useRealmApp();
   const savScopes = localStorage.getItem('scopes')?.split(',');
@@ -19,8 +20,17 @@ export default function Login(props){
   const navigate = useNavigate();
   const componentMap = { lock: 'My Lock Profile', trans: 'Lock Transfer' };
   const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
+  const val = ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
+    if (new Set(app.currentUser?.customData?.scopes).has(s)){
+      if (new Set(reqScopes).has(s)) return 3;
+      return props.component ? 2 : 3;
+    }
+    if (new Set(reqScopes).has(s)) return 1;
+    return 0;
+  });
 
-  const [scopes, setScopes] = useState(new Set([...exScopes, ...(reqScopes)]));
+  const [scopes, setScopes] = useState(new Set([...exScopes, ...reqScopes]));
+
   const handleChange = s => e => {
     const set = new Set(scopes);
     if (e.target.checked) return setScopes(set.add(s));
@@ -52,10 +62,9 @@ export default function Login(props){
     }, false);
   };
   const handleAbort = () => (props.showLogin ? props.showLogin(false) : navigate('/'));
-  // if component info box with requires scopes
   // ToDo: Warn if not having all granted scopes
   return (
-    <Dialog fullScreen={fullScreen} open={props.open !== false}>
+    <Dialog fullScreen={fullScreen} open>
       <DialogTitle>{app.currentUser ? 'Manage Chaster permissions' : 'Login with Chaster'}</DialogTitle>
       <DialogContent dividers>
         { props.component && (
@@ -69,21 +78,21 @@ export default function Login(props){
         )}
         <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Please select the <b>Chaster scopes</b> you want to grant <b>KittenLocks</b> below:</span>
         <FormGroup sx={{ my: 2, ml: 2 }}>
-          <FormControlLabel disabled control={<Switch defaultChecked />} label={scopeMap.profile}/>
-          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account (always required to login)</FormHelperText>
-          <FormControlLabel disabled={reqScopes.includes('locks')} onChange={handleChange('locks')} checked={scopes.has('locks')} control={<Switch/>} label={scopeMap.locks}/>
-          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks</FormHelperText>
-          <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch/>} label={scopeMap.keyholder}/>
-          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees</FormHelperText>
+          <FormControlLabel disabled control={<Switch defaultChecked color={val[0] === 0 ? 'primary' : (val[0] === 1 ? 'warning' : 'success')}/>} label={scopeMap.profile}/>
+          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account { val[0] && <b>({val[0] > 1 ? 'granted' : 'always required to login'})</b>}</FormHelperText>
+          <FormControlLabel disabled={reqScopes.includes('locks')} onChange={handleChange('locks')} checked={scopes.has('locks')} control={<Switch color={val[1] === 0 ? 'primary' : (val[1] === 1 ? 'warning' : 'success')}/>} label={scopeMap.locks}/>
+          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks { val[1] && <b>({val[1] === 1 ? 'required' : (val[1] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+          <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch color={val[2] === 0 ? 'primary' : (val[2] === 1 ? 'warning' : 'success')}/>} label={scopeMap.keyholder}/>
+          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
         </FormGroup>
         <Accordion disableGutters>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch/>} label={scopeMap.shared_locks}/>
-              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks</FormHelperText>
-              <FormControlLabel disabled={reqScopes.includes('messaging')} onChange={handleChange('messaging')} checked={scopes.has('messaging')} control={<Switch/>} label={scopeMap.messaging}/>
-              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging</FormHelperText>
+              <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch color={val[3] === 0 ? 'primary' : (val[3] === 1 ? 'warning' : 'success')}/>} label={scopeMap.shared_locks}/>
+              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks { val[3] && <b>({val[3] === 1 ? 'required' : (val[3] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+              <FormControlLabel disabled={reqScopes.includes('messaging')} onChange={handleChange('messaging')} checked={scopes.has('messaging')} control={<Switch color={val[4] === 0 ? 'primary' : (val[4] === 1 ? 'warning' : 'success')}/>} label={scopeMap.messaging}/>
+              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging { val[4] && <b>({val[4] === 1 ? 'required' : (val[4] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
             </FormGroup>
           </AccordionDetails>
         </Accordion>

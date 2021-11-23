@@ -148,7 +148,7 @@ export default function App(){
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201 }}/>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
-        <Login open={openLogin} showLogin={showLogin} scopes={logScopes} setAlert={setAlert}/>
+        { openLogin && <Login showLogin={showLogin} scopes={logScopes} setAlert={setAlert}/>}
         <Snackbar open={Boolean(isAlert)} autoHideDuration={15000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={handleAlertClose}>
           <Alert severity={isAlert?.type || 'info'} onClose={handleAlertClose}>{isAlert?.child || 'Unknown Error'}</Alert>
         </Snackbar>
