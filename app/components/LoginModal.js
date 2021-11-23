@@ -18,7 +18,7 @@ export default function Login(props){
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
-  const componentMap = { lock: 'My Lock Profile', trans: 'Lock Transfer' };
+  const componentMap = { lock: 'My Lock Profile', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
   const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
   const val = ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
@@ -93,18 +93,18 @@ export default function Login(props){
           <FormControlLabel disabled control={<Switch defaultChecked color={val[0] === 0 ? 'primary' : (val[0] === 1 ? 'warning' : 'success')}/>} label={scopeMap.profile}/>
           <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account { val[0] && <b>({val[0] > 1 ? 'granted' : 'always required to login'})</b>}</FormHelperText>
           <FormControlLabel disabled={reqScopes.includes('locks')} onChange={handleChange('locks')} checked={scopes.has('locks')} control={<Switch color={val[1] === 0 ? 'primary' : (val[1] === 1 ? 'warning' : 'success')}/>} label={scopeMap.locks}/>
-          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks { val[1] && <b>({val[1] === 1 ? 'required' : (val[1] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks { val[1] > 0 && <b>({val[1] === 1 ? 'required' : (val[1] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
           <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch color={val[2] === 0 ? 'primary' : (val[2] === 1 ? 'warning' : 'success')}/>} label={scopeMap.keyholder}/>
-          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] > 0 && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
         </FormGroup>
         <Accordion expanded={advanced} onChange={handleAdvancedChange} disableGutters>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
               <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch color={val[3] === 0 ? 'primary' : (val[3] === 1 ? 'warning' : 'success')}/>} label={scopeMap.shared_locks}/>
-              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks { val[3] && <b>({val[3] === 1 ? 'required' : (val[3] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks { val[3] > 0 && <b>({val[3] === 1 ? 'required' : (val[3] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
               <FormControlLabel disabled={reqScopes.includes('messaging')} onChange={handleChange('messaging')} checked={scopes.has('messaging')} control={<Switch color={val[4] === 0 ? 'primary' : (val[4] === 1 ? 'warning' : 'success')}/>} label={scopeMap.messaging}/>
-              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging { val[4] && <b>({val[4] === 1 ? 'required' : (val[4] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging { val[4] > 0 && <b>({val[4] === 1 ? 'required' : (val[4] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
             </FormGroup>
           </AccordionDetails>
         </Accordion>

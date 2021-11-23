@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, lazy, useEffect, useState } from 'react';
 import { Alert, LinearProgress, Paper, Skeleton } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
 import JsonView from '../components/JsonView';
+const LockChart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/LockChart'));
 
 function LockHistory(props){
   const [historyJSON, setHistoryJSON] = useState([]);
@@ -25,8 +26,10 @@ function LockHistory(props){
 
   return (
     <>
-      { loading && <LinearProgress/>}
+      { loading && <LinearProgress/> }
       { historyJSON ? <JsonView src={historyJSON} collapsed={1}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { loading && <LinearProgress/> }
+      { historyJSON && !loading && <LockChart data={historyJSON}/> }
     </>
   );
 }

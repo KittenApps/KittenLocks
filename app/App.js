@@ -25,6 +25,7 @@ import Home from './views/Home';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
 const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
+const PublicCharts = lazy(() => import(/* webpackChunkName: "public_charts" */ './views/PublicCharts'));
 const LockTransfer = lazy(() => import(/* webpackChunkName: "lock_transfer" */ './views/LockTransfer'));
 
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
@@ -226,7 +227,7 @@ export default function App(){
             <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My Lock Profile"/></ListItemButton>
             <ListItemButton key={2} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
             <Divider key={-2}/>
-            <ListItemButton disabled key={3} component={NLink} to="/"><ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
+            <ListItemButton key={3} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
             <ListItemButton disabled key={4} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
             <ListItemButton key={5} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
             <Divider key={-3}/>
@@ -249,6 +250,14 @@ export default function App(){
             <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>}>
               <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense>}/>
             </Route>
+            <Route
+              path="charts/*"
+              element={
+                <RequiredScopes scopes={[]} component="charts" setAlert={setAlert}>
+                  <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
+                </RequiredScopes>
+              }
+            />
             <Route
               path="trans/*"
               element={
