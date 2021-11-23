@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ImageList, ImageListItem, ImageListItemBar, Skeleton } from '@mui/material';
+import { ImageList, ImageListItem, ImageListItemBar, Skeleton, Typography } from '@mui/material';
 
 export default function VerficationPictureGalery(props){
   const [pics, setPics] = useState(null);
@@ -13,6 +13,11 @@ export default function VerficationPictureGalery(props){
 
   if (!props.data) return <p>No verifications pictures found!</p>;
   if (!pics) return <Skeleton variant="rectangular" width="100%" height={300} />;
+  if (pics.length === 0) return (
+    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+      It looks like this lock doesn't have any verification pictures yet :(
+    </Typography>
+  );
 
   return (
     <ImageList variant="masonry" cols={3} gap={8}>

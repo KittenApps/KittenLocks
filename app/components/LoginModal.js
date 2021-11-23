@@ -27,7 +27,6 @@ export default function Login(props){
     set.delete(s);
     setScopes(set);
   };
-  console.log(props.component);
 
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
@@ -57,7 +56,7 @@ export default function Login(props){
   // ToDo: Warn if not having all granted scopes
   return (
     <Dialog fullScreen={fullScreen} open={props.open !== false}>
-      <DialogTitle>Login with Chaster</DialogTitle>
+      <DialogTitle>{app.currentUser ? 'Manage Chaster permissions' : 'Login with Chaster'}</DialogTitle>
       <DialogContent dividers>
         { props.component && (
           <Alert severity="info" sx={{ mb: 2 }}>

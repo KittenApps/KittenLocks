@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Grid, InputLabel, LinearProgress, MenuItem,
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, FormControl, Grid, InputLabel, LinearProgress, MenuItem,
          Paper, Select, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -187,6 +187,7 @@ export default function MyLock(){
       <h2>My Locktober progress</h2>
       <Locktober app={app}/>
       <h2>{app.currentUser.customData.username}'s Locks:</h2>
+      { locksJSON?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
           <h3>{j.title} (info):</h3>

@@ -8,7 +8,7 @@ export default function Home(){
           <h2>Welcome to KittenLocks!</h2>
           <p>A pawtastic WebApp to enchance your Chaster experience, <Link href="https://github.com/KittenApps/KittenLocks" target="_blank" rel="noreferrer">built with</Link> ❤ <Link href="https://chaster.app/user/Silizia" target="_blank" rel="noopener">by Silizia ~ Stella</Link>.</p>
           <Avatar src="/appicon.png" sx={{ width: 192, height: 192, m: 'auto' }} />
-          <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} lg={4}>

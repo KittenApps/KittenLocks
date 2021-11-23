@@ -108,9 +108,10 @@ export default function LockTransfer(props){
               <Select labelId="select-label" value={oldLockID} label="Your current lock:" onChange={handleChangeLock} disabled={locks.length === 0}>
                 {locks.map(l => <MenuItem value={l._id} key={l._id}>{l.title} ({l._id})</MenuItem>)}
               </Select>
+              { locks?.length === 0 && <Alert severity="error" sx={{ m: 2 }}><b>Error:</b> It looks like you aren't in any active locks currently.</Alert> }
             </FormControl>
             <VerifyLock lock={locks.find(l => l._id === oldLockID)} setLockOkay={setLockOkay} />
-            <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: 2 }} variant="contained">Select shared lock</Button>
+            <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: locks?.length === 0 ? 0 : 2 }} variant="contained">Select shared lock</Button>
           </StepContent>
         </Step>
         <Step key="sharedLock">
