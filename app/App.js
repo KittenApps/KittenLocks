@@ -156,7 +156,7 @@ export default function App(){
   const handleAlertClose = () => setAlert(null);
 
   return (
-    <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201 }}/>
+    <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
         { openLogin && <Login showLogin={showLogin} scopes={logScopes} setAlert={setAlert} onClose={handleLoginModalClose}/>}
@@ -195,7 +195,7 @@ export default function App(){
             </Typography>
             { app.currentUser
               ? <CardHeader
-                  sx={{ p: 0, '& .MuiCardHeader-action': { mt: 0 } }}
+                  sx={{ p: 0, cursor: 'pointer', '& .MuiCardHeader-action': { mt: 0 } }}
                   avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
                   onClick={handleProfileMenuOpen}
                   action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon/></IconButton>}

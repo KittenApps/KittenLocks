@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Alert, AlertTitle, Skeleton } from '@mui/material';
-import ReactJson from 'react-json-view';
 import { useParams } from 'react-router-dom';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
+import JsonView from '../components/JsonView';
 
 export default function PublicLocks(){
   const { username } = useParams();
@@ -30,14 +30,13 @@ export default function PublicLocks(){
   return (
     <>
       <h2>Public profile of {profileJSON?.user?.username || username}</h2>
-      { profileJSON ? <ReactJson style={{ fontSize: 13 }} src={profileJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={2} name={false} theme="harmonic"/>
-                    : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { profileJSON ? <JsonView src={profileJSON} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
       <h2>Public locks of {profileJSON?.user?.username || username}</h2>
       { locksJSON?.length === 0 && <Alert severity="warning">It looks like <b>{profileJSON?.user?.username || username}</b> doesn't have any public locks yet :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
           <h3>{j.title} (info):</h3>
-          <ReactJson style={{ fontSize: 13 }} src={j} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
+          <JsonView src={j} collapsed={1}/>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <>
               <h3>{j.title} (verification pics):</h3>

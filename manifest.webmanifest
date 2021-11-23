@@ -14,8 +14,8 @@
       "sizes": "192x192"
     }
   ],
-  "start_url": ".",
-  "scope": "https://kittenlocks.netlify.app/",
+  "start_url": "https://kittenlocks.netlify.app/",
+  "scope": "https://kittenlocks.netlify.app",
   "display": "standalone",
   "theme_color": "#1f1d2b",
   "background_color": "#1f1d2b",

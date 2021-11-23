@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Alert, LinearProgress, Paper, Skeleton } from '@mui/material';
-import ReactJson from 'react-json-view';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
+import JsonView from '../components/JsonView';
 
 function LockHistory(props){
   const [historyJSON, setHistoryJSON] = useState([]);
@@ -26,8 +26,7 @@ function LockHistory(props){
   return (
     <>
       { loading && <LinearProgress/>}
-      { historyJSON ? <ReactJson style={{ fontSize: 13 }} src={historyJSON} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
-              : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { historyJSON ? <JsonView src={historyJSON} collapsed={1}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </>
   );
 }
@@ -53,7 +52,7 @@ export default function MyLock(){
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
           <h3>{j.title} (info):</h3>
-          <ReactJson style={{ fontSize: 13 }} src={j} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed={1} name={false} theme="harmonic"/>
+          <JsonView src={j} collapsed={1}/>
           <h3>{j.title} (history):</h3>
           <LockHistory app={app} id={j._id}/>
           { j.extensions.find(e => e.slug === 'verification-picture') && (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, InputLabel, MenuItem, Paper, Select, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
-import ReactJson from 'react-json-view';
+import JsonView from '../components/JsonView';
 
 function VerifyLock(props){
   const [result, setResult] = useState(null);
@@ -38,7 +38,7 @@ function VerifyLock(props){
   return (
     <>
       {result}
-      <ReactJson style={{ fontSize: 13 }} src={props.lock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed name={false} theme="harmonic"/>
+      <JsonView src={props.lock} collapsed/>
     </>
   );
 }
@@ -122,7 +122,7 @@ export default function LockTransfer(props){
               <TextField label="shared lock ID" value={sharedLockID} onChange={handleChangeSharedLockID} variant="outlined" />
               { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" />}
             </FormControl>
-            { sharedLock._id && <ReactJson style={{ fontSize: 13 }} src={sharedLock} quotesOnKeys={false} enableAdd={false} enableEdit={false} enableDelete={false} collapsed name={false} />}
+            { sharedLock._id && <JsonView src={sharedLock} collapsed/>}
             { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained">[BETA] Transfer Lock</Button> }
           </StepContent>
         </Step>

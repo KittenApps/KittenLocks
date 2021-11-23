@@ -76,7 +76,7 @@ export default function Login(props){
   };
 
   return (
-    <Dialog fullScreen={fullScreen} open>
+    <Dialog fullScreen={fullScreen} BackdropProps={{ sx: { backgroundColor: 'rgba(0, 0, 0, 0.75)' } }} open>
       <DialogTitle>{app.currentUser ? 'Manage Chaster permissions' : 'Login with Chaster'}</DialogTitle>
       <DialogContent dividers>
         { props.component && (
