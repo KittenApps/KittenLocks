@@ -127,10 +127,21 @@ export default function App(){
     setProfileMenuAnchorEl(null);
   };
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
-  let logScopes = searchParams.get('login')?.split(',').filter(x => ks.has(x)) || [];
-  if (app.currentUser?.customData?.scopes) logScopes = logScopes.filter(x => !app.currentUser?.customData?.scopes.includes(x));
+  const [logScopes, setLogScopes] = useState(() => {
+    let l = searchParams.get('login')?.split(',').filter(x => ks.has(x)) || [];
+    if (app.currentUser?.customData?.scopes) l = l.filter(x => !app.currentUser?.customData?.scopes.includes(x));
+    return l;
+  });
+  const handleLoginModalClose = () => {
+    setLogScopes([]);
+    const p = {};
+    for (const [k, v] of searchParams.entries()){
+      if (k !== 'login') p[k] = v;
+    }
+    setSearchParams(p);
+  };
 
   const [openLogin, showLogin] = useState(logScopes.length > 0);
   const handleLogin = () => showLogin(true);
@@ -148,9 +159,19 @@ export default function App(){
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201 }}/>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
-        { openLogin && <Login showLogin={showLogin} scopes={logScopes} setAlert={setAlert}/>}
+        { openLogin && <Login showLogin={showLogin} scopes={logScopes} setAlert={setAlert} onClose={handleLoginModalClose}/>}
         <Snackbar open={Boolean(isAlert)} autoHideDuration={15000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={handleAlertClose}>
-          <Alert severity={isAlert?.type || 'info'} onClose={handleAlertClose}>{isAlert?.child || 'Unknown Error'}</Alert>
+          <Alert
+            severity={isAlert?.type || 'info'}
+            action={
+              <Stack spacing={1} direction="row">
+                { isAlert?.scopes && <Button color="inherit" variant="outlined" onClick={() => {setLogScopes(isAlert?.scopes); showLogin(true);}} size="small">Upgrade scopes</Button>}
+                <IconButton color="inherit" onClick={handleAlertClose} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+              </Stack>
+              }
+          >
+            {isAlert?.child || 'Unknown Error'}
+          </Alert>
         </Snackbar>
         <Snackbar open={Boolean(installPrompt)} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} onClose={handlePWAClose}>
           <Alert

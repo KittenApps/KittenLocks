@@ -76,7 +76,7 @@ export default function LockTransfer(props){
 
   const handleTransferLock = () => {
     app.currentUser.functions.transferLock(oldLockID, sharedLock._id, password || '')
-      .then(r => props.setAlert(r.error ? { type: 'error', child: <><b>Error:</b>{r.error}</> } : { type: 'success', child: <><b>Success:</b>Lock sucessfully transfered!</> }));
+      .then(r => props.setAlert(r.error ? { type: 'error', child: <><b>Error:</b> {r.error}</> } : { type: 'success', child: <><b>Success:</b> Lock sucessfully transfered!</> }));
   };
 
   return (

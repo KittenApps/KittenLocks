@@ -52,17 +52,26 @@ export default function Login(props){
     window.addEventListener('message', e => {
       if (e.data.authCode && state === e.data.state){
         e.source.close();
-        app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl })).then(u => console.log(u.scopes, u.grantedScopes));
+        app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl })).then(u => {
+          const mis = u.grantedScopes.filter(x => !new Set(u.scopes).has(x));
+          if (mis.length > 0) props.setAlert({ type: 'warning', child: <><b>Missing granted scopes:</b> You're not using all your already granted scopes :(</>, scopes: u.grantedScopes });
+        });
         localStorage.setItem('scopes', [...scopes].join(','));
         if (props.showLogin) props.showLogin(false);
       } else if (e.data.authCode === null){
         e.source.close();
-        props.setAlert({ type: 'error', child: <><b>Login failed:</b>You need to accept the Chaster OAuth request!</> });
+        props.setAlert({ type: 'error', child: <><b>Login failed:</b> You need to accept the Chaster OAuth request!</> });
       }
     }, false);
   };
-  const handleAbort = () => (props.showLogin ? props.showLogin(false) : navigate('/'));
-  // ToDo: Warn if not having all granted scopes
+  const handleAbort = () => {
+    if (props.showLogin){
+      if (props.onClose) props.onClose();
+      return props.showLogin(false);
+    }
+    navigate('/');
+  };
+
   return (
     <Dialog fullScreen={fullScreen} open>
       <DialogTitle>{app.currentUser ? 'Manage Chaster permissions' : 'Login with Chaster'}</DialogTitle>
