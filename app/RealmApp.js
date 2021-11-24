@@ -1,7 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { App as RealmApp } from 'realm-web';
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { RetryLink } from '@apollo/client/link/retry';
 
 const RealmAppContext = createContext();
+const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
+const httpLink = new HttpLink({ uri: 'https://realm.mongodb.com/api/client/v2.0/app/kittenlocks-gcfgb/graphql' });
+const cache = new InMemoryCache();
 
 export function useRealmApp(){
   const app = useContext(RealmAppContext);
@@ -11,20 +17,19 @@ export function useRealmApp(){
 
 export function RealmAppProvider(props){
   const app = useMemo(() => new RealmApp('kittenlocks-gcfgb'), []);
-
-  // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = useState(app.currentUser);
-  const [u, update] = useState(true);
+  const [lastAuth, setLastAuth] = useState(0);
 
   useEffect(() => {
     currentUser?.refreshCustomData();
+    setLastAuth(Date.now());
   }, [currentUser]);
 
   async function logIn(credentials){
     await app.logIn(credentials);
     if (currentUser === app.currentUser){ // scope upgrade
       await currentUser?.refreshCustomData();
-      update(!u);
+      setLastAuth(Date.now());
     } else { // user logged in / switching users
       setCurrentUser(app.currentUser);
     }
@@ -53,7 +58,18 @@ export function RealmAppProvider(props){
     return accessTokenPromise;
   }
 
+  const authTokenLink = useMemo(() => setContext((_, { headers }) => {
+    const now = Date.now();
+    if (now - lastAuth > 1795000){
+      setLastAuth(now);
+      return currentUser.refreshCustomData().then(() => ({ headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } }));
+    }
+    return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
+  }), [currentUser, lastAuth]);
+
+  const client = useMemo(() => new ApolloClient({ link: from([authTokenLink, retryLink, httpLink]), cache }), [authTokenLink]);
+
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
 
-  return <RealmAppContext.Provider value={wrapped}>{props.children}</RealmAppContext.Provider>;
+  return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{props.children}</ApolloProvider></RealmAppContext.Provider>;
 }

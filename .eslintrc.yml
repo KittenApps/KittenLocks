@@ -90,7 +90,6 @@ rules:
   key-spacing: error
   keyword-spacing: error
   linebreak-style: error
-  lines-around-comment: error
   lines-between-class-members: error
   max-classes-per-file: error
   max-depth: error
