@@ -253,9 +253,9 @@ export default function App(){
             <Route
               path="charts/*"
               element={
-                <RequiredScopes scopes={[]} component="charts" setAlert={setAlert}>
-                  <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
-                </RequiredScopes>
+                /* <RequiredScopes scopes={[]} component="charts" setAlert={setAlert}> */
+                <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
+                /* </RequiredScopes> */
               }
             />
             <Route

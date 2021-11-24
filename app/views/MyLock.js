@@ -29,7 +29,7 @@ function LockHistory(props){
       { loading && <LinearProgress/> }
       { historyJSON ? <JsonView src={historyJSON} collapsed={1}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
       { loading && <LinearProgress/> }
-      { historyJSON && !loading && <LockChart data={historyJSON}/> }
+      { historyJSON && props.timeLogs && !loading && <LockChart data={historyJSON}/> }
     </>
   );
 }
@@ -57,7 +57,7 @@ export default function MyLock(){
           <h3>{j.title} (info):</h3>
           <JsonView src={j} collapsed={1}/>
           <h3>{j.title} (history):</h3>
-          <LockHistory app={app} id={j._id}/>
+          <LockHistory app={app} id={j._id} timeLogs={!j.hideTimeLogs}/>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <>
               <h3>{j.title} (verification pics):</h3>
