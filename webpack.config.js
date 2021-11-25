@@ -61,7 +61,10 @@ module.exports = {
       chunks: 'all'
     }
   },
-  devServer: {
-    historyApiFallback: true
-  }
+  ...(process.env.NODE_ENV === 'development' && {
+    devServer: {
+      historyApiFallback: true
+    },
+    devtool: 'eval-source-map'
+  })
 };
