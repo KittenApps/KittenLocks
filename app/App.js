@@ -1,9 +1,10 @@
-import { Suspense, forwardRef, lazy, useEffect, useState } from 'react';
+import { Suspense, forwardRef, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { Alert, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
-         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Snackbar, Stack, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
+         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 import RequiredScopes from './components/RequiredScopes';
 import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
@@ -93,6 +94,7 @@ function ResponsiveDrawer(props){
 export default function App(){
   const app = useRealmApp();
   const navigate = useNavigate();
+  const notistackRef = useRef(null);
 
   const theme = createTheme({
     palette: {
@@ -148,136 +150,128 @@ export default function App(){
   const handleLogin = () => showLogin(true);
   const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
 
-  const [installPrompt, setInstallPrompt] = useState(null);
-  useEffect(() => window.addEventListener('beforeinstallprompt', e => {e.preventDefault(); setInstallPrompt(e);}), []);
-  const handlePWAClose = () => setInstallPrompt(null);
-  const handlePWAInstall = () => {installPrompt.prompt(); handlePWAClose();};
+  const notistackClose = useCallback(key => {
+    const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
+    return <IconButton onClick={handleNotistackClose(key)} color="inherit" size="small"><CloseIcon fontSize="inherit"/></IconButton>;
+  }, []);
+  const onMissingScopes = s => {setLogScopes(s); showLogin(true);};
 
-  const [isAlert, setAlert] = useState(null);
-  const handleAlertClose = () => setAlert(null);
+  const installPromptAction = useCallback(prompt => {
+    const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
+    const handlePromp = k => () => {prompt(); notistackRef.current.closeSnackbar(k);};
+    return function missingScopes(key){
+      return (
+        <Stack spacing={1} direction="row">
+          <Button color="inherit" variant="outlined" onClick={handlePromp(key)} size="small">Install now</Button>
+          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+        </Stack>
+      );
+    };
+  }, [notistackRef]);
+
+  useEffect(() => window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    notistackRef.current.enqueueSnackbar('Add KittenLocks to your HomeScreen?', { variant: 'info', action: installPromptAction(e.prompt) });
+  }), [installPromptAction]);
 
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline/>
-        { openLogin && <Login showLogin={showLogin} scopes={logScopes} setAlert={setAlert} onClose={handleLoginModalClose}/>}
-        <Snackbar open={Boolean(isAlert)} autoHideDuration={15000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={handleAlertClose}>
-          <Alert
-            severity={isAlert?.type || 'info'}
-            action={
-              <Stack spacing={1} direction="row">
-                { isAlert?.scopes && <Button color="inherit" variant="outlined" onClick={() => {setLogScopes(isAlert?.scopes); showLogin(true); handleAlertClose();}} size="small">Upgrade scopes</Button>}
-                <IconButton color="inherit" onClick={handleAlertClose} size="small"><CloseIcon fontSize="inherit"/></IconButton>
-              </Stack>
-              }
-          >
-            {isAlert?.child || 'Unknown Error'}
-          </Alert>
-        </Snackbar>
-        <Snackbar open={Boolean(installPrompt)} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} onClose={handlePWAClose}>
-          <Alert
-            severity="warning"
-            action={
-              <Stack spacing={1} direction="row">
-                <Button color="inherit" variant="outlined" onClick={handlePWAInstall} size="small">Install now</Button>
-                <IconButton color="inherit" onClick={handlePWAClose} size="small"><CloseIcon fontSize="inherit"/></IconButton>
-              </Stack>
-              }
-          >
-            Add KittenLocks to your HomeScreen?
-          </Alert>
-        </Snackbar>
-        <StyledAppBar open={open} isDesktop={isDesktop} >
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
-            <Avatar src="/appicon.png" sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
-              KittenLocks
-            </Typography>
-            { app.currentUser
-              ? <CardHeader
-                  sx={{ p: 0, cursor: 'pointer', '& .MuiCardHeader-action': { mt: 0 } }}
-                  avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
-                  onClick={handleProfileMenuOpen}
-                  action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon/></IconButton>}
-                  title={app.currentUser.customData.username}
-                  titleTypographyProps={{ fontSize: 16 }}
-                  subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
-                />
-              : <Button variant="contained" onClick={handleLogin} size="small">Login with Chaster</Button>}
-            <Menu
-              anchorEl={profileMenuAnchorEl}
-              open={Boolean(profileMenuAnchorEl)}
-              onClose={handleProfileMenuClose}
-              sx={{ mt: 1 }}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleManage}><ListItemIcon><ManageAccountsIcon/></ListItemIcon>Manage scopes</MenuItem>
-              <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><SettingsIcon/></ListItemIcon>Chaster settings</MenuItem>
-              <Divider/>
-              <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><LogoutIcon/></ListItemIcon>Log out</MenuItem>
-            </Menu>
-          </Toolbar>
-        </StyledAppBar>
-        <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
-          <List onClick={handleListClick}>
-            <ListItemButton key={0} component={NLink} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
-            <Divider key={-1}/>
-            <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My Lock Profile"/></ListItemButton>
-            <ListItemButton key={2} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
-            <Divider key={-2}/>
-            <ListItemButton key={3} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
-            <ListItemButton disabled key={4} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
-            <ListItemButton key={5} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
-            <Divider key={-3}/>
-            <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
-          </List>
-          <div style={{ flexGrow: 1 }}/>
-          <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v0.1 (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
-        </ResponsiveDrawer>
-        <Main open={open} isDesktop={isDesktop}>
-          <DrawerHeader/>
-          <Routes>
-            <Route
-              path="lock/*"
-              element={
-                <RequiredScopes scopes={['locks']} component="lock" setAlert={setAlert}>
-                  <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
-                </RequiredScopes>
-              }
-            />
-            <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>}>
-              <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense>}/>
-            </Route>
-            <Route
-              path="charts/*"
-              element={
-                /* <RequiredScopes scopes={[]} component="charts" setAlert={setAlert}> */
-                <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
-                /* </RequiredScopes> */
-              }
-            />
-            <Route
-              path="trans/*"
-              element={
-                <RequiredScopes scopes={['locks']} component="trans" setAlert={setAlert}>
-                  <Suspense fallback={<p>loading...</p>} ><LockTransfer setAlert={setAlert}/></Suspense>
-                </RequiredScopes>
-              }
-            />
-            <Route
-              path="discord/*"
-              element={
-                <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? (open ? 256 : 16) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
-                  <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"/>
-                </Paper>
-              }
-            />
-            <Route path="*" element={<Home/>} />
-          </Routes>
-        </Main>
-      </Box>
+      <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
+        <Box sx={{ display: 'flex' }}>
+          <CssBaseline/>
+          { openLogin && <Login showLogin={showLogin} scopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
+          <StyledAppBar open={open} isDesktop={isDesktop} >
+            <Toolbar>
+              <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
+              <Avatar src="/appicon.png" sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
+                KittenLocks
+              </Typography>
+              { app.currentUser
+                ? <CardHeader
+                    sx={{ p: 0, cursor: 'pointer', '& .MuiCardHeader-action': { mt: 0 } }}
+                    avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
+                    onClick={handleProfileMenuOpen}
+                    action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon/></IconButton>}
+                    title={app.currentUser.customData.username}
+                    titleTypographyProps={{ fontSize: 16 }}
+                    subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
+                  />
+                : <Button variant="contained" onClick={handleLogin} size="small">Login with Chaster</Button>}
+              <Menu
+                anchorEl={profileMenuAnchorEl}
+                open={Boolean(profileMenuAnchorEl)}
+                onClose={handleProfileMenuClose}
+                sx={{ mt: 1 }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              >
+                <MenuItem onClick={handleManage}><ListItemIcon><ManageAccountsIcon/></ListItemIcon>Manage scopes</MenuItem>
+                <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><SettingsIcon/></ListItemIcon>Chaster settings</MenuItem>
+                <Divider/>
+                <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><LogoutIcon/></ListItemIcon>Log out</MenuItem>
+              </Menu>
+            </Toolbar>
+          </StyledAppBar>
+          <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
+            <List onClick={handleListClick}>
+              <ListItemButton key={0} component={NLink} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
+              <Divider key={-1}/>
+              <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My Lock Profile"/></ListItemButton>
+              <ListItemButton key={2} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
+              <Divider key={-2}/>
+              <ListItemButton key={3} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
+              <ListItemButton disabled key={4} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+              <ListItemButton key={5} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
+              <Divider key={-3}/>
+              <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
+            </List>
+            <div style={{ flexGrow: 1 }}/>
+            <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v0.1 (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
+          </ResponsiveDrawer>
+          <Main open={open} isDesktop={isDesktop}>
+            <DrawerHeader/>
+            <Routes>
+              <Route
+                path="lock/*"
+                element={
+                  <RequiredScopes scopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
+                    <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
+                  </RequiredScopes>
+                }
+              />
+              <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>}>
+                <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense>}/>
+              </Route>
+              <Route
+                path="charts/*"
+                element={
+                  /* <RequiredScopes scopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
+                  <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
+                  /* </RequiredScopes> */
+                }
+              />
+              <Route
+                path="trans/*"
+                element={
+                  <RequiredScopes scopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
+                    <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
+                  </RequiredScopes>
+                }
+              />
+              <Route
+                path="discord/*"
+                element={
+                  <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? (open ? 256 : 16) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
+                    <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"/>
+                  </Paper>
+                }
+              />
+              <Route path="*" element={<Home/>} />
+            </Routes>
+          </Main>
+        </Box>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

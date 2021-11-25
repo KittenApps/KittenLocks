@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, InputLabel, MenuItem, Paper, Select, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
 
 function VerifyLock(props){
@@ -43,8 +44,9 @@ function VerifyLock(props){
   );
 }
 
-export default function LockTransfer(props){
+export default function LockTransfer(){
   const app = useRealmApp();
+  const { enqueueSnackbar } = useSnackbar();
   const [searchParams] = useSearchParams();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -76,7 +78,7 @@ export default function LockTransfer(props){
 
   const handleTransferLock = () => {
     app.currentUser.functions.transferLock(oldLockID, sharedLock._id, password || '')
-      .then(r => props.setAlert(r.error ? { type: 'error', child: <><b>Error:</b> {r.error}</> } : { type: 'success', child: <><b>Success:</b> Lock sucessfully transfered!</> }));
+      .then(r => enqueueSnackbar(r.error ? `Error: ${r.error}` : 'Success: Lock sucessfully transfered!', { variant: r.error ? 'error' : 'success' }));
   };
 
   return (

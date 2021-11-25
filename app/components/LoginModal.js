@@ -1,16 +1,20 @@
-import { useState } from 'react';
+/* eslint-disable unicorn/consistent-destructuring */
+import { useCallback, useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Button, Dialog, DialogActions,
-         DialogContent, DialogTitle, FormControlLabel, FormGroup, FormHelperText, Stack, Switch, useMediaQuery } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Button, Dialog, DialogActions, DialogContent,
+         DialogTitle, FormControlLabel, FormGroup, FormHelperText, IconButton, Stack, Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useSnackbar } from 'notistack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CloseIcon from '@mui/icons-material/Close';
 import ScopeBadges from './ScopeBadges';
 
 // eslint-disable-next-line complexity
 export default function Login(props){
   const app = useRealmApp();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const savScopes = localStorage.getItem('scopes')?.split(',');
   const exScopes = app.currentUser?.customData?.scopes || savScopes || [];
   const reqScopes = ['profile', ...props.scopes] || [];
@@ -40,6 +44,20 @@ export default function Login(props){
 
   const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
   const handleAdvancedChange = () => setAdvanced(!advanced);
+  const { onMissingScopes } = props;
+
+  const missingScopesAction = useCallback(grantedScopes => {
+    const handleNotistackClose = k => () => closeSnackbar(k);
+    const handleMissingScopes = k => () => {onMissingScopes(grantedScopes); closeSnackbar(k);};
+    return function missingScopes(key){
+      return (
+        <Stack spacing={1} direction="row">
+          <Button color="inherit" variant="outlined" onClick={handleMissingScopes(key)} size="small">Upgrade scopes</Button>
+          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+        </Stack>
+      );
+    };
+  }, [closeSnackbar, onMissingScopes]);
 
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
@@ -57,13 +75,13 @@ export default function Login(props){
         e.source.close();
         app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl })).then(u => {
           const mis = u.grantedScopes.filter(x => !new Set(u.scopes).has(x));
-          if (mis.length > 0) props.setAlert({ type: 'warning', child: <><b>Missing granted scopes:</b> You're not using all your already granted scopes :(</>, scopes: u.grantedScopes });
+          if (mis.length > 0) enqueueSnackbar('Missing granted scopes: You\'re not using all your already granted scopes :(', { variant: 'warning', action: missingScopesAction(u.grantedScopes) });
         });
         localStorage.setItem('scopes', [...scopes].join(','));
         if (props.showLogin) props.showLogin(false);
       } else if (e.data.authCode === null){
         e.source.close();
-        props.setAlert({ type: 'error', child: <><b>Login failed:</b> You need to accept the Chaster OAuth request!</> });
+        enqueueSnackbar('Login failed: You need to accept the Chaster OAuth request!', { variant: 'error' });
       }
     }, false);
   };
