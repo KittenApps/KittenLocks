@@ -1,5 +1,5 @@
-import { Fragment, lazy, useEffect, useState } from 'react';
-import { Alert, LinearProgress, Paper, Skeleton } from '@mui/material';
+import { Fragment, Suspense, lazy, useEffect, useState } from 'react';
+import { Alert, FormControlLabel, LinearProgress, Paper, Skeleton, Switch } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
 import JsonView from '../components/JsonView';
@@ -27,30 +27,39 @@ function LockHistory(props){
   return (
     <>
       { loading && <LinearProgress/> }
-      { historyJSON ? <JsonView src={historyJSON} collapsed={1}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { historyJSON ? <JsonView src={historyJSON} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
       { loading && <LinearProgress/> }
-      { historyJSON && props.timeLogs && !loading && <LockChart data={historyJSON}/> }
+      { historyJSON && props.timeLogs && !loading && <Suspense fallback={<p>loading...</p>}><LockChart data={historyJSON}/></Suspense> }
     </>
   );
 }
 
 export default function MyLock(){
   const app = useRealmApp();
+  const [showArchived, setShowArchived] = useState(false);
   const [locksJSON, setLocksJSON] = useState(null);
+
+  const handleShowArchived = e => setShowArchived(e.target.checked);
 
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
     app.getAccessToken().then(({ accessToken }) => {
       const headers = { 'Authorization': `Bearer ${accessToken}` };
-      return fetch('https://api.chaster.app/locks', { headers, signal });
-    }).then(d => d.json()).then(j => setLocksJSON(j));
+      return fetch(`https://api.chaster.app/locks${showArchived ? '?status=all' : ''}`, { headers, signal });
+    }).then(d => d.json()).then(j => setLocksJSON(j.sort((a, b) => {
+      if (a.status !== b.status) return a.status > b.status ? 1 : -1;
+      return a.startDate < b.startDate ? 1 : -1;
+    })));
     return () => controller.abort();
-  }, [app]);
+  }, [app, showArchived]);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <h2>{app.currentUser.customData.username}'s Locks:</h2>
+      <h2>
+        {app.currentUser.customData.username}'s Locks:
+        <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start" sx={{ float: 'right', mr: 2 }}/>
+      </h2>
       { locksJSON?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
