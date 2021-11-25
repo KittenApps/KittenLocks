@@ -29,6 +29,10 @@
       "url": "/locks"
     },
     {
+      "name": "Public Lock Charts",
+      "url": "/charts"
+    },
+    {
       "name": "Lock Transfer",
       "url": "/trans"
     }

@@ -54,7 +54,7 @@ module.exports = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }, { from: 'manifest.webmanifest', to: '.' }] })
+    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }, { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://kittenlocks.netlify.app', 'http://localhost:8080'))) }] })
   ],
   optimization: {
     splitChunks: {
