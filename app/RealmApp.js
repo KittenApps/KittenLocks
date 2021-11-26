@@ -59,6 +59,7 @@ export function RealmAppProvider({ children }){
   }
 
   const authTokenLink = useMemo(() => setContext((_, { headers }) => {
+    if (!currentUser) throw new Error('Login required!');
     const now = Date.now();
     if (now - lastAuth > 1795000){
       setLastAuth(now);
