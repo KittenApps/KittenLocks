@@ -12,12 +12,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import ScopeBadges from './ScopeBadges';
 
 // eslint-disable-next-line complexity
-export default function Login(props){
+export default function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const app = useRealmApp();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const savScopes = localStorage.getItem('scopes')?.split(',');
   const exScopes = app.currentUser?.customData?.scopes || savScopes || [];
-  const reqScopes = ['profile', ...props.scopes] || [];
+  const reqScopes = ['profile', ...(rScopes || [])];
   const misScopes = reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s));
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -27,7 +27,7 @@ export default function Login(props){
   const val = ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
       if (new Set(reqScopes).has(s)) return 3;
-      return props.component ? 2 : 3;
+      return component ? 2 : 3;
     }
     if (new Set(reqScopes).has(s)) return 1;
     return 0;
@@ -44,7 +44,6 @@ export default function Login(props){
 
   const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
   const handleAdvancedChange = () => setAdvanced(!advanced);
-  const { onMissingScopes } = props;
 
   const missingScopesAction = useCallback(grantedScopes => {
     const handleNotistackClose = k => () => closeSnackbar(k);
@@ -78,7 +77,7 @@ export default function Login(props){
           if (mis.length > 0) enqueueSnackbar('Missing granted scopes: You\'re not using all your already granted scopes :(', { variant: 'warning', action: missingScopesAction(u.grantedScopes) });
         });
         localStorage.setItem('scopes', [...scopes].join(','));
-        if (props.showLogin) props.showLogin(false);
+        if (showLogin) showLogin(false);
       } else if (e.data.authCode === null){
         e.source.close();
         enqueueSnackbar('Login failed: You need to accept the Chaster OAuth request!', { variant: 'error' });
@@ -86,9 +85,9 @@ export default function Login(props){
     }, false);
   };
   const handleAbort = () => {
-    if (props.showLogin){
-      if (props.onClose) props.onClose();
-      return props.showLogin(false);
+    if (showLogin){
+      if (onClose) onClose();
+      return showLogin(false);
     }
     navigate('/');
   };
@@ -97,10 +96,10 @@ export default function Login(props){
     <Dialog fullScreen={fullScreen} BackdropProps={{ sx: { backgroundColor: 'rgba(0, 0, 0, 0.75)' } }} open>
       <DialogTitle>{app.currentUser ? 'Manage Chaster permissions' : 'Login with Chaster'}</DialogTitle>
       <DialogContent dividers>
-        { props.component && (
+        { component && (
           <Alert severity="info" sx={{ mb: 2 }}>
             <Stack direction="row" justifyContent="space-between"><AlertTitle>{app.currentUser ? 'Missing Chaster scopes' : 'Chaster Login required'}</AlertTitle><ScopeBadges scopes={reqScopes}/></Stack>
-            You need {app.currentUser ? 'to grant these additional Chaster' : 'a Chaster Login with the following'} scopes to use <b>{componentMap[props.component]}</b>:
+            You need {app.currentUser ? 'to grant these additional Chaster' : 'a Chaster Login with the following'} scopes to use <b>{componentMap[component]}</b>:
             <ul style={{ margin: '7px 0' }}>
               { misScopes.map(s => <li key={s}>{scopeMap[s]}</li>)}
             </ul>

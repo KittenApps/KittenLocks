@@ -15,7 +15,7 @@ export function useRealmApp(){
   return app;
 }
 
-export function RealmAppProvider(props){
+export function RealmAppProvider({ children }){
   const app = useMemo(() => new RealmApp('kittenlocks-gcfgb'), []);
   const [currentUser, setCurrentUser] = useState(app.currentUser);
   const [lastAuth, setLastAuth] = useState(0);
@@ -71,5 +71,5 @@ export function RealmAppProvider(props){
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
 
-  return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{props.children}</ApolloProvider></RealmAppContext.Provider>;
+  return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{children}</ApolloProvider></RealmAppContext.Provider>;
 }

@@ -304,6 +304,7 @@ rules:
   react/jsx-pascal-case: error
   react/jsx-props-no-multi-spaces: error
   react/jsx-wrap-multilines: error
+  react/destructuring-assignment: error
   import/first: error
   import/no-amd: error
   import/no-anonymous-default-export: warn

@@ -16,25 +16,17 @@ class ErrorBoundary extends PureComponent{
   }
 
   render(){
-    if (this.state.error !== null) return (
+    const { error, stack } = this.state;
+    const { children } = this.props;
+    if (error !== null) return (
       <>
         <h1>Oops, something went wrong! :(</h1>
-        <p>
-          <b>
-            Please give the following information to a hard working tech kitten.
-          </b>
-        </p>
-        <p>
-          <u>Error: </u>
-          {this.state.error.toString()}
-        </p>
-        <p>
-          <u>Stack: </u>
-          {this.state.stack}
-        </p>
+        <p><b>Please give the following information to a hard working tech kitten.</b></p>
+        <p><u>Error:</u> {error.toString()}</p>
+        <p><u>Stack:</u> {stack}</p>
       </>
     );
-    return this.props.children;
+    return children;
   }
 }
 

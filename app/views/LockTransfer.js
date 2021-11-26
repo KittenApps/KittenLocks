@@ -5,41 +5,41 @@ import { Alert, AlertTitle, Button, FormControl, InputLabel, MenuItem, Paper, Se
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
 
-function VerifyLock(props){
+function VerifyLock({ lock, setLockOkay }){
   const [result, setResult] = useState(null);
 
   useEffect(() => {
-    if (!props.lock) return;
-    if (props.lock.status !== 'locked'){
+    if (!lock) return;
+    if (lock.status !== 'locked'){
       setResult(<p>❌ lock already unlocked</p>);
-    } else if (!props.lock.keyholder){
+    } else if (!lock.keyholder){
       setResult(<p>✅ in self lock</p>);
-      props.setLockOkay(true);
-    } else if (props.lock.keyholder.isDisabled){
+      setLockOkay(true);
+    } else if (lock.keyholder.isDisabled){
       setResult(<p>✅ keyholder is suspended</p>);
-      props.setLockOkay(true);
-    } else if (props.lock.keyholder.lastSeen > 7 * 24 * 60 * 60){
+      setLockOkay(true);
+    } else if (lock.keyholder.lastSeen > 7 * 24 * 60 * 60){
       setResult(<p>✅ keyholder inactive for more than 1 week</p>);
-      props.setLockOkay(true);
+      setLockOkay(true);
     } else {
-      const timerVisible = props.lock.isAllowedToViewTime;
-      const remainingTime = timerVisible && (new Date(props.lock.endDate).getTime() - Date.now()) / 3600000 < 2;
+      const timerVisible = lock.isAllowedToViewTime;
+      const remainingTime = timerVisible && (new Date(lock.endDate).getTime() - Date.now()) / 3600000 < 2;
       setResult(
         <>
           <p>{timerVisible ? '✅' : '❌' } in keyholder lock with visible timer</p>
           <p>{remainingTime ? '✅' : '❌' } timer is less than 2 hours</p>
         </>
       );
-      if (timerVisible && remainingTime) props.setLockOkay(true);
+      if (timerVisible && remainingTime) setLockOkay(true);
     }
-  }, [props]);
+  }, [lock, setLockOkay]);
 
-  if (!props.lock) return null;
+  if (!lock) return null;
 
   return (
     <>
       {result}
-      <JsonView src={props.lock} collapsed/>
+      <JsonView src={lock} collapsed/>
     </>
   );
 }

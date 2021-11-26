@@ -8,15 +8,15 @@ HighContrastDarkTheme(Highcharts);
 // eslint-disable-next-line new-cap
 Exporting(Highcharts);
 
-export default function LockChart(props){
+export default function LockChart({ history }){
   // eslint-disable-next-line complexity
   const [options, setOptions] = useState(() => {
     const data = [];
     let lastFreeze = 0;
     let time = 0;
     let date;
-    for (let i = props.data.length - 1; i >= 0; i--){
-      const d = props.data[i];
+    for (let i = history.length - 1; i >= 0; i--){
+      const d = history[i];
       if (d.updatedAt !== d.createdAt) console.warn(d);
       switch (d.type){
         case 'locked':
@@ -96,8 +96,8 @@ export default function LockChart(props){
   });
 
   useEffect(() => {
-    setOptions(props.data);
-  }, [props.data]);
+    setOptions(history);
+  }, [history]);
 
   return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
 }

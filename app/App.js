@@ -78,17 +78,17 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end'
 }));
 
-function ResponsiveDrawer(props){
-  if (props.isDesktop) return (
-    <Drawer variant="persistent" anchor="left" open={props.open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
+function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose, children }){
+  if (isDesktop) return (
+    <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
       <DrawerHeader>
-        <IconButton onClick={props.handleDrawerClose}><ChevronLeftIcon/></IconButton>
+        <IconButton onClick={handleDrawerClose}><ChevronLeftIcon/></IconButton>
       </DrawerHeader>
       <Divider />
-      {props.children}
+      {children}
     </Drawer>
   );
-  return <SwipeableDrawer anchor="left" open={props.open} onClose={props.handleDrawerClose} onOpen={props.handleDrawerOpen}>{props.children}</SwipeableDrawer>;
+  return <SwipeableDrawer anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 }
 
 export default function App(){
@@ -159,7 +159,7 @@ export default function App(){
   const installPromptAction = useCallback(prompt => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
     const handlePromp = k => () => {prompt(); notistackRef.current.closeSnackbar(k);};
-    return function missingScopes(key){
+    return function installAction(key){
       return (
         <Stack spacing={1} direction="row">
           <Button color="inherit" variant="outlined" onClick={handlePromp(key)} size="small">Install now</Button>
@@ -179,7 +179,7 @@ export default function App(){
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline/>
-          { openLogin && <Login showLogin={showLogin} scopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
+          { openLogin && <Login showLogin={showLogin} rScopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
           <StyledAppBar open={open} isDesktop={isDesktop} >
             <Toolbar>
               <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
@@ -235,7 +235,7 @@ export default function App(){
               <Route
                 path="lock/*"
                 element={
-                  <RequiredScopes scopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
+                  <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
                     <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
                   </RequiredScopes>
                 }
@@ -246,7 +246,7 @@ export default function App(){
               <Route
                 path="charts/*"
                 element={
-                  /* <RequiredScopes scopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
+                  /* <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
                   <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
                   /* </RequiredScopes> */
                 }
@@ -254,7 +254,7 @@ export default function App(){
               <Route
                 path="trans/*"
                 element={
-                  <RequiredScopes scopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
+                  <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
                     <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
                   </RequiredScopes>
                 }

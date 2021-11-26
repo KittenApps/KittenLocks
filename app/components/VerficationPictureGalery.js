@@ -3,22 +3,22 @@ import { IconButton, ImageListItem, ImageListItemBar, Modal, Skeleton, Typograph
 import Masonry from '@mui/lab/Masonry';
 import IosShareIcon from '@mui/icons-material/IosShare';
 
-export default function VerficationPictureGalery(props){
+export default function VerficationPictureGalery({ data }){
   const [pics, setPics] = useState(null);
   useEffect(() => {
-    if (props.data){
-      Promise.all(props.data.map(e => fetch(`https://api.chaster.app/files/${e.imageKey}`).then(d => d.json())
-                                      .then(d => ({ src: d.url, title: new Date(e.submittedAt) }))))
+    if (data){
+      Promise.all(data.map(e => fetch(`https://api.chaster.app/files/${e.imageKey}`).then(d => d.json())
+                                .then(d => ({ src: d.url, title: new Date(e.submittedAt) }))))
       .then(d => d.sort((a, b) => a.title - b.title)).then(d => setPics(d));
     }
-  }, [props.data]);
+  }, [data]);
 
   const [selected, setSelected] = useState(null);
   const handleClick = img => () => setSelected(img);
   const handleClose = () => setSelected(null);
   const handleShare = url => () => navigator.share({ url });
 
-  if (!props.data) return <p>No verifications pictures found!</p>;
+  if (!data) return <p>No verifications pictures found!</p>;
   if (!pics) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   if (pics.length === 0) return (
     <Typography variant="caption" sx={{ color: 'text.secondary' }}>

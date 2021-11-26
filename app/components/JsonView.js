@@ -1,15 +1,15 @@
 import ReactJson from 'react-json-view';
 
-export default function JsonView(props){
+export default function JsonView({ src, collapsed }){
   return (
     <ReactJson
       style={{ fontSize: 13, wordBreak: 'break-word' }}
-      src={props.src}
+      src={src}
       quotesOnKeys={false}
       enableAdd={false}
       enableEdit={false}
       enableDelete={false}
-      collapsed={props.collapsed}
+      collapsed={collapsed}
       name={false}
       theme="harmonic"
     />

@@ -1,9 +1,9 @@
 import { Avatar, Stack } from '@mui/material';
 
-export default function ScopeBadges(props){
-  const p = props.scopes.includes('profile') ? 'lightblue' : 'grey';
-  const l = props.scopes.includes('locks') ? 'hotpink' : 'grey';
-  const k = props.scopes.includes('keyholder') ? 'violet' : 'grey';
+export default function ScopeBadges({ scopes }){
+  const p = scopes.includes('profile') ? 'lightblue' : 'grey';
+  const l = scopes.includes('locks') ? 'hotpink' : 'grey';
+  const k = scopes.includes('keyholder') ? 'violet' : 'grey';
   return (
     <Stack direction="row" spacing={0.5}>
       <Avatar sx={{ width: 16, height: 16, fontSize: 'inherit', bgcolor: p }} >P</Avatar>
