@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Button, Paper, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { gql, useQuery } from '@apollo/client';
 
 const GetAllUsernames = gql`
   query GetAllUsernames {
