@@ -63,7 +63,7 @@ export default function PublicLocks({ isDesktop }){
       navigate(`/locks/${n.o || n.trim()}`);
     }
   };
-  const filterOptions = createFilterOptions({ stringify: o => `${o.o} ${o.h}`, trim: true });
+  const filterOptions = createFilterOptions({ stringify: o => (o.d ? '' : `${o.o} ${o.h}`), trim: true });
   const handleOpen = () => setOpen(true);
   const handleClose = (e, r) => (isDesktop || r !== 'blur' || username.trim() === '' || username.trim() === selected) && setOpen(false);
 
