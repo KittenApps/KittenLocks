@@ -1,8 +1,11 @@
+/* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import { Autocomplete, Avatar, Box, Paper, TextField, Typography } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
 import { BSON } from 'realm-web';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
 import WarnIcon from '@mui/icons-material/WarningTwoTone';
 import { gql, useQuery } from '@apollo/client';
@@ -20,9 +23,9 @@ const GetAllUsernames = gql`
 export default function PublicLocks(){
   const app = useRealmApp();
   const navigate = useNavigate();
-  const match = useMatch('locks/:username/*')?.params.username;
-  const [username, setUsername] = useState(match || '');
-  const [selected, setSelected] = useState(match || '');
+  const urlUsername = useMatch('locks/:username/*')?.params.username;
+  const [username, setUsername] = useState(urlUsername || '');
+  const [selected, setSelected] = useState(urlUsername || '');
   const [options, setOptions] = useState(app.currentUser ? [
     { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' },
     { o: 'Keyholder scope required', t: 'Your Lockees', d: true },
@@ -59,12 +62,7 @@ export default function PublicLocks(){
       navigate(`/locks/${n.o || n.trim()}`);
     }
   };
-
-  const filterOptions = createFilterOptions({
-    stringify: o => `${o.o} ${o.h}`,
-    trim: true
-  });
-  
+  const filterOptions = createFilterOptions({ stringify: o => `${o.o} ${o.h}`, trim: true });
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
@@ -84,13 +82,17 @@ export default function PublicLocks(){
         forcePopupIcon
         selectOnFocus
         filterOptions={filterOptions}
-        renderOption={(props, op) => (
-          <Box component="li" {...props}>
-            { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
-            {op.o}
-            { op.h && op.h !== '{}' && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({op.h})</Typography> }
-          </Box>
-        )}
+        renderOption={(props, op, { inputValue }) => {
+          const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
+          const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
+          return (
+            <Box component="li" {...props}>
+              { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
+              {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
+              { op.h && op.h !== '{}' && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
+            </Box>
+          );
+        }}
         groupBy={o => o.t}
         getOptionLabel={o => o.o || o}
         getOptionDisabled={o => o.d}

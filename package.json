@@ -40,6 +40,7 @@
     "@mui/icons-material": "^5.2.0",
     "@mui/lab": "^5.0.0-alpha.57",
     "@mui/material": "^5.2.1",
+    "autosuggest-highlight": "^3.2.0",
     "babel-loader": "^8.2.3",
     "babel-plugin-graphql-tag": "^3.3.0",
     "copy-webpack-plugin": "^10.0.0",
