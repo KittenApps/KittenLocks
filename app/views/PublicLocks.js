@@ -20,10 +20,11 @@ const GetAllUsernames = gql`
   }
 `;
 
-export default function PublicLocks(){
+export default function PublicLocks({ isDesktop }){
   const app = useRealmApp();
   const navigate = useNavigate();
   const urlUsername = useMatch('locks/:username/*')?.params.username;
+  const [open, setOpen] = useState(false);
   const [username, setUsername] = useState(urlUsername || '');
   const [selected, setSelected] = useState(urlUsername || '');
   const [options, setOptions] = useState(app.currentUser ? [
@@ -63,9 +64,11 @@ export default function PublicLocks(){
     }
   };
   const filterOptions = createFilterOptions({ stringify: o => `${o.o} ${o.h}`, trim: true });
+  const handleOpen = () => setOpen(true);
+  const handleClose = (e, r) => (isDesktop || r !== 'blur' || username.trim() === '' || username.trim() === selected) && setOpen(false);
 
   return (
-    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
+    <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
       <h1>Public Lock Profiles Search:</h1>
       <Autocomplete
         value={selected}
@@ -75,12 +78,15 @@ export default function PublicLocks(){
         disablePortal
         fullWidth
         freeSolo
-        autoSelect
+        autoSelect={isDesktop}
         blurOnSelect
         clearOnEscape
         openOnFocus
         forcePopupIcon
         selectOnFocus
+        open={open}
+        onOpen={handleOpen}
+        onClose={handleClose}
         filterOptions={filterOptions}
         renderOption={(props, op, { inputValue }) => {
           const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));

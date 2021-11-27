@@ -88,7 +88,7 @@ function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose
       {children}
     </Drawer>
   );
-  return <SwipeableDrawer anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+  return <SwipeableDrawer sx={{ zIndex: 1350 }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 }
 
 export default function App(){
@@ -240,8 +240,8 @@ export default function App(){
                   </RequiredScopes>
                 }
               />
-              <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>}>
-                <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense>}/>
+              <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
+                <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock isDesktop={isDesktop}/></Suspense>}/>
               </Route>
               <Route
                 path="charts/*"
