@@ -3,6 +3,7 @@ import { App as RealmApp } from 'realm-web';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { RetryLink } from '@apollo/client/link/retry';
+import * as Sentry from '@sentry/react';
 
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
@@ -21,7 +22,7 @@ export function RealmAppProvider({ children }){
   const [lastAuth, setLastAuth] = useState(0);
 
   useEffect(() => {
-    currentUser?.refreshCustomData();
+    currentUser?.refreshCustomData().then(d => Sentry.setUser({ username: d.username }));
     setLastAuth(Date.now());
   }, [currentUser]);
 
@@ -37,6 +38,7 @@ export function RealmAppProvider({ children }){
   }
   async function logOut(){
     await app.currentUser?.logOut();
+    Sentry.setUser(null);
     setCurrentUser(app.currentUser); // other logged in user or null
   }
 

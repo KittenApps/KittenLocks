@@ -1,41 +1,37 @@
-import { PureComponent, StrictMode } from 'react';
+import { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { RealmAppProvider } from './RealmApp.js';
 import App from './App';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
+import { Integrations as TracingIntegrations } from '@sentry/tracing';
 
-class ErrorBoundary extends PureComponent{
-  constructor(props){
-    super(props);
-    this.state = { error: null, stack: null };
-  }
-
-  componentDidCatch(error, errorInfo){
-    this.setState({ error, stack: errorInfo.componentStack });
-  }
-
-  render(){
-    const { error, stack } = this.state;
-    const { children } = this.props;
-    if (error !== null) return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, padding: 10, overflow: 'scroll', color: '#ffffff', backgroundColor: '#272533' }}>
-        <h1>Oops, something went wrong! :(</h1>
-        <p><b>Please give the following information to a hard working tech kitten.</b></p>
-        <textarea readOnly style={{ width: '100%', height: 300, backgroundColor: '#343241', color: '#ffffff' }} value={`\`\`\`${error.toString()}${stack}\`\`\``}/>
-        <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777378262474815" title="Discord" width="100%" height="500" allowtransparency="true" frameBorder="0"/>
-      </div>
-    );
-    return children;
-  }
+function errorFallback({ error, componentStack, resetError }){
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, padding: 10, overflow: 'scroll', color: '#ffffff', backgroundColor: '#272533' }}>
+      <h1>Oops, something went wrong! :(</h1>
+      <button onClick={resetError} style={{ width: '100%', border: 0, borderRadius: 4, padding: '4px 10px', color: '#fff', backgroundColor: '#6d7dd1' }}>Try to reset invalid user input state and go back to KittenLocks</button>
+      <p><b>Please give the following information to a hard working tech kitten.</b></p>
+      <textarea readOnly style={{ width: '100%', height: 300, backgroundColor: '#343241', color: '#ffffff' }} value={`\`\`\`${error.toString()}${componentStack}\`\`\``}/>
+      <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777378262474815" title="Discord" width="100%" height="500" allowtransparency="true" frameBorder="0"/>
+    </div>
+  );
 }
 
+if (process.env.CI) Sentry.init({
+  dsn: 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627',
+  release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
+  integrations: [new TracingIntegrations.BrowserTracing()],
+  tracesSampleRate: 1,
+  ignoreErrors: ['AbortError']
+});
 const div = document.createElement('div');
 document.body.append(div);
 
 render(
   <StrictMode>
-    <ErrorBoundary>
+    <Sentry.ErrorBoundary fallback={errorFallback} showDialog>
       <BrowserRouter>
         <RealmAppProvider>
           <HelmetProvider>
@@ -57,6 +53,6 @@ render(
           </HelmetProvider>
         </RealmAppProvider>
       </BrowserRouter>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   </StrictMode>, div
 );

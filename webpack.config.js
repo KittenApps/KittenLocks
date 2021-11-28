@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -12,7 +13,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'static/js/[name].js',
-    chunkFilename: 'static/js/[name].js'
+    chunkFilename: 'static/js/[name].js',
+    clean: true
   },
   resolve: { extensions: ['.js'], fallback: { 'crypto': false } },
   module: {
@@ -32,7 +34,8 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin({ CI: '', COMMIT_REF: 'dev' }),
+    // eslint-disable-next-line camelcase
+    new webpack.EnvironmentPlugin({ CI: '', COMMIT_REF: 'dev', npm_package_version: 'dev' }),
     new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/', favicon: 'favicon.png' }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
@@ -54,17 +57,26 @@ module.exports = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [{ from: 'appicon.png', to: '.' }, { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://kittenlocks.netlify.app', 'http://localhost:8080'))) }] })
+    new CopyPlugin({ patterns: [
+      { from: 'appicon.png', to: '.' },
+      { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://kittenlocks.netlify.app', 'http://localhost:8080'))) }
+    ] }),
+    ...(process.env.CI && [
+      new SentryWebpackPlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: 'kittenlocks',
+        release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
+        include: './public',
+        setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
+      })
+    ] || [])
   ],
   optimization: {
     splitChunks: {
       chunks: 'all'
     }
   },
-  ...(process.env.NODE_ENV === 'development' && {
-    devServer: {
-      historyApiFallback: true
-    },
-    devtool: 'eval-source-map'
-  })
+  devServer: {
+    historyApiFallback: true
+  },
+  devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map'
 };

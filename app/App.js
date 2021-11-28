@@ -1,8 +1,8 @@
 import { Suspense, forwardRef, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
-         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, SwipeableDrawer, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
+         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import RequiredScopes from './components/RequiredScopes';
@@ -23,11 +23,23 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import Home from './views/Home';
+import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
 const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
 const PublicCharts = lazy(() => import(/* webpackChunkName: "public_charts" */ './views/PublicCharts'));
 const LockTransfer = lazy(() => import(/* webpackChunkName: "lock_transfer" */ './views/LockTransfer'));
+
+function ErrorFallback({ error, componentStack, resetError }){
+  return (
+    <Alert severity="error" sx={{ '& .MuiAlert-message': { width: '100%' } }}>
+      <AlertTitle>Oops, something went wrong! :(</AlertTitle>
+      <p><b>Please give the following information to a hard working tech kitten.</b></p>
+      <TextField multiline fullWidth label="Error message" InputProps={{ readOnly: true }} value={`\`\`\`\n${error.toString()}${componentStack}\n\`\`\``}/>
+      <Button variant="contained" onClick={resetError} fullWidth sx={{ mt: 1 }}>Try to reset invalid user input state and go back ...</Button>
+    </Alert>
+  );
+}
 
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
 NLink.displayName = 'NLink';
@@ -231,44 +243,46 @@ export default function App(){
           </ResponsiveDrawer>
           <Main open={open} isDesktop={isDesktop}>
             <DrawerHeader/>
-            <Routes>
-              <Route
-                path="lock/*"
-                element={
-                  <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
-                    <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
-                  </RequiredScopes>
-                }
-              />
-              <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
-                <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock isDesktop={isDesktop}/></Suspense>}/>
-              </Route>
-              <Route
-                path="charts/*"
-                element={
-                  /* <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
-                  <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
-                  /* </RequiredScopes> */
-                }
-              />
-              <Route
-                path="trans/*"
-                element={
-                  <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
-                    <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
-                  </RequiredScopes>
-                }
-              />
-              <Route
-                path="discord/*"
-                element={
-                  <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? (open ? 256 : 16) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
-                    <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"/>
-                  </Paper>
-                }
-              />
-              <Route path="*" element={<Home/>} />
-            </Routes>
+            <ErrorBoundary fallback={ErrorFallback} showDialog>
+              <Routes>
+                <Route
+                  path="lock/*"
+                  element={
+                    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
+                      <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
+                    </RequiredScopes>
+                  }
+                />
+                <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
+                  <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock isDesktop={isDesktop}/></Suspense>}/>
+                </Route>
+                <Route
+                  path="charts/*"
+                  element={
+                    /* <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
+                    <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
+                    /* </RequiredScopes> */
+                  }
+                />
+                <Route
+                  path="trans/*"
+                  element={
+                    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
+                      <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
+                    </RequiredScopes>
+                  }
+                />
+                <Route
+                  path="discord/*"
+                  element={
+                    <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? (open ? 256 : 16) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
+                      <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"/>
+                    </Paper>
+                  }
+                />
+                <Route path="*" element={<Home/>} />
+              </Routes>
+            </ErrorBoundary>
           </Main>
         </Box>
       </SnackbarProvider>
