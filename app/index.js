@@ -19,12 +19,12 @@ class ErrorBoundary extends PureComponent{
     const { error, stack } = this.state;
     const { children } = this.props;
     if (error !== null) return (
-      <>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, padding: 10, overflow: 'scroll', color: '#ffffff', backgroundColor: '#272533' }}>
         <h1>Oops, something went wrong! :(</h1>
         <p><b>Please give the following information to a hard working tech kitten.</b></p>
-        <p><u>Error:</u> {error.toString()}</p>
-        <p><u>Stack:</u> {stack}</p>
-      </>
+        <textarea readOnly style={{ width: '100%', height: 300, backgroundColor: '#343241', color: '#ffffff' }} value={`\`\`\`${error.toString()}${stack}\`\`\``}/>
+        <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777378262474815" title="Discord" width="100%" height="500" allowtransparency="true" frameBorder="0"/>
+      </div>
     );
     return children;
   }
