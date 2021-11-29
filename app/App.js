@@ -54,10 +54,10 @@ function ErrorFallback({ error, componentStack, resetError }){
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
 NLink.displayName = 'NLink';
 
-const SLink = forwardRef((props, ref) => <ScrollLink smooth offset={-72} activeClass="Mui-selected" spy hashSpy {...props} innerRef={ref}/>);
+const SLink = forwardRef((props, _) => <ScrollLink smooth offset={-72} spyThrottle={500} activeClass="Mui-selected" spy {...props}/>);
 SLink.displayName = 'SLink';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isDesktop' })(({ theme, open, isDesktop }) => ({
   flexGrow: 1,
@@ -113,7 +113,7 @@ function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose
       {children}
     </Drawer>
   );
-  return <SwipeableDrawer sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+  return <SwipeableDrawer elevation={2} sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 }
 
 export default function App(){
@@ -205,7 +205,7 @@ export default function App(){
     if (subNav && subNav.locks.length > 0) setSubNavSelected(subNav.locks[0].id);
   }, [subNav]);
   const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();};
-  const handleSubNavClick = s => () => setSubNavSelected(s);
+  const handleSubNavActive = s => () => setSubNavSelected(s);
 
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
@@ -260,34 +260,34 @@ export default function App(){
               <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
             </List>
             { subNav && (
-              <List onClick={handleListClick} disablePadding>
+              <List disablePadding>
                 <Divider key={-1}/>
                 <ListSubheader sx={{ textAlign: 'center' }}>SUB-NAVIGATION BAR</ListSubheader>
                 { subNav.public && (
                   <Fragment key="public">
-                    <ListItemButton to="search" component={SLink} dense><ListItemIcon><SearchIcon/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
-                    <ListItemButton to="profile" component={SLink} dense><ListItemIcon><AccountBoxIcon/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
+                    <ListItemButton onClick={handleListClick} component={SLink} to="search" hashSpy dense><ListItemIcon><SearchIcon/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
+                    <ListItemButton onClick={handleListClick} component={SLink} to="profile" hashSpy dense><ListItemIcon><AccountBoxIcon/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
                   </Fragment>
                 )}
                 { subNav.locks.map(j => (
                   <Fragment key={j.id}>
-                    <ListItem component={SLink} to={`info-${j.id}`} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
-                      <ListItemButton onClick={handleSubNavClick(j.id)}><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title}/></ListItemButton>
+                    <ListItem onClick={handleListClick} component={SLink} to={j.id} onSetActive={handleSubNavActive(j.id)} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
+                      <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title}/></ListItemButton>
                     </ListItem>
                     <Collapse in={subNavSelected === j.id} timeout="auto">
                       <List component="div" disablePadding>
-                        <ListItemButton component={SLink} key={`info-${j.id}`} to={`info-${j.id}`} dense sx={{ pl: 4 }}>
+                        <ListItemButton key={`info-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${j.id}`} dense sx={{ pl: 4 }}>
                           <ListItemIcon><InfoIcon/></ListItemIcon>
                           <ListItemText primary="Lock Information"/>
                         </ListItemButton>
                         { j.hist && (
-                          <ListItemButton component={SLink} key={`hist-${j.id}`} to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
+                          <ListItemButton key={`hist-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
                             <ListItemIcon><RestoreIcon/></ListItemIcon>
                             <ListItemText primary="Lock History"/>
                           </ListItemButton>
                         )}
                         { j.veri && (
-                          <ListItemButton component={SLink} key={`veri-${j.id}`} to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
+                          <ListItemButton key={`veri-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
                             <ListItemIcon><ImageIcon/></ListItemIcon>
                             <ListItemText primary="Verifications"/>
                           </ListItemButton>

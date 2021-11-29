@@ -44,7 +44,7 @@ export default function PublicLocks({ setSubNav }){
       <Typography variant="h4" gutterBottom component="p">Public locks of {profileJSON?.user?.username || username}</Typography>
       { locksJSON?.length === 0 && <Alert severity="warning">It looks like <b>{profileJSON?.user?.username || username}</b> doesn't have any public locks yet :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
-        <Fragment key={j._id}>
+        <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
             <JsonView src={j} collapsed={1}/>
@@ -55,7 +55,7 @@ export default function PublicLocks({ setSubNav }){
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
-        </Fragment>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
+        </ScrollElement>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </>
   );
 }

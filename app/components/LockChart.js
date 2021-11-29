@@ -85,7 +85,7 @@ export default function LockChart({ history }){
         case 'tasks_vote_ended':
         case 'tasks_task_completed':
         case 'tasks_task_failed':
-        case 'session_offer_accepte':
+        case 'session_offer_accepted':
         case 'timer_guessed':
           break;
         default:
