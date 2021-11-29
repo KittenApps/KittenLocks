@@ -9,6 +9,7 @@ import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
 import WarnIcon from '@mui/icons-material/WarningTwoTone';
 import { gql, useQuery } from '@apollo/client';
+import { Element as ScrollElement } from 'react-scroll';
 
 const GetAllUsernames = gql`
   query GetAllUsernames($userId: ObjectId!) {
@@ -69,42 +70,44 @@ export default function PublicLocks({ isDesktop }){
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <h1>Public Lock Profiles Search:</h1>
-      <Autocomplete
-        value={selected}
-        onChange={handleUsernameSearch}
-        inputValue={username}
-        onInputChange={onChangeUsername}
-        disablePortal
-        fullWidth
-        freeSolo
-        autoSelect={isDesktop}
-        blurOnSelect
-        clearOnEscape
-        openOnFocus
-        forcePopupIcon
-        selectOnFocus
-        open={open}
-        onOpen={handleOpen}
-        onClose={handleClose}
-        filterOptions={filterOptions}
-        renderOption={(props, op, { inputValue }) => {
-          const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
-          const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
-          return (
-            <Box component="li" {...props}>
-              { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
-              {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
-              { op.h && op.h !== '{}' && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
-            </Box>
-          );
-        }}
-        groupBy={o => o.t}
-        getOptionLabel={o => o.o || o}
-        getOptionDisabled={o => o.d}
-        options={options}
-        renderInput={params => <TextField {...params} label="Username"/>}
-      />
+      <ScrollElement name="search" style={{ paddingBottom: 8 }}>
+        <Typography variant="h3" gutterBottom component="p">Public Lock Profile Search:</Typography>
+        <Autocomplete
+          value={selected}
+          onChange={handleUsernameSearch}
+          inputValue={username}
+          onInputChange={onChangeUsername}
+          disablePortal
+          fullWidth
+          freeSolo
+          autoSelect={isDesktop}
+          blurOnSelect
+          clearOnEscape
+          openOnFocus
+          forcePopupIcon
+          selectOnFocus
+          open={open}
+          onOpen={handleOpen}
+          onClose={handleClose}
+          filterOptions={filterOptions}
+          renderOption={(props, op, { inputValue }) => {
+            const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
+            const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
+            return (
+              <Box component="li" {...props}>
+                { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
+                {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
+                { op.h && op.h !== '{}' && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
+              </Box>
+            );
+          }}
+          groupBy={o => o.t}
+          getOptionLabel={o => o.o || o}
+          getOptionDisabled={o => o.d}
+          options={options}
+          renderInput={params => <TextField {...params} label="Username"/>}
+        />
+      </ScrollElement>
       <Outlet/>
     </Paper>
   );

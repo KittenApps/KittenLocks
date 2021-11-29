@@ -1,8 +1,10 @@
 import { Fragment, Suspense, lazy, useEffect, useState } from 'react';
-import { Alert, FormControlLabel, LinearProgress, Paper, Skeleton, Switch } from '@mui/material';
+import { Alert, FormControlLabel, LinearProgress, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
 import JsonView from '../components/JsonView';
+import { Element as ScrollElement } from 'react-scroll';
+
 const LockChart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/LockChart'));
 
 function LockHistory({ app, id, timeLogs }){
@@ -34,7 +36,7 @@ function LockHistory({ app, id, timeLogs }){
   );
 }
 
-export default function MyLock(){
+export default function MyLock({ setSubNav }){
   const app = useRealmApp();
   const [showArchived, setShowArchived] = useState(false);
   const [locksJSON, setLocksJSON] = useState(null);
@@ -54,24 +56,33 @@ export default function MyLock(){
     return () => controller.abort();
   }, [app, showArchived]);
 
+  useEffect(() => {
+    if (locksJSON) setSubNav({ public: null, locks: locksJSON.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    return () => setSubNav(null);
+  }, [locksJSON, setSubNav]);
+
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <h2>
+      <Typography variant="h4" gutterBottom component="p">
         {app.currentUser.customData.username}'s Locks:
         <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start" sx={{ float: 'right', mr: 2 }}/>
-      </h2>
+      </Typography>
       { locksJSON?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
-          <h3>{j.title} (info):</h3>
-          <JsonView src={j} collapsed={1}/>
-          <h3>{j.title} (history):</h3>
-          <LockHistory app={app} id={j._id} timeLogs={!j.hideTimeLogs}/>
+          <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
+            <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
+            <JsonView src={j} collapsed={1}/>
+          </ScrollElement>
+          <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
+            <Typography variant="h5" gutterBottom component="p">{j.title} (history):</Typography>
+            <LockHistory app={app} id={j._id} timeLogs={!j.hideTimeLogs}/>
+          </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
-            <>
-              <h3>{j.title} (verification pics):</h3>
+            <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
+              <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
-            </>
+            </ScrollElement>
           )}
         </Fragment>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>

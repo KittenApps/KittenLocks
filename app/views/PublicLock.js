@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Alert, AlertTitle, Skeleton } from '@mui/material';
+import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
 import JsonView from '../components/JsonView';
+import { Element as ScrollElement } from 'react-scroll';
 
-export default function PublicLocks(){
+export default function PublicLocks({ setSubNav }){
   const { username } = useParams();
   const [profileJSON, setProfileJSON] = useState(null);
   const [locksJSON, setLocksJSON] = useState(null);
@@ -18,7 +19,14 @@ export default function PublicLocks(){
       setLocksJSON(ljson);
     }
     fetchData();
+    setProfileJSON(null);
+    setLocksJSON(null);
   }, [username]);
+
+  useEffect(() => {
+    if (locksJSON) setSubNav({ public: profileJSON.user.username, locks: locksJSON.map(j => ({ id: j._id, title: j.title, hist: false, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    return () => setSubNav(null);
+  }, [profileJSON, locksJSON, setSubNav]);
 
   if (profileJSON?.statusCode === 404) return (
     <Alert severity="error" sx={{ mt: 2 }}>
@@ -29,19 +37,23 @@ export default function PublicLocks(){
 
   return (
     <>
-      <h2>Public profile of {profileJSON?.user?.username || username}</h2>
-      { profileJSON ? <JsonView src={profileJSON} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
-      <h2>Public locks of {profileJSON?.user?.username || username}</h2>
+      <ScrollElement name="profile" style={{ paddingBottom: 8 }}>
+        <Typography variant="h4" gutterBottom component="p">Public profile of {profileJSON?.user?.username || username}</Typography>
+        { profileJSON ? <JsonView src={profileJSON} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      </ScrollElement>
+      <Typography variant="h4" gutterBottom component="p">Public locks of {profileJSON?.user?.username || username}</Typography>
       { locksJSON?.length === 0 && <Alert severity="warning">It looks like <b>{profileJSON?.user?.username || username}</b> doesn't have any public locks yet :(</Alert> }
       { locksJSON ? locksJSON.map(j => (
         <Fragment key={j._id}>
-          <h3>{j.title} (info):</h3>
-          <JsonView src={j} collapsed={1}/>
+          <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
+            <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
+            <JsonView src={j} collapsed={1}/>
+          </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
-            <>
-              <h3>{j.title} (verification pics):</h3>
+            <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
+              <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
-            </>
+            </ScrollElement>
           )}
         </Fragment>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </>

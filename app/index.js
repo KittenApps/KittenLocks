@@ -27,6 +27,7 @@ if (process.env.CI) Sentry.init({
   ignoreErrors: ['AbortError']
 });
 const div = document.createElement('div');
+div.id = 'container';
 document.body.append(div);
 
 render(

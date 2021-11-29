@@ -1,10 +1,12 @@
-import { Suspense, forwardRef, lazy, useCallback, useEffect, useRef, useState } from 'react';
+/* eslint-disable max-lines */
+import { Fragment, Suspense, forwardRef, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItemButton,
-         ListItemIcon, ListItemText, Menu, MenuItem, Paper, Stack, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, Collapse, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton,
+         ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem, Paper, Stack, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import { Link as ScrollLink } from 'react-scroll';
 import RequiredScopes from './components/RequiredScopes';
 import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
@@ -22,6 +24,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import LockClockIcon from '@mui/icons-material/LockClockTwoTone';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import InfoIcon from '@mui/icons-material/InfoTwoTone';
+import RestoreIcon from '@mui/icons-material/Restore';
+import ImageIcon from '@mui/icons-material/ImageTwoTone';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
@@ -43,6 +53,9 @@ function ErrorFallback({ error, componentStack, resetError }){
 
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
 NLink.displayName = 'NLink';
+
+const SLink = forwardRef((props, ref) => <ScrollLink smooth offset={-72} activeClass="Mui-selected" spy hashSpy {...props} innerRef={ref}/>);
+SLink.displayName = 'SLink';
 
 const drawerWidth = 240;
 
@@ -100,7 +113,7 @@ function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose
       {children}
     </Drawer>
   );
-  return <SwipeableDrawer sx={{ zIndex: 1350 }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+  return <SwipeableDrawer sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 }
 
 export default function App(){
@@ -186,6 +199,14 @@ export default function App(){
     notistackRef.current.enqueueSnackbar('Add KittenLocks to your HomeScreen?', { variant: 'info', action: installPromptAction(e.prompt) });
   }), [installPromptAction]);
 
+  const [subNav, setSubNav] = useState(null);
+  const [subNavSelected, setSubNavSelected] = useState('');
+  useEffect(() => {
+    if (subNav && subNav.locks.length > 0) setSubNavSelected(subNav.locks[0].id);
+  }, [subNav]);
+  const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();};
+  const handleSubNavClick = s => () => setSubNavSelected(s);
+
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
@@ -238,6 +259,45 @@ export default function App(){
               <Divider key={-3}/>
               <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
             </List>
+            { subNav && (
+              <List onClick={handleListClick} disablePadding>
+                <Divider key={-1}/>
+                <ListSubheader sx={{ textAlign: 'center' }}>SUB-NAVIGATION BAR</ListSubheader>
+                { subNav.public && (
+                  <Fragment key="public">
+                    <ListItemButton to="search" component={SLink} dense><ListItemIcon><SearchIcon/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
+                    <ListItemButton to="profile" component={SLink} dense><ListItemIcon><AccountBoxIcon/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
+                  </Fragment>
+                )}
+                { subNav.locks.map(j => (
+                  <Fragment key={j.id}>
+                    <ListItem component={SLink} to={`info-${j.id}`} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
+                      <ListItemButton onClick={handleSubNavClick(j.id)}><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title}/></ListItemButton>
+                    </ListItem>
+                    <Collapse in={subNavSelected === j.id} timeout="auto">
+                      <List component="div" disablePadding>
+                        <ListItemButton component={SLink} key={`info-${j.id}`} to={`info-${j.id}`} dense sx={{ pl: 4 }}>
+                          <ListItemIcon><InfoIcon/></ListItemIcon>
+                          <ListItemText primary="Lock Information"/>
+                        </ListItemButton>
+                        { j.hist && (
+                          <ListItemButton component={SLink} key={`hist-${j.id}`} to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
+                            <ListItemIcon><RestoreIcon/></ListItemIcon>
+                            <ListItemText primary="Lock History"/>
+                          </ListItemButton>
+                        )}
+                        { j.veri && (
+                          <ListItemButton component={SLink} key={`veri-${j.id}`} to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
+                            <ListItemIcon><ImageIcon/></ListItemIcon>
+                            <ListItemText primary="Verifications"/>
+                          </ListItemButton>
+                        )}
+                      </List>
+                    </Collapse>
+                  </Fragment>
+                ))}
+              </List>
+            )}
             <div style={{ flexGrow: 1 }}/>
             <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v0.1 (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
           </ResponsiveDrawer>
@@ -249,12 +309,12 @@ export default function App(){
                   path="lock/*"
                   element={
                     <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
-                      <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense>
+                      <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense>
                     </RequiredScopes>
                   }
                 />
                 <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
-                  <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock isDesktop={isDesktop}/></Suspense>}/>
+                  <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense>}/>
                 </Route>
                 <Route
                   path="charts/*"
