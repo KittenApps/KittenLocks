@@ -7,7 +7,7 @@ import { Element as ScrollElement } from 'react-scroll';
 
 const LockChart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/LockChart'));
 
-function LockHistory({ app, id, timeLogs }){
+function LockHistory({ app, id, startTime }){
   const [historyJSON, setHistoryJSON] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ function LockHistory({ app, id, timeLogs }){
       { loading && <LinearProgress/> }
       { historyJSON ? <JsonView src={historyJSON} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
       { loading && <LinearProgress/> }
-      { historyJSON && timeLogs && !loading && <Suspense fallback={<p>loading...</p>}><LockChart history={historyJSON}/></Suspense> }
+      { historyJSON && startTime && !loading && <Suspense fallback={<p>loading...</p>}><LockChart history={historyJSON} startTime={startTime}/></Suspense> }
     </>
   );
 }
@@ -76,7 +76,7 @@ export default function MyLock({ setSubNav }){
           </ScrollElement>
           <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (history):</Typography>
-            <LockHistory app={app} id={j._id} timeLogs={!j.hideTimeLogs}/>
+            <LockHistory app={app} id={j._id} startTime={j.hideTimeLogs ? 0 : Date.parse(j.minDate)}/>
           </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>

@@ -8,12 +8,12 @@ HighContrastDarkTheme(Highcharts);
 // eslint-disable-next-line new-cap
 Exporting(Highcharts);
 
-export default function LockChart({ history }){
+export default function LockChart({ history, startTime }){
   // eslint-disable-next-line complexity
   const [options, setOptions] = useState(() => {
     const data = [];
     let lastFreeze = 0;
-    let time = 0;
+    let time = startTime;
     let date;
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
@@ -21,56 +21,56 @@ export default function LockChart({ history }){
       if (d.updatedAt !== d.createdAt) console.warn(d);
       switch (d.type){
         case 'locked':
-          data.push([new Date(d.updatedAt).getTime(), time]);
+          data.push([Date.parse(d.updatedAt), time]);
           break;
         case 'time_changed':
         case 'link_time_changed':
-          date = new Date(d.updatedAt).getTime();
+          date = Date.parse(d.updatedAt);
           if (lastFreeze > 0){
-            time += (date / 1000 - lastFreeze) / (60 * 60 * 24);
-            lastFreeze = date / 1000;
+            time += date - lastFreeze;
+            lastFreeze = date;
           }
           data.push([date - 1, time]);
-          time += d.payload.duration / (60 * 60 * 24);
+          time += d.payload.duration * 1000;
           data.push([date, time]);
           break;
         case 'pillory_out':
-          date = new Date(d.updatedAt).getTime();
+          date = Date.parse(d.updatedAt);
           if (lastFreeze > 0){
-            time += (date / 1000 - lastFreeze) / (60 * 60 * 24);
-            lastFreeze = date / 1000;
+            time += date - lastFreeze;
+            lastFreeze = date;
           }
           data.push([date - 1, time]);
-          time += d.payload.timeAdded / (60 * 60 * 24);
+          time += d.payload.timeAdded * 1000;
           data.push([date, time]);
           break;
         case 'temporary_opening_locked_late':
-          date = new Date(d.updatedAt).getTime();
+          date = Date.parse(d.updatedAt);
           if (lastFreeze > 0){
-            time += (date / 1000 - lastFreeze) / (60 * 60 * 24);
-            lastFreeze = date / 1000;
+            time += date - lastFreeze;
+            lastFreeze = date;
           }
           data.push([date - 1, time]);
-          time += d.payload.penaltyTime / (60 * 60 * 24);
+          time += d.payload.penaltyTime * 1000;
           data.push([date, time]);
           break;
         case 'lock_frozen':
-          date = new Date(d.updatedAt).getTime();
+          date = Date.parse(d.updatedAt);
           data.push([date, time]);
-          lastFreeze = date / 1000;
+          lastFreeze = date;
           break;
         case 'lock_unfrozen':
-          date = new Date(d.updatedAt).getTime();
-          time += (date / 1000 - lastFreeze) / (60 * 60 * 24);
+          date = Date.parse(d.updatedAt);
+          time += date - lastFreeze;
           lastFreeze = 0;
           data.push([date, time]);
           break;
         case 'unlocked':
         case 'deserted':
-          date = new Date(d.updatedAt).getTime();
+          date = Date.parse(d.updatedAt);
           if (lastFreeze > 0){
-            time += (date / 1000 - lastFreeze) / (60 * 60 * 24);
-            lastFreeze = date / 1000;
+            time += date - lastFreeze;
+            lastFreeze = date;
           }
           data.push([date, time]);
           break;
@@ -94,7 +94,8 @@ export default function LockChart({ history }){
           console.warn(d);
       }
     }
-    return { title: { text: 'added Time' }, series: [{ data }] };
+    // eslint-disable-next-line react/no-this-in-sfc
+    return { title: { text: 'added Time' }, series: [{ data }], xAxis: { type: 'datetime', ordinal: false }, yAxis: { title: { text: 'unlock date' }, type: 'datetime', crosshair: true }, tooltip: { pointFormatter(){return `unlock date: ${new Date(this.y).toLocaleString()}`;} } };
   });
 
   useEffect(() => {
