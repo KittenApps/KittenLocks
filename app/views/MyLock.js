@@ -1,4 +1,4 @@
-import { Fragment, Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Alert, FormControlLabel, LinearProgress, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';

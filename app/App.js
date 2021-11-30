@@ -54,6 +54,7 @@ function ErrorFallback({ error, componentStack, resetError }){
 const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
 NLink.displayName = 'NLink';
 
+// eslint-disable-next-line no-unused-vars
 const SLink = forwardRef((props, _) => <ScrollLink smooth offset={-72} spyThrottle={500} activeClass="Mui-selected" spy {...props}/>);
 SLink.displayName = 'SLink';
 

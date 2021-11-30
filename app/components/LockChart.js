@@ -17,6 +17,7 @@ export default function LockChart({ history }){
     let date;
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
+      // eslint-disable-next-line no-console
       if (d.updatedAt !== d.createdAt) console.warn(d);
       switch (d.type){
         case 'locked':
@@ -89,6 +90,7 @@ export default function LockChart({ history }){
         case 'timer_guessed':
           break;
         default:
+          // eslint-disable-next-line no-console
           console.warn(d);
       }
     }

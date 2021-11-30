@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
