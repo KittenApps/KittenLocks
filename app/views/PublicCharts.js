@@ -10,7 +10,7 @@ export default function PublicCharts(){
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <h1>Public Lock Chart Demo Silizia:</h1>
-      { history ? <LockChart history={history} startTime={Date.parse('2021-07-12T22:52:58.000Z')}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { history ? <LockChart history={history} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
 }
