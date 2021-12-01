@@ -53,7 +53,7 @@ export default function PublicLocks({ isDesktop }){
     const t = 'other KittenLocks users';
     if (data) setOptions(op => {
       const set = new Set(op.map(o => o.o));
-      return [...op.filter(o => o.t !== t), ...data.users.filter(u => !set.has(u.username)).sort((a, b) => a.username.localeCompare(b.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: u.discordUsername, t }))];
+      return [...op.filter(o => o.t !== t), ...data.users.filter(u => !set.has(u.username)).sort((a, b) => a.username.localeCompare(b.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: u.discordUsername === '{}' ? '' : u.discordUsername, t }))];
     });
   }, [data]);
 
@@ -97,7 +97,7 @@ export default function PublicLocks({ isDesktop }){
               <Box component="li" {...props}>
                 { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
                 {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
-                { op.h && op.h !== '{}' && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
+                { op.h && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
               </Box>
             );
           }}
