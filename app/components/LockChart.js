@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
 import Highcharts from 'highcharts/highstock';
 import Exporting from 'highcharts/modules/exporting';
+import OfflineExporting from 'highcharts/modules/offline-exporting';
 import HighContrastDarkTheme from 'highcharts/themes/high-contrast-dark';
 import HighchartsReact from 'highcharts-react-official';
 // eslint-disable-next-line new-cap
 HighContrastDarkTheme(Highcharts);
 // eslint-disable-next-line new-cap
 Exporting(Highcharts);
+// eslint-disable-next-line new-cap
+OfflineExporting(Highcharts);
 
 export default function LockChart({ history, startTime, startRem }){
+  const [options, setOptions] = useState(null);
   // eslint-disable-next-line complexity
-  const [options, setOptions] = useState(() => {
+  useEffect(() => {
     const data = [];
     const rdata = [];
     const timeChanges = [];
@@ -232,7 +236,7 @@ export default function LockChart({ history, startTime, startRem }){
           console.warn(d);
       }
     }
-    return {
+    setOptions({
       title: { text: 'added Time' },
       series: [ // eslint-disable-next-line react/no-this-in-sfc
         { name: 'unlock date', tooltip: { pointFormatter(){return `unlock date: ${new Date(this.y).toLocaleString()}`;} }, id: 'date', data }, // eslint-disable-next-line react/no-this-in-sfc
@@ -253,12 +257,8 @@ export default function LockChart({ history, startTime, startRem }){
         { title: { text: 'remaining days' } }
       ],
       legend: { enabled: true, align: 'center', verticalAlign: 'bottom' }
-    };
-  });
-
-  useEffect(() => {
-    setOptions(history);
-  }, [history]);
+    });
+  }, [history, startRem, startTime]);
 
   return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
 }
