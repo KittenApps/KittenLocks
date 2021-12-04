@@ -31,6 +31,25 @@ export default function LockChart({ history, startTime, startRem }){
     let time = startTime;
     let rem = startRem / (1000 * 60 * 60 * 24);
     let date;
+
+    const handleaddTime = (add, edate) => {
+      if (lastFreeze > 0){
+        time += edate - lastFreeze;
+        lastFreeze = edate;
+      } else {
+        rem -= (edate - lastRem) / (1000 * 60 * 60 * 24);
+        lastRem = edate;
+      }
+      if (add !== 0){
+        data.push([edate - 1, time]);
+        rdata.push([edate - 1, rem]);
+        time += add * 1000;
+        rem += add / (60 * 60 * 24);
+      }
+      data.push([edate, time]);
+      rdata.push([edate, rem]);
+    };
+
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
       // eslint-disable-next-line no-console
@@ -46,36 +65,12 @@ export default function LockChart({ history, startTime, startRem }){
         case 'time_changed':
           date = Date.parse(d.updatedAt);
           timeChanges.push({ x: date, title: '⏱', text: `Your duration was modified by ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date - 1, time]);
-          rdata.push([date - 1, rem]);
-          time += d.payload.duration * 1000;
-          rem += d.payload.duration / (60 * 60 * 24);
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(d.payload.duration, date);
           break;
         case 'link_time_changed':
           date = Date.parse(d.updatedAt);
           timeChanges.push({ x: date, title: '🗳', text: `A shared link vote modified your time by ${(d.payload.duration / (60 * 60)).toFixed(2)}h!` });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date - 1, time]);
-          rdata.push([date - 1, rem]);
-          time += d.payload.duration * 1000;
-          rem += d.payload.duration / (60 * 60 * 24);
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(d.payload.duration, date);
           break;
         case 'pillory_in':
           pillory.push({ x: Date.parse(d.updatedAt), title: 'P⬆', text: `You were put into the pillory for ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'} with the reason: ${d.payload.reason}` });
@@ -83,19 +78,7 @@ export default function LockChart({ history, startTime, startRem }){
         case 'pillory_out':
           date = Date.parse(d.updatedAt);
           pillory.push({ x: date, title: 'P⬇', text: `While in pillory you got a total of ${(d.payload.timeAdded / (60 * 60)).toFixed(2)}h added!` });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date - 1, time]);
-          rdata.push([date - 1, rem]);
-          time += d.payload.timeAdded * 1000;
-          rem += d.payload.timeAdded / (60 * 60 * 24);
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(d.payload.timeAdded, date);
           break;
         case 'temporary_opening_opened':
           hygiene.push({ x: Date.parse(d.updatedAt), title: 'O⬆', text: `The lock was temporary opened for cleaning${d.role === 'keyholder' ? ' by your keyholder' : ''}!` });
@@ -106,27 +89,16 @@ export default function LockChart({ history, startTime, startRem }){
         case 'temporary_opening_locked_late':
           date = Date.parse(d.updatedAt);
           hygiene.push({ x: date, title: 'O⬆', text: `You closed your lock after cleaning ${(d.payload.unlockedTime / 60).toFixed(2)}min late and got ${(d.payload.penaltyTime / (60 * 60)).toFixed(2)}h added as a penalty!` });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date - 1, time]);
-          rdata.push([date - 1, rem]);
-          time += d.payload.penaltyTime * 1000;
-          rem += d.payload.penaltyTime / (60 * 60 * 24);
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(d.payload.penaltyTime, date);
           break;
         case 'lock_frozen':
           date = Date.parse(d.updatedAt);
           freeze.push({ x: date, title: '🧊⬆', text: `Your lock was frozen by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
           rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
+          lastFreeze = date;
+          lastRem = 0;
           data.push([date, time]);
           rdata.push([date, rem]);
-          lastFreeze = date;
           break;
         case 'lock_unfrozen':
           date = Date.parse(d.updatedAt);
@@ -140,28 +112,12 @@ export default function LockChart({ history, startTime, startRem }){
         case 'unlocked':
           date = Date.parse(d.updatedAt);
           lock.push({ x: date, title: 'L⬇', text: 'You unlocked your lock! 🥳' });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(0, date);
           break;
         case 'deserted':
           date = Date.parse(d.updatedAt);
           lock.push({ x: date, title: 'L❌', text: 'You deserted your lock! 😦' });
-          if (lastFreeze > 0){
-            time += date - lastFreeze;
-            lastFreeze = date;
-          } else {
-            rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-            lastRem = date;
-          }
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          handleaddTime(0, date);
           break;
         case 'wheel_of_fortune_turned':
           date = Date.parse(d.updatedAt);
@@ -190,8 +146,7 @@ export default function LockChart({ history, startTime, startRem }){
             case 'freeze':
               games.push({ x: Date.parse(d.updatedAt), title: '🎡🧊', text: `Your Wheel of Fortune ${d.payload.isFrozen ? 'froze' : 'unfroze'} your lock!` });
               break;
-            default:
-              // eslint-disable-next-line no-console
+            default: // eslint-disable-next-line no-console
               console.warn(d.payload);
           }
           break;
@@ -231,8 +186,7 @@ export default function LockChart({ history, startTime, startRem }){
         case 'timer_guessed':
           lock.push({ x: Date.parse(d.updatedAt), title: 'L✓', text: 'You correctly guessed that your time was over! 🥳' });
           break;
-        default:
-          // eslint-disable-next-line no-console
+        default: // eslint-disable-next-line no-console
           console.warn(d);
       }
     }
