@@ -214,5 +214,6 @@ export default function LockChart({ history, startTime, startRem }){
     });
   }, [history, startRem, startTime]);
 
+  if (!options) return null;
   return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
 }

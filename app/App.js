@@ -16,6 +16,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import HomeIcon from '@mui/icons-material/HomeTwoTone';
 import LockIcon from '@mui/icons-material/Lock';
 import Lock2Icon from '@mui/icons-material/LockTwoTone';
+import KeyIcon from '@mui/icons-material/Key';
 import AddLockItem from '@mui/icons-material/EnhancedEncryptionTwoTone';
 import ChartIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/CompareArrows';
@@ -35,6 +36,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
+const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearer'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
 const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
 const PublicCharts = lazy(() => import(/* webpackChunkName: "public_charts" */ './views/PublicCharts'));
@@ -252,13 +254,14 @@ export default function App(){
               <ListItemButton key={0} component={NLink} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
               <Divider key={-1}/>
               <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My Lock Profile"/></ListItemButton>
-              <ListItemButton key={2} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
+              <ListItemButton key={2} component={NLink} to="/wearers">  <ListItemIcon><KeyIcon/></ListItemIcon>    <ListItemText primary="My Wearers Locks"/></ListItemButton>
+              <ListItemButton key={3} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
               <Divider key={-2}/>
-              <ListItemButton key={3} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
-              <ListItemButton disabled key={4} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
-              <ListItemButton key={5} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
+              <ListItemButton key={4} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
+              <ListItemButton disabled key={5} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+              <ListItemButton key={6} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
               <Divider key={-3}/>
-              <ListItemButton key={6} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
+              <ListItemButton key={7} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
             </List>
             { subNav && (
               <List disablePadding>
@@ -273,7 +276,7 @@ export default function App(){
                 { subNav.locks.map(j => (
                   <Fragment key={j.id}>
                     <ListItem onClick={handleListClick} component={SLink} to={j.id} onSetActive={handleSubNavActive(j.id)} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
-                      <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title}/></ListItemButton>
+                      <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title} secondary={j.subtitle}/></ListItemButton>
                     </ListItem>
                     <Collapse in={subNavSelected === j.id} timeout="auto">
                       <List component="div" disablePadding>
@@ -311,6 +314,14 @@ export default function App(){
                   element={
                     <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
                       <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense>
+                    </RequiredScopes>
+                  }
+                />
+                <Route
+                  path="wearers/*"
+                  element={
+                    <RequiredScopes rScopes={['keyholder']} onMissingScopes={onMissingScopes} component="wearer">
+                      <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense>
                     </RequiredScopes>
                   }
                 />

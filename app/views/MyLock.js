@@ -1,40 +1,10 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
-import { Alert, FormControlLabel, LinearProgress, Paper, Skeleton, Switch, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Alert, FormControlLabel, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationPictureGalery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
-
-const LockChart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/LockChart'));
-
-function LockHistory({ app, id, startTime, startRem }){
-  const [historyJSON, setHistoryJSON] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    app.getAccessToken().then(({ accessToken }) => {
-      const fetchHistory = async lastId => {
-        const headers = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
-        const ch = await fetch(`https://api.chaster.app/locks/${id}/history`, { headers, signal, method: 'POST', body: JSON.stringify({ lastId, limit: 100 }) }).then(d => d.json());
-        setHistoryJSON(h => [...h, ...ch.results]);
-        if (ch.hasMore) await fetchHistory(ch.results[99]._id);
-      };
-      return fetchHistory();
-    }).then(() => setLoading(false));
-    return () => controller.abort();
-  }, [app, id]);
-
-  return (
-    <>
-      { loading && <LinearProgress/> }
-      { historyJSON ? <JsonView src={historyJSON} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
-      { loading && <LinearProgress/> }
-      { historyJSON && startTime && !loading && <Suspense fallback={<p>loading...</p>}><LockChart history={historyJSON} startTime={startTime} startRem={startRem}/></Suspense> }
-    </>
-  );
-}
+import LockHistory from '../components/LockHistory';
 
 export default function MyLock({ setSubNav }){
   const app = useRealmApp();

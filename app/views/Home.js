@@ -13,6 +13,11 @@ export default function Home(){
       </Grid>
       <Grid item xs={12} sm={6} lg={4}>
         <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
+          <h3>Changelog v0.2 (WIP):</h3>
+          <ul>
+            <li key="1">My Wearers Locks</li>
+            <li key="2">Lock Charts (WIP)</li>
+          </ul>
           <h3>Changelog v0.1:</h3>
           <ul>
             <li key="1">stabilized backend API</li>

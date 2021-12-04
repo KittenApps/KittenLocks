@@ -22,7 +22,7 @@ export default function Login({ rScopes, component, onMissingScopes, showLogin, 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
-  const componentMap = { lock: 'My Lock Profile', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
+  const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
   const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
   const val = ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
