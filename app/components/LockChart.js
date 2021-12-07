@@ -1,22 +1,13 @@
-import { useEffect, useState } from 'react';
-import Highcharts from 'highcharts/highstock';
-import Exporting from 'highcharts/modules/exporting';
-import OfflineExporting from 'highcharts/modules/offline-exporting';
-import HighContrastDarkTheme from 'highcharts/themes/high-contrast-dark';
-import HighchartsReact from 'highcharts-react-official';
-// eslint-disable-next-line new-cap
-HighContrastDarkTheme(Highcharts);
-// eslint-disable-next-line new-cap
-Exporting(Highcharts);
-// eslint-disable-next-line new-cap
-OfflineExporting(Highcharts);
+import { Suspense, lazy, useEffect, useState } from 'react';
+import { Skeleton } from '@mui/material';
+const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ './Chart'));
 
 export default function LockChart({ history, startTime, startRem }){
   const [options, setOptions] = useState(null);
   // eslint-disable-next-line complexity
   useEffect(() => {
-    const data = [];
-    const rdata = [];
+    const unlockDate = [];
+    const remTime = [];
     const timeChanges = [];
     const pillory = [];
     const freeze = [];
@@ -41,13 +32,13 @@ export default function LockChart({ history, startTime, startRem }){
         lastRem = edate;
       }
       if (add !== 0){
-        data.push([edate - 1, time]);
-        rdata.push([edate - 1, rem]);
+        unlockDate.push([edate - 1, time]);
+        remTime.push([edate - 1, rem]);
         time += add * 1000;
         rem += add / (60 * 60 * 24);
       }
-      data.push([edate, time]);
-      rdata.push([edate, rem]);
+      unlockDate.push([edate, time]);
+      remTime.push([edate, rem]);
     };
 
     for (let i = history.length - 1; i >= 0; i--){
@@ -58,9 +49,9 @@ export default function LockChart({ history, startTime, startRem }){
         case 'locked':
           date = Date.parse(d.updatedAt);
           lock.push({ x: date, title: 'L⬆', text: 'You started a new lock! 🥳' });
-          data.push([date, time]);
+          unlockDate.push([date, time]);
           lastRem = date;
-          rdata.push([date, rem]);
+          remTime.push([date, rem]);
           break;
         case 'time_changed':
           date = Date.parse(d.updatedAt);
@@ -97,8 +88,8 @@ export default function LockChart({ history, startTime, startRem }){
           rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
           lastFreeze = date;
           lastRem = 0;
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          unlockDate.push([date, time]);
+          remTime.push([date, rem]);
           break;
         case 'lock_unfrozen':
           date = Date.parse(d.updatedAt);
@@ -106,8 +97,8 @@ export default function LockChart({ history, startTime, startRem }){
           time += date - lastFreeze;
           lastFreeze = 0;
           lastRem = date;
-          data.push([date, time]);
-          rdata.push([date, rem]);
+          unlockDate.push([date, time]);
+          remTime.push([date, rem]);
           break;
         case 'unlocked':
           date = Date.parse(d.updatedAt);
@@ -190,30 +181,9 @@ export default function LockChart({ history, startTime, startRem }){
           console.warn(d);
       }
     }
-    setOptions({
-      title: { text: 'added Time' },
-      series: [ // eslint-disable-next-line react/no-this-in-sfc
-        { name: 'unlock date', tooltip: { pointFormatter(){return `unlock date: ${new Date(this.y).toLocaleString()}`;} }, id: 'date', data }, // eslint-disable-next-line react/no-this-in-sfc
-        { name: 'remaining days', id: 'rdate', data: rdata, yAxis: 1 },
-        { type: 'flags', name: 'time changes', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: timeChanges },
-        { type: 'flags', name: 'pillory', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: pillory },
-        { type: 'flags', name: 'freeze', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: freeze },
-        { type: 'flags', name: 'timer', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: timer },
-        { type: 'flags', name: 'lock', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: lock },
-        { type: 'flags', name: 'hygiene opening', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: hygiene },
-        { type: 'flags', name: 'verifications', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: verification },
-        { type: 'flags', name: 'games', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: games },
-        { type: 'flags', name: 'tasks', shape: 'circlepin', onSeries: 'date', turboThreshold: 0, data: tasks }
-      ],
-      xAxis: { type: 'datetime', ordinal: false },
-      yAxis: [
-        { title: { text: 'unlock date' }, type: 'datetime', crosshair: true, maxPadding: 0.2 },
-        { title: { text: 'remaining days' } }
-      ],
-      legend: { enabled: true, align: 'center', verticalAlign: 'bottom' }
-    });
+    setOptions({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks });
   }, [history, startRem, startTime]);
 
-  if (!options) return null;
-  return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
+  if (!options) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  return <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={300}/>}><Chart {...options}/></Suspense>;
 }
