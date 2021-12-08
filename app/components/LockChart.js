@@ -1,8 +1,8 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, memo, useEffect, useState } from 'react';
 import { Skeleton } from '@mui/material';
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ './Chart'));
 
-export default function LockChart({ history, startTime, startRem }){
+function LockChart({ history, startTime, startRem }){
   const [options, setOptions] = useState(null);
   // eslint-disable-next-line complexity
   useEffect(() => {
@@ -187,3 +187,5 @@ export default function LockChart({ history, startTime, startRem }){
   if (!options) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   return <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={300}/>}><Chart {...options}/></Suspense>;
 }
+
+export default memo(LockChart);

@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import ReactJson from 'react-json-view';
 
-export default function JsonView({ src, collapsed }){
+function JsonView({ src, collapsed }){
   return (
     <ReactJson
       style={{ fontSize: 13, wordBreak: 'break-word' }}
@@ -15,3 +16,5 @@ export default function JsonView({ src, collapsed }){
     />
   );
 }
+
+export default memo(JsonView);

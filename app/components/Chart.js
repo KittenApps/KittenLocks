@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Highcharts from 'highcharts/highstock';
 import Exporting from 'highcharts/modules/exporting';
 import OfflineExporting from 'highcharts/modules/offline-exporting';
@@ -10,7 +11,7 @@ Exporting(Highcharts);
 // eslint-disable-next-line new-cap
 OfflineExporting(Highcharts);
 
-export default function LockChart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks }){
+function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks }){
   const options = {
     title: { text: 'added Time' },
     series: [ // eslint-disable-next-line react/no-this-in-sfc
@@ -47,3 +48,5 @@ export default function LockChart({ unlockDate, remTime, timeChanges, pillory, f
   };
   return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
 }
+
+export default memo(Chart);

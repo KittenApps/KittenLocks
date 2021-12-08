@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { LinearProgress, Skeleton } from '@mui/material';
 import JsonView from '../components/JsonView';
 import LockChart from '../components/LockChart';
 
-export default function LockHistory({ app, id, startTime, startRem }){
+function LockHistory({ app, id, startTime, startRem }){
   const [historyJSON, setHistoryJSON] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,9 +25,11 @@ export default function LockHistory({ app, id, startTime, startRem }){
   return (
     <>
       { loading && <LinearProgress/> }
-      { historyJSON ? <JsonView src={historyJSON} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { historyJSON ? <JsonView src={historyJSON} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300}/> }
       { loading && <LinearProgress/> }
       { historyJSON && startTime !== 0 && !loading && <LockChart history={historyJSON} startTime={startTime} startRem={startRem}/> }
     </>
   );
 }
+
+export default memo(LockHistory);

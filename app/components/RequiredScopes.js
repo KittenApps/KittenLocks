@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { Paper, Skeleton } from '@mui/material';
 import LoginModal from './LoginModal';
 
-export default function RequiredScopes({ rScopes, onMissingScopes, component, children }){
+function RequiredScopes({ rScopes, onMissingScopes, component, children }){
   const app = useRealmApp();
   const scopes = app.currentUser?.customData?.scopes;
 
@@ -15,3 +16,5 @@ export default function RequiredScopes({ rScopes, onMissingScopes, component, ch
     </Paper>
   );
 }
+
+export default memo(RequiredScopes);

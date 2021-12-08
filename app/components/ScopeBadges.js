@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { Avatar, Stack } from '@mui/material';
 
-export default function ScopeBadges({ scopes }){
+function ScopeBadges({ scopes }){
   const p = scopes.includes('profile') ? 'lightblue' : 'grey';
   const l = scopes.includes('locks') ? 'hotpink' : 'grey';
   const k = scopes.includes('keyholder') ? 'violet' : 'grey';
@@ -12,3 +13,5 @@ export default function ScopeBadges({ scopes }){
     </Stack>
   );
 }
+
+export default memo(ScopeBadges);

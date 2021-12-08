@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { IconButton, ImageListItem, ImageListItemBar, Modal, Skeleton, Typography } from '@mui/material';
 import Masonry from '@mui/lab/Masonry';
 import IosShareIcon from '@mui/icons-material/IosShare';
 
-export default function VerficationPictureGalery({ data }){
+function VerficationPictureGalery({ data }){
   const [pics, setPics] = useState(null);
   useEffect(() => {
     if (data){
@@ -48,3 +48,5 @@ export default function VerficationPictureGalery({ data }){
     </>
   );
 }
+
+export default memo(VerficationPictureGalery);

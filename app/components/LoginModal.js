@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/consistent-destructuring */
-import { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ScopeBadges from './ScopeBadges';
 
 // eslint-disable-next-line complexity
-export default function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
+function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const app = useRealmApp();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const savScopes = localStorage.getItem('scopes')?.split(',');
@@ -134,3 +134,5 @@ export default function Login({ rScopes, component, onMissingScopes, showLogin, 
     </Dialog>
   );
 }
+
+export default memo(Login);
