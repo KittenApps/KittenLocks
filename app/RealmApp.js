@@ -1,12 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { App as RealmApp } from 'realm-web';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client';
+import { RestLink } from 'apollo-link-rest';
 import { setContext } from '@apollo/client/link/context';
 import { RetryLink } from '@apollo/client/link/retry';
 import * as Sentry from '@sentry/react';
 
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
+const restLink = new RestLink({ uri: 'https://api.chaster.app/' });
 const httpLink = new HttpLink({ uri: 'https://realm.mongodb.com/api/client/v2.0/app/kittenlocks-gcfgb/graphql' });
 const cache = new InMemoryCache();
 
@@ -60,17 +62,20 @@ export function RealmAppProvider({ children }){
     return accessTokenPromise;
   }
 
-  const authTokenLink = useMemo(() => setContext((_, { headers }) => {
+  const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
     if (!currentUser) throw new Error('Login required!');
+    if (body.includes('@rest')){
+      return getAccessToken().then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
+    }
     const now = Date.now();
     if (now - lastAuth > 1795000){
       setLastAuth(now);
       return currentUser.refreshCustomData().then(() => ({ headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } }));
     }
     return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
-  }), [currentUser, lastAuth]);
+  });
 
-  const client = useMemo(() => new ApolloClient({ link: from([authTokenLink, retryLink, httpLink]), cache }), [authTokenLink]);
+  const client = useMemo(() => new ApolloClient({ link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
 

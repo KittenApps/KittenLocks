@@ -21,6 +21,18 @@ const GetAllUsernames = gql`
   }
 `;
 
+const GetMyWearers = gql`
+  query GetMyWearers {
+    wearers @rest(type: "Wearer", path: "keyholder/wearers", method: "GET") {
+      user {
+        username
+        avatarUrl
+        discordUsername
+      }
+    }
+  }
+`;
+
 export default function PublicLocks({ isDesktop }){
   const app = useRealmApp();
   const navigate = useNavigate();
@@ -56,6 +68,9 @@ export default function PublicLocks({ isDesktop }){
       return [...op.filter(o => o.t !== t), ...data.users.filter(u => !set.has(u.username)).sort((a, b) => a.username.localeCompare(b.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: u.discordUsername === '{}' ? '' : u.discordUsername, t }))];
     });
   }, [data]);
+
+  // const { loading, error, data: data2 } = useQuery(GetMyWearers);
+  // console.log(loading, error, data2);
 
   const onChangeUsername = (e, n) => setUsername(n);
   const handleUsernameSearch = (e, n) => {
