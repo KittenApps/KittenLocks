@@ -61,7 +61,7 @@ module.exports = {
       { from: 'appicon.png', to: '.' },
       { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://kittenlocks.netlify.app', 'http://localhost:8080'))) }
     ] }),
-    ...(process.env.CI && [
+    ...(process.env.NETLIFY && [
       new SentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: 'kittenlocks',
         release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
