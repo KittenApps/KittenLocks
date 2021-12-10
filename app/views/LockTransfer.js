@@ -89,7 +89,7 @@ export default function LockTransfer(){
         <ul style={{ margin: '3px 0' }}>
           <li>copy the combination from the old session</li>
           <li>abandon / desert the old session (so you don't get the combination from the old lock)</li>
-          <li>start a new lock with the combination copied over from the given shared lock</li>
+          <li>start a new lock from the given shared lock with the combination from the old lock copied over</li>
         </ul>
         Please not doing so will reset your current locked time and you'll start from 0 again. (Copying time over would require official support from Chaster).<br/>
         To be able to transfer you lock, you're required to fullfil either:

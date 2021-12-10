@@ -24,7 +24,7 @@ if (process.env.CI) Sentry.init({
   release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
   integrations: [new TracingIntegrations.BrowserTracing()],
   tracesSampleRate: 1,
-  ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded']
+  ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded', 'ResizeObserver loop completed with undelivered notifications.']
 });
 const div = document.createElement('div');
 div.id = 'container';
