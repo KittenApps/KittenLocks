@@ -7,7 +7,7 @@ import { BSON } from 'realm-web';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
-import WarnIcon from '@mui/icons-material/WarningTwoTone';
+import { WarningTwoTone as Warn } from '@mui/icons-material';
 import { gql, useQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
 
@@ -110,7 +110,7 @@ export default function PublicLocks({ isDesktop }){
             const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
             return (
               <Box component="li" {...props}>
-                { op.d ? <WarnIcon sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
+                { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
                 {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
                 { op.h && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
               </Box>

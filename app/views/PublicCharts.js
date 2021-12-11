@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFileTwoTone';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ExpandMore, UploadFileTwoTone } from '@mui/icons-material';
 import LockChart from '../components/LockChart';
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/Chart'));
 
@@ -22,13 +21,13 @@ export default function PublicCharts(){
       <Alert severity="info">You can export your own Lock Chart by going to a chart (requires time information in history) in 'My Lock Profile' or 'My Wearers Locks' and selecting the 'Share as interactive Lock Chart'-option in the top right export hamburger menu.</Alert>
       <label htmlFor="openLockChart">
         <input id="openLockChart" type="file" onChange={handleOpen} accept=".klc" hidden/>
-        <Button variant="contained" startIcon={<UploadFileIcon/>} component="span" fullWidth>Open shared Lock Chart file (.klc) ...</Button>
+        <Button variant="contained" startIcon={<UploadFileTwoTone/>} component="span" fullWidth>Open shared Lock Chart file (.klc) ...</Button>
       </label>
       <p>
         { options && <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={300}/>}><Chart {...options}/></Suspense> }
       </p>
       <Accordion TransitionProps={{ mountOnEnter: true }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon/>}><b>Load example Lock Chart from Silizia</b></AccordionSummary>
+        <AccordionSummary expandIcon={<ExpandMore/>}><b>Load example Lock Chart from Silizia</b></AccordionSummary>
         <AccordionDetails><ExampleChart/></AccordionDetails>
       </Accordion>
     </Paper>

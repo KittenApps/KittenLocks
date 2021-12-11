@@ -27,7 +27,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env', ['@babel/preset-react', { 'runtime': 'automatic' }]],
-            plugins: ['graphql-tag']
+            plugins: ['graphql-tag', ['babel-plugin-direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/system'] }]]
           }
         }
       }

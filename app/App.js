@@ -10,29 +10,9 @@ import { Link as ScrollLink } from 'react-scroll';
 import RequiredScopes from './components/RequiredScopes';
 import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import HomeIcon from '@mui/icons-material/HomeTwoTone';
-import LockIcon from '@mui/icons-material/Lock';
-import Lock2Icon from '@mui/icons-material/LockTwoTone';
-import KeyIcon from '@mui/icons-material/Key';
-import AddLockItem from '@mui/icons-material/EnhancedEncryptionTwoTone';
-import ChartIcon from '@mui/icons-material/ShowChart';
-import CompareIcon from '@mui/icons-material/CompareArrows';
-import ChatIcon from '@mui/icons-material/ChatTwoTone';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
-import CloseIcon from '@mui/icons-material/Close';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import LockClockIcon from '@mui/icons-material/LockClockTwoTone';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import InfoIcon from '@mui/icons-material/InfoTwoTone';
-import RestoreIcon from '@mui/icons-material/Restore';
-import ImageIcon from '@mui/icons-material/ImageTwoTone';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, Close, CompareArrows as CompareIcon,
+         ExpandLess, ExpandMore, HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon,
+         Lock as LockIcon, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Restore, Search, Settings } from '@mui/icons-material';
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
@@ -110,7 +90,7 @@ function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose
   if (isDesktop) return (
     <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
       <DrawerHeader>
-        <IconButton onClick={handleDrawerClose}><ChevronLeftIcon/></IconButton>
+        <IconButton onClick={handleDrawerClose}><ChevronLeft/></IconButton>
       </DrawerHeader>
       <Divider />
       {children}
@@ -180,7 +160,7 @@ export default function App(){
 
   const notistackClose = useCallback(key => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
-    return <IconButton onClick={handleNotistackClose(key)} color="inherit" size="small"><CloseIcon fontSize="inherit"/></IconButton>;
+    return <IconButton onClick={handleNotistackClose(key)} color="inherit" size="small"><Close fontSize="inherit"/></IconButton>;
   }, []);
   const onMissingScopes = s => {setLogScopes(s); showLogin(true);};
 
@@ -191,7 +171,7 @@ export default function App(){
       return (
         <Stack spacing={1} direction="row">
           <Button color="inherit" variant="outlined" onClick={handlePromp(key)} size="small">Install now</Button>
-          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><Close fontSize="inherit"/></IconButton>
         </Stack>
       );
     };
@@ -228,7 +208,7 @@ export default function App(){
                     sx={{ p: 0, cursor: 'pointer', '& .MuiCardHeader-action': { mt: 0 } }}
                     avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
                     onClick={handleProfileMenuOpen}
-                    action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVertIcon/></IconButton>}
+                    action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVert/></IconButton>}
                     title={app.currentUser.customData.username}
                     titleTypographyProps={{ fontSize: 16 }}
                     subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
@@ -242,10 +222,10 @@ export default function App(){
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
-                <MenuItem onClick={handleManage}><ListItemIcon><ManageAccountsIcon/></ListItemIcon>Manage scopes</MenuItem>
-                <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><SettingsIcon/></ListItemIcon>Chaster settings</MenuItem>
+                <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
+                <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem>
                 <Divider/>
-                <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><LogoutIcon/></ListItemIcon>Log out</MenuItem>
+                <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem>
               </Menu>
             </Toolbar>
           </StyledAppBar>
@@ -258,7 +238,7 @@ export default function App(){
               <ListItemButton key={3} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
               <Divider key={-2}/>
               <ListItemButton key={4} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
-              <ListItemButton disabled key={5} component={NLink} to="/"><ListItemIcon><AddLockItem/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+              <ListItemButton disabled key={5} component={NLink} to="/"><ListItemIcon><AddLockIcon/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
               <ListItemButton key={6} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
               <Divider key={-3}/>
               <ListItemButton key={7} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
@@ -269,8 +249,8 @@ export default function App(){
                 <ListSubheader sx={{ textAlign: 'center' }}>SUB-NAVIGATION BAR</ListSubheader>
                 { subNav.public && (
                   <Fragment key="public">
-                    <ListItemButton onClick={handleListClick} component={SLink} to="search" hashSpy dense><ListItemIcon><SearchIcon/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
-                    <ListItemButton onClick={handleListClick} component={SLink} to="profile" hashSpy dense><ListItemIcon><AccountBoxIcon/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
+                    <ListItemButton onClick={handleListClick} component={SLink} to="search" hashSpy dense><ListItemIcon><Search/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
+                    <ListItemButton onClick={handleListClick} component={SLink} to="profile" hashSpy dense><ListItemIcon><AccountBox/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
                   </Fragment>
                 )}
                 { subNav.locks.map(j => (
@@ -281,18 +261,18 @@ export default function App(){
                     <Collapse in={subNavSelected === j.id} timeout="auto">
                       <List component="div" disablePadding>
                         <ListItemButton key={`info-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${j.id}`} dense sx={{ pl: 4 }}>
-                          <ListItemIcon><InfoIcon/></ListItemIcon>
+                          <ListItemIcon><InfoTwoTone/></ListItemIcon>
                           <ListItemText primary="Lock Information"/>
                         </ListItemButton>
                         { j.hist && (
                           <ListItemButton key={`hist-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
-                            <ListItemIcon><RestoreIcon/></ListItemIcon>
+                            <ListItemIcon><Restore/></ListItemIcon>
                             <ListItemText primary="Lock History"/>
                           </ListItemButton>
                         )}
                         { j.veri && (
                           <ListItemButton key={`veri-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
-                            <ListItemIcon><ImageIcon/></ListItemIcon>
+                            <ListItemIcon><ImageTwoTone/></ListItemIcon>
                             <ListItemText primary="Verifications"/>
                           </ListItemButton>
                         )}

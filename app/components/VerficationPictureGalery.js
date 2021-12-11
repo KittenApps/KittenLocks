@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import { IconButton, ImageListItem, ImageListItemBar, Modal, Skeleton, Typography } from '@mui/material';
-import Masonry from '@mui/lab/Masonry';
-import IosShareIcon from '@mui/icons-material/IosShare';
+import { Masonry } from '@mui/lab';
+import { IosShare } from '@mui/icons-material';
 
 function VerficationPictureGalery({ data }){
   const [pics, setPics] = useState(null);
@@ -41,7 +41,7 @@ function VerficationPictureGalery({ data }){
           <img src={selected?.src} alt={selected?.title.toLocaleString()} style={{ maxWidth: '100%', maxHeight: '100%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)', outline: 'none' }}/>
           <h3 style={{ position: 'absolute', bottom: -52, width: '100%', textAlign: 'center' }}>
             {`${selected?.title.toLocaleString()} (${selected?.code})`}
-            { navigator.share && <IconButton size="small" aria-label="share" onClick={handleShare(selected?.src)} sx={{ pt: 0 }} component="span"><IosShareIcon/></IconButton>}
+            { navigator.share && <IconButton size="small" aria-label="share" onClick={handleShare(selected?.src)} sx={{ pt: 0 }} component="span"><IosShare/></IconButton>}
           </h3>
         </div>
       </Modal>

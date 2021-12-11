@@ -7,8 +7,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Butto
          DialogTitle, FormControlLabel, FormGroup, FormHelperText, IconButton, Stack, Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
+import { Close, ExpandMore } from '@mui/icons-material';
 import ScopeBadges from './ScopeBadges';
 
 // eslint-disable-next-line complexity
@@ -52,7 +51,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
       return (
         <Stack spacing={1} direction="row">
           <Button color="inherit" variant="outlined" onClick={handleMissingScopes(key)} size="small">Upgrade scopes</Button>
-          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><CloseIcon fontSize="inherit"/></IconButton>
+          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><Close fontSize="inherit"/></IconButton>
         </Stack>
       );
     };
@@ -115,7 +114,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
           <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] > 0 && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
         </FormGroup>
         <Accordion expanded={advanced} onChange={handleAdvancedChange} disableGutters>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>more advanced scopes</AccordionSummary>
+          <AccordionSummary expandIcon={<ExpandMore/>}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
               <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch color={val[3] === 0 ? 'primary' : (val[3] === 1 ? 'warning' : 'success')}/>} label={scopeMap.shared_locks}/>
