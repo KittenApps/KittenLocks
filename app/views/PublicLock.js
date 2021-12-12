@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import VerficationPictureGalery from '../components/VerficationPictureGalery';
+import VerficationPictureGalery from '../components/VerficationGalery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 

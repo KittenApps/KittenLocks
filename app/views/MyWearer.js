@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
-import VerficationPictureGalery from '../components/VerficationPictureGalery';
+import VerficationPictureGalery from '../components/VerficationGalery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
