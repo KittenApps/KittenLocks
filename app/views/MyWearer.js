@@ -6,32 +6,24 @@ import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
 import LockHistory from '../components/LockHistory';
+import { useQuery } from '@apollo/client';
+import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
+import { useSnackbar } from 'notistack';
 
 export default function MyWearer({ setSubNav }){
   const app = useRealmApp();
   const navigate = useNavigate();
-  const [filter, setFilter] = useState('locked');
-  const [locksJSON, setLocksJSON] = useState(null);
-
-  const handleFilter = e => setFilter(e.target.value);
-
+  const [status, setStatus] = useState('locked');
+  const handleStatusChange = e => setStatus(e.target.value);
+  const { enqueueSnackbar } = useSnackbar();
+  const { data, loading, error } = useQuery(GetMyWearers, { variables: { status } });
   useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    app.getAccessToken().then(({ accessToken }) => {
-      const headers = { 'Authorization': `Bearer ${accessToken}` };
-      return fetch(`https://api.chaster.app/keyholder/wearers?status=${filter}`, { headers, signal });
-    }).then(d => d.json()).then(j => setLocksJSON(j.sort((a, b) => {
-      if (a.status !== b.status) return a.status > b.status ? 1 : -1;
-      return a.startDate < b.startDate ? 1 : -1;
-    })));
-    return () => controller.abort();
-  }, [app, filter]);
-
+    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+  }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (locksJSON) setSubNav({ public: null, locks: locksJSON.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data) setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
-  }, [locksJSON, setSubNav]);
+  }, [data, setSubNav]);
 
   const handleUsernameClick = username => () => navigate(`/locks/${username}`);
 
@@ -41,7 +33,7 @@ export default function MyWearer({ setSubNav }){
         My Wearer's Locks:
         <FormControl sx={{ float: 'right', mr: 2 }}>
           <InputLabel id="filter-label">Filter</InputLabel>
-          <Select labelId="filter-label" label="Filter" value={filter} onChange={handleFilter}>
+          <Select labelId="filter-label" label="Filter" value={status} onChange={handleStatusChange}>
             <MenuItem value="locked">locked</MenuItem>
             <MenuItem value="unlocked">unlocked</MenuItem>
             <MenuItem value="deserted">deserted</MenuItem>
@@ -49,8 +41,8 @@ export default function MyWearer({ setSubNav }){
           </Select>
         </FormControl>
       </Typography>
-      { locksJSON?.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
-      { locksJSON ? locksJSON.map(j => (
+      { data?.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
+      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(j => (
         <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Stack direction="row" alignItems="center">
@@ -79,7 +71,7 @@ export default function MyWearer({ setSubNav }){
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
-        </ScrollElement>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
+        </ScrollElement>))}
     </Paper>
   );
 }
