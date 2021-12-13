@@ -27,7 +27,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env', ['@babel/preset-react', { 'runtime': 'automatic' }]],
-            plugins: ['graphql-tag', ['babel-plugin-direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/system'] }]]
+            plugins: ['import-graphql', ['direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/system'] }]]
           }
         }
       }
@@ -75,8 +75,6 @@ module.exports = {
       chunks: 'all'
     }
   },
-  devServer: {
-    historyApiFallback: true
-  },
+  devServer: { historyApiFallback: true },
   devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map'
 };

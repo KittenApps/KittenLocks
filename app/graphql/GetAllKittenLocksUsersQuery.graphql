@@ -1,0 +1,7 @@
+query GetAllKittenLocksUsers($userId: ObjectId!) {
+  users(query: {_id_ne: $userId}, limit: 1000, sortBy: USERNAME_ASC) {
+    username
+    avatarUrl
+    discordUsername
+  }
+}

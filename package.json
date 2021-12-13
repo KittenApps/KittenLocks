@@ -47,7 +47,7 @@
     "autosuggest-highlight": "^3.2.0",
     "babel-loader": "^8.2.3",
     "babel-plugin-direct-import": "^1.0.0",
-    "babel-plugin-graphql-tag": "^3.3.0",
+    "babel-plugin-import-graphql": "^2.8.1",
     "copy-webpack-plugin": "^10.1.0",
     "graphql": "^15.8.0",
     "highcharts": "^9.3.2",

@@ -1,0 +1,9 @@
+query GetAllMyWearers {
+  wearers @rest(type: "Wearers", path: "keyholder/wearers") {
+    user @type(name: "Wearer"){
+      username
+      avatarUrl
+      discordUsername
+    }
+  }
+}

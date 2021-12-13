@@ -8,30 +8,9 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
 import { WarningTwoTone as Warn } from '@mui/icons-material';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
-
-const GetAllUsernames = gql`
-  query GetAllUsernames($userId: ObjectId!) {
-    users(query: {_id_ne: $userId}, limit: 1000, sortBy: USERNAME_ASC) {
-      username
-      avatarUrl
-      discordUsername
-    }
-  }
-`;
-
-const GetMyWearers = gql`
-  query GetMyWearers {
-    wearers @rest(type: "Wearer", path: "keyholder/wearers", method: "GET") {
-      user {
-        username
-        avatarUrl
-        discordUsername
-      }
-    }
-  }
-`;
+import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graphql';
 
 export default function PublicLocks({ isDesktop }){
   const app = useRealmApp();
@@ -60,7 +39,7 @@ export default function PublicLocks({ isDesktop }){
     }
   }, [app, app.currentUser]);
 
-  const { data } = useQuery(GetAllUsernames, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
+  const { data } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
   useEffect(() => {
     const t = 'other KittenLocks users';
     if (data) setOptions(op => {
