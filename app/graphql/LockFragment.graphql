@@ -1,0 +1,98 @@
+#import "./UserForPublicFragment.graphql"
+#import "./SharedLockForPublicFragment.graphql"
+
+fragment LockFragment on Lock {
+  _id # The lock id
+  endDate # The end date
+  title # The lock title
+  totalDuration # The total duration, since the creation of the lock
+  user @type(name: "UserForPublic") { # The user
+    ...UserForPublicFragment
+  }
+  keyholder @type(name: "UserForPublic") { # The keyholder
+    ...UserForPublicFragment
+  }
+  sharedLock @type(name: "SharedLockForPublic") {
+    ...SharedLockForPublicFragment # The shared lock
+  }
+  isAllowedToViewTime # Whether the wearer is allowed to view the remaining time
+  canBeUnlocked # Whether the lock can be unlocked
+  canBeUnlockedByMaxLimitDate # Whether the lock can be unlocked because the max limit date has been reached
+  isFrozen # Whether the lock is frozen
+  role # The user role
+  extensions @type(name: "Extension") {
+    ...ExtensionFragment
+  }
+  #extensions: [ExtensionPartyForPublic] # The extensions
+  combination # The combination
+  availableHomeActions @type(name: "ExtensionHomeAction") { # List of home actions
+    ...ExtensionHomeActionFragment
+  }
+  reasonsPreventingUnlocking @type(name: "ReasonPreventingUnlocking") { # Reasons preventing unlocking
+    ...ReasonPreventingUnlockingFragment
+  }
+  extensionsAllowUnlocking # Whether the extensions allow unlocking
+  lastVerificationPicture @type(name: "VerificationPictureItem") { # The last verification picture
+    ...VerificationPictureItemFragment
+  }
+  createdAt # Created at
+  updatedAt # Updated at
+  startDate # The start date
+  minDate # The minimum initial date configured at creation
+  maxDate # The maximum initial date configured at creation
+  maxLimitDate # The maximum date of the lock  After this date, the wearer can release themself regardless of the timer or extension restrictions.
+  displayRemainingTime # Whether the remaining time is displayed to the wearer
+  limitLockTime # Whether the lock is limited in duration
+  status # The status
+  deletedAt # Deleted at
+  unlockedAt # Unlocked at
+  archivedAt # Archived at
+  frozenAt # Frozen at
+  keyholderArchivedAt # Keyholder archived at
+  allowSessionOffer # Whether the lock allows session offers
+  isTestLock # Whether the lock is a test lock and counts in the user stats
+  offerToken # The offer token
+  hideTimeLogs # True if the time information should be hidden from the history
+}
+
+fragment VerificationPictureItemFragment on VerificationPictureItem {
+  #imageFile
+  imageKey
+  submittedAt
+  verificationCode
+  #filename
+  peerVerificationId
+}
+
+fragment ExtensionHomeActionFragment on ExtensionHomeAction {
+  extensionPartyId
+  slug
+  title
+  description
+  icon
+  badge
+}
+
+fragment ReasonPreventingUnlockingFragment on ReasonPreventingUnlocking {
+  reason
+  icon
+}
+
+fragment ExtensionFragment on Extension {
+  slug # The extension slug. 
+  config # The extension configuration. #######################
+  _id
+  displayName
+  summary
+  subtitle
+  icon
+  mode
+  regularity
+  userData ########################
+  nbActionsRemaining
+  nextActionDate
+  isPartner
+  textConfig
+  createdAt # Created at
+  updatedAt # Updated at
+}

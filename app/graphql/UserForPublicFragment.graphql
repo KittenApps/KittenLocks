@@ -1,0 +1,28 @@
+fragment UserForPublicFragment on UserForPublic {
+  _id # The user id
+  username # The username
+  isPremium # Whether the user has a Premium subscription
+  description # The profile description
+  location # The location
+  gender # The gender
+  age # The age
+  role # The role
+  isFindom # Whether the user is a findom
+  avatarUrl # The avatar URL
+  online # Whether the user is online
+  lastSeen # User last seen, in seconds
+  isAdmin # Whether the user is an admin
+  isModerator # Whether the user is a moderator
+  metadata @type(name: "UserMetadata") { # User metadata
+    ...UserMetadataFragment
+  }
+  fullLocation # User full location
+  discordId # The Discord ID
+  discordUsername # The Discord username
+  isDisabled # Whether the user is disabled
+}
+
+fragment UserMetadataFragment on UserMetadata {
+  locktober2020Points
+  locktober2021Points
+}

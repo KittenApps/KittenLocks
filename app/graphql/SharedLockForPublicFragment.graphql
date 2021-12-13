@@ -1,0 +1,42 @@
+#import "./UserForPublicFragment.graphql"
+
+fragment SharedLockForPublicFragment on SharedLockForPublic {
+  _id # The shared lock id
+  minDuration # The minimum duration, in seconds
+  maxDuration # The maximum duration, in seconds
+  calculatedMaxLimitDuration # The calculated max limit duration
+  user @type(name: "UserForPublic") { # The creator
+    ...UserForPublicFragment
+  }
+  unsplashPhoto @type(name: "UnsplashPhoto") { # The Unsplash photo
+    ...UnsplashPhotoFragment
+  }
+  extensions # Extension configurations ############################
+  createdAt # Created at
+  updatedAt # Updated at
+  deletedAt # Deleted at
+  archivedAt # Archived at
+  #locks: [LockForPublic] # List of locks  Only returned in shared locks endpoints
+  requirePassword # Whether the lock requires a password
+  durationMode # Duration mode
+  maxLimitDuration # The maximum duration of the lock, in seconds  After this duration, the wearer can release themself regardless of the timer or extension restrictions.
+  minDate # The minimum date
+  maxDate # The maximum date
+  maxLimitDate # The maximum date of the lock  After this date, the wearer can release themself regardless of the timer or extension restrictions.
+  displayRemainingTime # Whether the remaining time should be displayed to the wearer
+  limitLockTime # Whether the lock is limited in time
+  maxLockedUsers # The number of maximum locked users for this shared lock
+  isPublic # Whether the lock is public
+  requireContact # Whether the shared lock requires contact from wearer  Displayed for information purposes only on the lock page
+  name # The name
+  description # The description
+  hideTimeLogs # Whether the time information should be hidden from the history
+  lastSavedAt # Last saved at
+}
+
+fragment UnsplashPhotoFragment on UnsplashPhoto {
+  id
+  username
+  name
+  url
+}

@@ -5,31 +5,24 @@ import VerficationPictureGalery from '../components/VerficationGalery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import LockHistory from '../components/LockHistory';
+import { useQuery } from '@apollo/client';
+import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
+import { useSnackbar } from 'notistack';
 
 export default function MyLock({ setSubNav }){
   const app = useRealmApp();
   const [showArchived, setShowArchived] = useState(false);
-  const [locksJSON, setLocksJSON] = useState(null);
-
   const handleShowArchived = e => setShowArchived(e.target.checked);
 
+  const { enqueueSnackbar } = useSnackbar();
+  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active' } });
   useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    app.getAccessToken().then(({ accessToken }) => {
-      const headers = { 'Authorization': `Bearer ${accessToken}` };
-      return fetch(`https://api.chaster.app/locks${showArchived ? '?status=all' : ''}`, { headers, signal });
-    }).then(d => d.json()).then(j => setLocksJSON(j.sort((a, b) => {
-      if (a.status !== b.status) return a.status > b.status ? 1 : -1;
-      return a.startDate < b.startDate ? 1 : -1;
-    })));
-    return () => controller.abort();
-  }, [app, showArchived]);
-
+    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+  }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (locksJSON) setSubNav({ public: null, locks: locksJSON.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data) setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
-  }, [locksJSON, setSubNav]);
+  }, [data, setSubNav]);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
@@ -37,8 +30,8 @@ export default function MyLock({ setSubNav }){
         {app.currentUser.customData.username}'s Locks:
         <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start" sx={{ float: 'right', mr: 2 }}/>
       </Typography>
-      { locksJSON?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
-      { locksJSON ? locksJSON.map(j => (
+      { data?.locks.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
+      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(j => (
         <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
@@ -54,7 +47,7 @@ export default function MyLock({ setSubNav }){
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
-        </ScrollElement>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
+        </ScrollElement>))}
     </Paper>
   );
 }
