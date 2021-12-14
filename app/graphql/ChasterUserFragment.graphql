@@ -1,4 +1,4 @@
-fragment UserFragment on User {
+fragment ChasterUserFragment on ChasterUser {
   _id # The user id
   username # The username
   isPremium # Whether the user has a Premium subscription
@@ -13,16 +13,9 @@ fragment UserFragment on User {
   lastSeen # User last seen, in seconds
   isAdmin # Whether the user is an admin
   isModerator # Whether the user is a moderator
-  metadata @type(name: "UserMetadata") { # User metadata
-    ...UserMetadataFragment
-  }
+  metadata # User metadata
   fullLocation # User full location
   discordId # The Discord ID
   discordUsername # The Discord username
   isDisabled # Whether the user is disabled
-}
-
-fragment UserMetadataFragment on UserMetadata {
-  locktober2020Points
-  locktober2021Points
 }

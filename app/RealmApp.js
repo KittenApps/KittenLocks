@@ -1,3 +1,4 @@
+/* eslint-disable no-undefined */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { App as RealmApp } from 'realm-web';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client';
@@ -10,7 +11,32 @@ const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
 const restLink = new RestLink({ uri: 'https://api.chaster.app/' });
 const httpLink = new HttpLink({ uri: 'https://realm.mongodb.com/api/client/v2.0/app/kittenlocks-gcfgb/graphql' });
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        users: { keyArgs: false }
+        /* mlocks: {
+          keyArgs: false,
+          merge(existing, incoming, { readField, args: { status } }){
+            const merged = { ...existing };
+            for (const item of incoming) merged[readField('_id', item)] = item;
+            if (status === 'all') merged.all = 'all';
+            return merged;
+          },
+          read(existing, { args: { status }, readField }){
+            if (!existing) return;
+            if (status === 'all'){
+              if (existing.all === 'all') return Object.values(existing).filter(x => x !== 'all');
+              return;
+            }
+            return existing.all === 'all' ? Object.values(existing).filter(x => x !== 'all' && readField('archivedAt', x) === null) : Object.values(existing);
+          }
+        }*/
+      }
+    }
+  }
+});
 
 export function useRealmApp(){
   const app = useContext(RealmAppContext);
@@ -63,8 +89,8 @@ export function RealmAppProvider({ children }){
   }
 
   const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
+    if (body.includes('#apollo noauth')) return; // unauthenticated Chaster API
     if (!currentUser) throw new Error('Login required!');
-    if (body.includes('locks/user/')) return; // unauthenticated to work around Chaster API bug
     if (body.includes('@rest')){
       return getAccessToken().then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
     }
@@ -76,7 +102,7 @@ export function RealmAppProvider({ children }){
     return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
   });
 
-  const client = useMemo(() => new ApolloClient({ link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
+  const client = useMemo(() => new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
 
   const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
 

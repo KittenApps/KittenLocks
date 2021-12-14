@@ -1,39 +1,13 @@
-#import "./UserFragment.graphql"
+#import "./ChasterUserFragment.graphql"
 #import "./SharedLockFragment.graphql"
 
 fragment ProfileFragment on Profile {
-  user @type(name: "User") {
-    ...UserFragment
+  user @type(name: "ChasterUser") {
+    ...ChasterUserFragment
   }
-  stats @type(name: "UserStats") {
-    ...UserStatsFragment
-  }
-  achievements @type(name: "UserAchievements") {
-    ...UserAchievementsFragment
-  }
+  stats
+  achievements
   sharedLocks @type(name: "SharedLock") {
     ...SharedLockFragment
   }
-}
-
-
-fragment UserStatsFragment on UserStats {
-  nbStartedLocks # Number of locks started by the user as a wearer
-  nbEndedLocks # Number of locks ended by the user as a wearer
-  totalTimeLocked # Total time locked
-  maxTimeLocked # Maximum session duration
-  keyholderNbLocks # Number of locks keyholded
-}
-
-fragment UserAchievementsFragment on UserAchievements {
-  slug
-  granted
-  progress
-  total
-  grantedAt
-  name
-  description
-  category
-  progressEnabled
-  hideIfNotGranted
 }

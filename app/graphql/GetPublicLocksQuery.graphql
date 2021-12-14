@@ -1,5 +1,6 @@
 #import "./ProfileFragment.graphql"
 #import "./LockFragment.graphql"
+#apollo noauth
 
 query GetPublicProfile($username: String!) {
   profile(username: $username) @rest(type: "Profile", path: "users/profile/{args.username}/details"){

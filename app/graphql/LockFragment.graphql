@@ -1,4 +1,4 @@
-#import "./UserFragment.graphql"
+#import "./ChasterUserFragment.graphql"
 #import "./SharedLockFragment.graphql"
 
 fragment LockFragment on Lock {
@@ -6,11 +6,11 @@ fragment LockFragment on Lock {
   endDate # The end date
   title # The lock title
   totalDuration # The total duration, since the creation of the lock
-  user @type(name: "User") { # The user
-    ...UserFragment
+  user @type(name: "ChasterUser") { # The user
+    ...ChasterUserFragment
   }
-  keyholder @type(name: "User") { # The keyholder
-    ...UserFragment
+  keyholder @type(name: "ChasterUser") { # The keyholder
+    ...ChasterUserFragment
   }
   sharedLock @type(name: "SharedLock") {
     ...SharedLockFragment # The shared lock
@@ -24,16 +24,10 @@ fragment LockFragment on Lock {
     ...ExtensionFragment
   }
   combination # The combination
-  availableHomeActions @type(name: "ExtensionHomeAction") { # List of home actions
-    ...ExtensionHomeActionFragment
-  }
-  reasonsPreventingUnlocking @type(name: "ReasonPreventingUnlocking") { # Reasons preventing unlocking
-    ...ReasonPreventingUnlockingFragment
-  }
+  availableHomeActions # List of home actions
+  reasonsPreventingUnlocking # Reasons preventing unlocking
   extensionsAllowUnlocking # Whether the extensions allow unlocking
-  lastVerificationPicture @type(name: "VerificationPictureItem") { # The last verification picture
-    ...VerificationPictureItemFragment
-  }
+  lastVerificationPicture # The last verification picture
   createdAt # Created at
   updatedAt # Updated at
   startDate # The start date
@@ -54,32 +48,9 @@ fragment LockFragment on Lock {
   hideTimeLogs # True if the time information should be hidden from the history
 }
 
-fragment VerificationPictureItemFragment on VerificationPictureItem {
-  #imageFile
-  imageKey
-  submittedAt
-  verificationCode
-  #filename
-  peerVerificationId
-}
-
-fragment ExtensionHomeActionFragment on ExtensionHomeAction {
-  extensionPartyId
-  slug
-  title
-  description
-  icon
-  badge
-}
-
-fragment ReasonPreventingUnlockingFragment on ReasonPreventingUnlocking {
-  reason
-  icon
-}
-
 fragment ExtensionFragment on Extension {
   slug # The extension slug. 
-  config # The extension configuration. #######################
+  config # The extension configuration.
   _id
   displayName
   summary
@@ -87,7 +58,7 @@ fragment ExtensionFragment on Extension {
   icon
   mode
   regularity
-  userData ########################
+  userData
   nbActionsRemaining
   nextActionDate
   isPartner
