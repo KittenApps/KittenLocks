@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, FormControlLabel, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerficationPictureGalery from '../components/VerficationGalery';
@@ -8,6 +8,11 @@ import LockHistory from '../components/LockHistory';
 import { useQuery } from '@apollo/client';
 import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
+
+function lockSort(a, b){
+  if (a.status !== b.status) return a.status > b.status ? 1 : -1;
+  return a.startDate < b.startDate ? 1 : -1;
+}
 
 export default function MyLock({ setSubNav }){
   const app = useRealmApp();
@@ -19,10 +24,11 @@ export default function MyLock({ setSubNav }){
   useEffect(() => {
     if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
   }, [error, enqueueSnackbar]);
+  const locks = useMemo(() => data && [...data.mlocks].sort(lockSort), [data]);
   useEffect(() => {
-    if (data) setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (locks) setSubNav({ public: null, locks: locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
-  }, [data, setSubNav]);
+  }, [locks, setSubNav]);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
@@ -30,8 +36,8 @@ export default function MyLock({ setSubNav }){
         {app.currentUser.customData.username}'s Locks:
         <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start" sx={{ float: 'right', mr: 2 }}/>
       </Typography>
-      { data?.locks.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
-      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(j => (
+      { locks?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
+      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : locks.map(j => (
         <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>

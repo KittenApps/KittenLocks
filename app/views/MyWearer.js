@@ -21,7 +21,7 @@ export default function MyWearer({ setSubNav }){
     if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
   }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (data) setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data) setSubNav({ public: null, locks: data.wlocks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
   }, [data, setSubNav]);
 
@@ -41,8 +41,8 @@ export default function MyWearer({ setSubNav }){
           </Select>
         </FormControl>
       </Typography>
-      { data?.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
-      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(j => (
+      { data?.wlocks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
+      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.wlocks.map(j => (
         <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Stack direction="row" alignItems="center">

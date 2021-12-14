@@ -1,6 +1,6 @@
 query GetAllMyWearers {
-  wearers @rest(type: "Wearers", path: "keyholder/wearers") {
-    user @type(name: "Wearer"){
+  wlocks @rest(type: "Lock", path: "keyholder/wearers") {
+    user @type(name: "User"){
       username
       avatarUrl
       discordUsername
