@@ -52,14 +52,14 @@ module.exports = {
             const searchParams = new URLSearchParams(window.location.search);
             const authCode = searchParams.get('code');
             const state = searchParams.get('state');
-            window.opener.postMessage({ authCode, state }, '${process.env.CI ? 'https://kittenlocks.netlify.app' : 'http://localhost:8080'}' );
+            window.opener.postMessage({ authCode, state }, '${process.env.CI ? 'https://www.kittenlocks.de' : 'http://localhost:8080'}' );
           </script>
         </body>
       </html>
   ` }),
     new CopyPlugin({ patterns: [
       { from: 'appicon.png', to: '.' },
-      { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://kittenlocks.netlify.app', 'http://localhost:8080'))) }
+      { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? c : Buffer.from(c.toString().replaceAll('https://www.kittenlocks.de', 'http://localhost:8080'))) }
     ] }),
     ...(process.env.NETLIFY && [
       new SentryWebpackPlugin({

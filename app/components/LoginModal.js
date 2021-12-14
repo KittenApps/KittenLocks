@@ -61,7 +61,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
     const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
     const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.has(x));
-    const redUrl = process.env.CI ? 'https://kittenlocks.netlify.app/static/html/oauthcb' : 'http://localhost:8080/static/html/oauthcb';
+    const redUrl = process.env.CI ? 'https://www.kittenlocks.de/static/html/oauthcb' : 'http://localhost:8080/static/html/oauthcb';
     window.open(
       'https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-870504' +
       `&redirect_uri=${encodeURIComponent(redUrl)}&response_type=code&scope=${sc.join('%20')}&state=${state}`,
