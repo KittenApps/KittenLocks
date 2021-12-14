@@ -26,7 +26,7 @@ export default function MyLock({ setSubNav }){
   }, [error, enqueueSnackbar]);
   const locks = useMemo(() => data && [...data.mlocks].sort(lockSort), [data]);
   useEffect(() => {
-    if (locks) setSubNav({ public: null, locks: locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (locks && locks.length > 0) setSubNav({ public: null, locks: locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
   }, [locks, setSubNav]);
 

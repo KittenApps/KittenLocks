@@ -21,7 +21,7 @@ export default function MyWearer({ setSubNav }){
     if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
   }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (data) setSubNav({ public: null, locks: data.wlocks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data && data.wlocks.length > 0) setSubNav({ public: null, locks: data.wlocks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
   }, [data, setSubNav]);
 
