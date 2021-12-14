@@ -1,49 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VerficationPictureGalery from '../components/VerficationGalery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
+import { useQuery } from '@apollo/client';
+import { GetPublicLocks, GetPublicProfile } from '../graphql/GetPublicLocksQuery.graphql';
+import { useSnackbar } from 'notistack';
 
-export default function PublicLocks({ setSubNav }){
-  const { username } = useParams();
-  const [profileJSON, setProfileJSON] = useState(null);
-  const [locksJSON, setLocksJSON] = useState(null);
-
+function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
+  const { data, loading, error } = useQuery(GetPublicLocks, { variables: { userId } });
   useEffect(() => {
-    async function fetchData(){
-      const pjson = await fetch(`https://api.chaster.app/users/profile/${username}/details`).then(d => d.json());
-      setProfileJSON(pjson);
-      if (pjson.statusCode > 400) return setLocksJSON(null);
-      const ljson = await fetch(`https://api.chaster.app/locks/user/${pjson.user._id}`).then(d => d.json());
-      setLocksJSON(ljson);
-    }
-    fetchData();
-    setProfileJSON(null);
-    setLocksJSON(null);
-  }, [username]);
-
+    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+  }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (locksJSON) setSubNav({ public: profileJSON.user.username, locks: locksJSON.map(j => ({ id: j._id, title: j.title, hist: false, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data) setSubNav({ public: username, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: false, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
-  }, [profileJSON, locksJSON, setSubNav]);
+  }, [data, setSubNav, username]);
 
-  if (profileJSON?.statusCode === 404) return (
-    <Alert severity="error" sx={{ mt: 2 }}>
-      <AlertTitle>Error: User not found!</AlertTitle>
-      A Chaster user with the username <b>{username}</b> doesn't exist.
-    </Alert>
-  );
-
+  if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  if (data?.locks.length === 0) return <Alert severity="warning">It looks like <b>{username}</b> doesn't have any public locks yet :(</Alert>;
   return (
     <>
-      <ScrollElement name="profile" style={{ paddingBottom: 8 }}>
-        <Typography variant="h4" gutterBottom component="p">Public profile of {profileJSON?.user?.username || username}</Typography>
-        { profileJSON ? <JsonView src={profileJSON} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300} /> }
-      </ScrollElement>
-      <Typography variant="h4" gutterBottom component="p">Public locks of {profileJSON?.user?.username || username}</Typography>
-      { locksJSON?.length === 0 && <Alert severity="warning">It looks like <b>{profileJSON?.user?.username || username}</b> doesn't have any public locks yet :(</Alert> }
-      { locksJSON ? locksJSON.map(j => (
+      { data.locks.map(j => (
         <ScrollElement key={j._id} name={j._id}>
           <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
@@ -55,7 +34,37 @@ export default function PublicLocks({ setSubNav }){
               <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
-        </ScrollElement>)) : <Skeleton variant="rectangular" width="100%" height={300} /> }
+        </ScrollElement>
+      ))}
+    </>
+  );
+}
+
+export default function PublicLocks({ setSubNav }){
+  const { username } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GetPublicProfile, { variables: { username } });
+  useEffect(() => {
+    if (profileError) enqueueSnackbar(profileError.toString(), { variant: 'error' });
+  }, [profileError, enqueueSnackbar]);
+
+  if (profileData?.profile === null) return (
+    <Alert severity="error" sx={{ mt: 2 }}>
+      <AlertTitle>Error: User not found!</AlertTitle>
+      A Chaster user with the username <b>{username}</b> doesn't exist.
+    </Alert>
+  );
+
+  return (
+    <>
+      <ScrollElement name="profile" style={{ paddingBottom: 8 }}>
+        <Typography variant="h4" gutterBottom component="p">Public profile of {profileData?.profile?.user.username || username}</Typography>
+        { profileLoading || profileError ? <Skeleton variant="rectangular" width="100%" height={300} /> : <JsonView src={profileData.profile} collapsed={2}/> }
+      </ScrollElement>
+      <Typography variant="h4" gutterBottom component="p">Public locks of {profileData?.profile?.user.username || username}</Typography>
+      { profileLoading || profileError ? <Skeleton variant="rectangular" width="100%" height={300} />
+        : <PLocks userId={profileData.profile.user._id} enqueueSnackbar={enqueueSnackbar} setSubNav={setSubNav} username={profileData.profile.user.username || username}/> }
     </>
   );
 }

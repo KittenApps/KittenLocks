@@ -64,6 +64,7 @@ export function RealmAppProvider({ children }){
 
   const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
     if (!currentUser) throw new Error('Login required!');
+    if (body.includes('locks/user/')) return; // unauthenticated to work around Chaster API bug
     if (body.includes('@rest')){
       return getAccessToken().then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
     }

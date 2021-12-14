@@ -1,4 +1,4 @@
-fragment UserForPublicFragment on UserForPublic {
+fragment UserFragment on User {
   _id # The user id
   username # The username
   isPremium # Whether the user has a Premium subscription

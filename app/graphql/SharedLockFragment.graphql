@@ -1,12 +1,12 @@
-#import "./UserForPublicFragment.graphql"
+#import "./UserFragment.graphql"
 
-fragment SharedLockForPublicFragment on SharedLockForPublic {
+fragment SharedLockFragment on SharedLock {
   _id # The shared lock id
   minDuration # The minimum duration, in seconds
   maxDuration # The maximum duration, in seconds
   calculatedMaxLimitDuration # The calculated max limit duration
-  user @type(name: "UserForPublic") { # The creator
-    ...UserForPublicFragment
+  user @type(name: "User") { # The creator
+    ...UserFragment
   }
   unsplashPhoto @type(name: "UnsplashPhoto") { # The Unsplash photo
     ...UnsplashPhotoFragment

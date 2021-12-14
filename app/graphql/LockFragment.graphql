@@ -1,19 +1,19 @@
-#import "./UserForPublicFragment.graphql"
-#import "./SharedLockForPublicFragment.graphql"
+#import "./UserFragment.graphql"
+#import "./SharedLockFragment.graphql"
 
 fragment LockFragment on Lock {
   _id # The lock id
   endDate # The end date
   title # The lock title
   totalDuration # The total duration, since the creation of the lock
-  user @type(name: "UserForPublic") { # The user
-    ...UserForPublicFragment
+  user @type(name: "User") { # The user
+    ...UserFragment
   }
-  keyholder @type(name: "UserForPublic") { # The keyholder
-    ...UserForPublicFragment
+  keyholder @type(name: "User") { # The keyholder
+    ...UserFragment
   }
-  sharedLock @type(name: "SharedLockForPublic") {
-    ...SharedLockForPublicFragment # The shared lock
+  sharedLock @type(name: "SharedLock") {
+    ...SharedLockFragment # The shared lock
   }
   isAllowedToViewTime # Whether the wearer is allowed to view the remaining time
   canBeUnlocked # Whether the lock can be unlocked
@@ -23,7 +23,6 @@ fragment LockFragment on Lock {
   extensions @type(name: "Extension") {
     ...ExtensionFragment
   }
-  #extensions: [ExtensionPartyForPublic] # The extensions
   combination # The combination
   availableHomeActions @type(name: "ExtensionHomeAction") { # List of home actions
     ...ExtensionHomeActionFragment

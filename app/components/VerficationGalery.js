@@ -6,11 +6,14 @@ import { IosShare } from '@mui/icons-material';
 function VerficationPictureGalery({ data }){
   const [pics, setPics] = useState(null);
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
     if (data){
-      Promise.all(data.map(e => fetch(`https://api.chaster.app/files/${e.imageKey}`).then(d => d.json())
+      Promise.all(data.map(e => fetch(`https://api.chaster.app/files/${e.imageKey}`, { signal }).then(d => d.json())
                                 .then(d => ({ src: d.url, code: e.verificationCode, title: new Date(e.submittedAt) }))))
-      .then(d => d.sort((a, b) => a.title - b.title)).then(d => setPics(d));
+      .then(d => setPics(d.sort((a, b) => a.title - b.title)));
     }
+    return () => controller.abort();
   }, [data]);
 
   const [selected, setSelected] = useState(null);
