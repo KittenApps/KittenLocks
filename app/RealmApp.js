@@ -35,7 +35,8 @@ const cache = new InMemoryCache({
         }*/
       }
     },
-    VerificationPictureHistoryEntry: { keyFields: ({ imageKey }, { typename }) => `${typename}:${imageKey}` }
+    VerificationPictureHistoryEntry: { keyFields: ({ imageKey }, { typename }) => `${typename}:${imageKey}` },
+    LockHistory: { keyFields: false }
   }
 });
 
@@ -90,7 +91,7 @@ export function RealmAppProvider({ children }){
   }
 
   const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
-    if (body.includes('#apollo noauth')) return; // unauthenticated Chaster API
+    if (body.includes('@noauth')) return; // unauthenticated Chaster API
     if (!currentUser) throw new Error('Login required!');
     if (body.includes('@rest')){
       return getAccessToken().then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
