@@ -3,13 +3,13 @@
 #apollo noauth
 
 query GetPublicProfile($username: String!) {
-  profile(username: $username) @rest(type: "Profile", path: "users/profile/{args.username}/details"){
+  profile(username: $username) @rest(type: "Profile", path: "/users/profile/{args.username}/details"){
     ...ProfileFragment
   }
 }
 
 query GetPublicLocks($userId: String!) {
-  locks(userId: $userId) @rest(type: "Lock", path: "locks/user/{args.userId}") {
+  locks(userId: $userId) @rest(type: "Lock", path: "/locks/user/{args.userId}") {
     ...LockFragment
   }
 }

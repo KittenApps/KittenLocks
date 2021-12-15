@@ -1,7 +1,7 @@
 #import "./VerificationPictureHistoryFragment.graphql"
 
 query GetVerificationPictures($lockId: String!) {
-  verifications(lockId: $lockId) @rest(type: "VerificationPictureHistory", path: "extensions/verification-picture/{args.lockId}/history") {
+  verifications(lockId: $lockId) @rest(type: "VerificationPictureHistory", path: "/extensions/verification-picture/{args.lockId}/history") {
     ...VerificationPictureHistoryFragment
   }
 }

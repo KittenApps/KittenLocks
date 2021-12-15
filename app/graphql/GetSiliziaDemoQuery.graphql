@@ -1,0 +1,18 @@
+#apollo noauth
+
+query GetSiliziaDemo {
+  siliziaHistory @rest(type: "LockHistory", endpoint: "silizia", path: "/Silizia.json") {
+    _id
+    createdAt
+    description
+    extension
+    icon
+    lock
+    payload
+    prefix
+    role
+    title
+    type
+    updatedAt
+  }
+}

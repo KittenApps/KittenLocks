@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/react';
 
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
-const restLink = new RestLink({ uri: 'https://api.chaster.app/' });
+const restLink = new RestLink({ uri: 'https://api.chaster.app', endpoints: { silizia: 'https://silizia.kittenlocks.de' } });
 const httpLink = new HttpLink({ uri: 'https://api.kittenlocks.de/graphql' });
 const cache = new InMemoryCache({
   typePolicies: {

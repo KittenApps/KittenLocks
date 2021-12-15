@@ -1,7 +1,7 @@
 #import "./LockFragment.graphql"
 
 query GetMyWearers($status: String) {
-  wlocks(status: $status) @rest(type: "Lock", path: "keyholder/wearers?{args}") {
+  wlocks(status: $status) @rest(type: "Lock", path: "/keyholder/wearers?{args}") {
     ...LockFragment
   }
 }

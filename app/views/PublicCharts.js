@@ -2,13 +2,22 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
 import { ExpandMore, UploadFileTwoTone } from '@mui/icons-material';
 import LockChart from '../components/LockChart';
+import { useQuery } from '@apollo/client';
+import GetSiliziaDemo from '../graphql/GetSiliziaDemoQuery.graphql';
+import { useSnackbar } from 'notistack';
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/Chart'));
 
-function ExampleChart(){
-  const [history, setHistory] = useState(null);
-  useEffect(() => fetch('https://silizia.kittenlocks.de/Silizia.json').then(d => d.json()).then(d => setHistory(d)), []);
-  if (!history) return <Skeleton variant="rectangular" width="100%" height={300}/>;
-  return <LockChart history={history} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
+function SampleChart(){
+  const { enqueueSnackbar } = useSnackbar();
+  const { data, loading, error } = useQuery(GetSiliziaDemo);
+  useEffect(() => {
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
+  }, [error, enqueueSnackbar]);
+  if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  return <LockChart history={data.siliziaHistory} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
 }
 
 export default function PublicCharts(){
@@ -28,7 +37,7 @@ export default function PublicCharts(){
       </p>
       <Accordion TransitionProps={{ mountOnEnter: true }}>
         <AccordionSummary expandIcon={<ExpandMore/>}><b>Load example Lock Chart from Silizia</b></AccordionSummary>
-        <AccordionDetails><ExampleChart/></AccordionDetails>
+        <AccordionDetails><SampleChart/></AccordionDetails>
       </Accordion>
     </Paper>
   );

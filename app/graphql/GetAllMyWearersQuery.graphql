@@ -1,5 +1,5 @@
 query GetAllMyWearers {
-  wlocks @rest(type: "Lock", path: "keyholder/wearers") {
+  wlocks @rest(type: "Lock", path: "/keyholder/wearers") {
     user @type(name: "User"){
       username
       avatarUrl

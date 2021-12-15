@@ -13,7 +13,7 @@ fragment VerificationPictureHistoryEntryFragment on VerificationPictureHistoryEn
   imageKey @export(as: "imageKey") # The peer verification image key
   submittedAt # Submitted at
   votes # Votes if the peer verification is enabled
-  image @rest(path: "files/{exportVariables.imageKey}", type: "VerificationPictureImage") {
+  image @rest(path: "/files/{exportVariables.imageKey}", type: "VerificationPictureImage") {
     ...VerificationPictureImageFragment
   }
 }

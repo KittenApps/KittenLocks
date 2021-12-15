@@ -1,7 +1,7 @@
 #import "./LockFragment.graphql"
 
 query GetMyLocks($status: String) {
-  mlocks(status: $status) @rest(type: "Lock", path: "locks?{args}") {
+  mlocks(status: $status) @rest(type: "Lock", path: "/locks?{args}") {
     ...LockFragment
   }
 }
