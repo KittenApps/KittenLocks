@@ -10,7 +10,7 @@ import * as Sentry from '@sentry/react';
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
 const restLink = new RestLink({ uri: 'https://api.chaster.app/' });
-const httpLink = new HttpLink({ uri: 'https://realm.mongodb.com/api/client/v2.0/app/kittenlocks-gcfgb/graphql' });
+const httpLink = new HttpLink({ uri: 'https://api.kittenlocks.de/graphql' });
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
@@ -45,7 +45,7 @@ export function useRealmApp(){
 }
 
 export function RealmAppProvider({ children }){
-  const app = useMemo(() => new RealmApp('kittenlocks-gcfgb'), []);
+  const app = useMemo(() => new RealmApp({ id: 'kittenlocks-gcfgb', baseUrl: 'https://api.kittenlocks.de', skipLocationRequest: true }), []);
   const [currentUser, setCurrentUser] = useState(app.currentUser);
   const [lastAuth, setLastAuth] = useState(0);
 

@@ -6,7 +6,7 @@ const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../compone
 
 function ExampleChart(){
   const [history, setHistory] = useState(null);
-  useEffect(() => fetch('https://silizia.netlify.app/Silizia.json').then(d => d.json()).then(d => setHistory(d)), []);
+  useEffect(() => fetch('https://silizia.kittenlocks.de/Silizia.json').then(d => d.json()).then(d => setHistory(d)), []);
   if (!history) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   return <LockChart history={history} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
 }
