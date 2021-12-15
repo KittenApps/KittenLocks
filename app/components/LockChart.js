@@ -21,7 +21,6 @@ function LockChart({ history, startTime, startRem }){
     let lastRem = 0;
     let time = startTime;
     let rem = startRem / (1000 * 60 * 60 * 24);
-    let date;
 
     const handleaddTime = (add, edate) => {
       if (lastFreeze > 0){
@@ -43,141 +42,131 @@ function LockChart({ history, startTime, startRem }){
 
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
-      // eslint-disable-next-line no-console
+      const x = Date.parse(d.createdAt);
       if (d.updatedAt !== d.createdAt) console.warn(d);
       switch (d.type){
         case 'locked':
-          date = Date.parse(d.updatedAt);
-          lock.push({ x: date, title: 'L⬆', text: 'You started a new lock! 🥳' });
-          unlockDate.push([date, time]);
-          lastRem = date;
-          remTime.push([date, rem]);
+          lock.push({ x, title: 'L⬆', text: 'You started a new lock! 🥳' });
+          unlockDate.push([x, time]);
+          lastRem = x;
+          remTime.push([x, rem]);
           break;
         case 'time_changed':
-          date = Date.parse(d.updatedAt);
-          timeChanges.push({ x: date, title: '⏱', text: `Your duration was modified by ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
-          handleaddTime(d.payload.duration, date);
+          timeChanges.push({ x, title: '⏱', text: `Your duration was modified by ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
+          handleaddTime(d.payload.duration, x);
           break;
         case 'link_time_changed':
-          date = Date.parse(d.updatedAt);
-          timeChanges.push({ x: date, title: '🗳', text: `A shared link vote modified your time by ${(d.payload.duration / (60 * 60)).toFixed(2)}h!` });
-          handleaddTime(d.payload.duration, date);
+          timeChanges.push({ x, title: '🗳', text: `A shared link vote modified your time by ${(d.payload.duration / (60 * 60)).toFixed(2)}h!` });
+          handleaddTime(d.payload.duration, x);
           break;
         case 'pillory_in':
-          pillory.push({ x: Date.parse(d.updatedAt), title: 'P⬆', text: `You were put into the pillory for ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'} with the reason: ${d.payload.reason}` });
+          pillory.push({ x, title: 'P⬆', text: `You were put into the pillory for ${(d.payload.duration / (60 * 60)).toFixed(2)}h by ${d.role === 'extension' ? d.extension : 'your keyholder'} with the reason: ${d.payload.reason}` });
           break;
         case 'pillory_out':
-          date = Date.parse(d.updatedAt);
-          pillory.push({ x: date, title: 'P⬇', text: `While in pillory you got a total of ${(d.payload.timeAdded / (60 * 60)).toFixed(2)}h added!` });
-          handleaddTime(d.payload.timeAdded, date);
+          pillory.push({ x, title: 'P⬇', text: `While in pillory you got a total of ${(d.payload.timeAdded / (60 * 60)).toFixed(2)}h added!` });
+          handleaddTime(d.payload.timeAdded, x);
           break;
         case 'temporary_opening_opened':
-          hygiene.push({ x: Date.parse(d.updatedAt), title: 'O⬆', text: `The lock was temporary opened for cleaning${d.role === 'keyholder' ? ' by your keyholder' : ''}!` });
+          hygiene.push({ x, title: 'O⬆', text: `The lock was temporary opened for cleaning${d.role === 'keyholder' ? ' by your keyholder' : ''}!` });
           break;
         case 'temporary_opening_locked':
-          hygiene.push({ x: Date.parse(d.updatedAt), title: 'O⬆', text: `You finished your cleaning opening after ${(d.payload.unlockedTime / 60).toFixed(2)}min in time!` });
+          hygiene.push({ x, title: 'O⬆', text: `You finished your cleaning opening after ${(d.payload.unlockedTime / 60).toFixed(2)}min in time!` });
           break;
         case 'temporary_opening_locked_late':
-          date = Date.parse(d.updatedAt);
-          hygiene.push({ x: date, title: 'O⬆', text: `You closed your lock after cleaning ${(d.payload.unlockedTime / 60).toFixed(2)}min late and got ${(d.payload.penaltyTime / (60 * 60)).toFixed(2)}h added as a penalty!` });
-          handleaddTime(d.payload.penaltyTime, date);
+          hygiene.push({ x, title: 'O⬆', text: `You closed your lock after cleaning ${(d.payload.unlockedTime / 60).toFixed(2)}min late and got ${(d.payload.penaltyTime / (60 * 60)).toFixed(2)}h added as a penalty!` });
+          handleaddTime(d.payload.penaltyTime, x);
           break;
         case 'lock_frozen':
-          date = Date.parse(d.updatedAt);
-          freeze.push({ x: date, title: '🧊⬆', text: `Your lock was frozen by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
-          rem -= (date - lastRem) / (1000 * 60 * 60 * 24);
-          lastFreeze = date;
+          freeze.push({ x, title: '🧊⬆', text: `Your lock was frozen by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
+          rem -= (x - lastRem) / (1000 * 60 * 60 * 24);
+          lastFreeze = x;
           lastRem = 0;
-          unlockDate.push([date, time]);
-          remTime.push([date, rem]);
+          unlockDate.push([x, time]);
+          remTime.push([x, rem]);
           break;
         case 'lock_unfrozen':
-          date = Date.parse(d.updatedAt);
-          freeze.push({ x: date, title: '🧊⬇', text: `Your lock was unfrozen by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
-          time += date - lastFreeze;
+          freeze.push({ x, title: '🧊⬇', text: `Your lock was unfrozen by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
+          time += x - lastFreeze;
           lastFreeze = 0;
-          lastRem = date;
-          unlockDate.push([date, time]);
-          remTime.push([date, rem]);
+          lastRem = x;
+          unlockDate.push([x, time]);
+          remTime.push([x, rem]);
           break;
         case 'unlocked':
-          date = Date.parse(d.updatedAt);
-          lock.push({ x: date, title: 'L⬇', text: 'You unlocked your lock! 🥳' });
-          handleaddTime(0, date);
+          lock.push({ x, title: 'L⬇', text: 'You unlocked your lock! 🥳' });
+          handleaddTime(0, x);
           break;
         case 'deserted':
-          date = Date.parse(d.updatedAt);
-          lock.push({ x: date, title: 'L❌', text: 'You deserted your lock! 😦' });
-          handleaddTime(0, date);
+          lock.push({ x, title: 'L❌', text: 'You deserted your lock! 😦' });
+          handleaddTime(0, x);
           break;
         case 'wheel_of_fortune_turned':
-          date = Date.parse(d.updatedAt);
           switch (d.payload.segment.type){
             case 'add-time':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡+', text: `Your Wheel of Fortune landed on: adding ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
+              games.push({ x, title: '🎡+', text: `Your Wheel of Fortune landed on: adding ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
               break;
             case 'remove-time':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡-', text: `Your Wheel of Fortune landed on: removing ${(-d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
+              games.push({ x, title: '🎡-', text: `Your Wheel of Fortune landed on: removing ${(-d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
               break;
             case 'add-remove-time':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡±', text: `Your Wheel of Fortune landed on: add or remove ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
+              games.push({ x, title: '🎡±', text: `Your Wheel of Fortune landed on: add or remove ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
               break;
             case 'pillory':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡P', text: `Your Wheel of Fortune landed on: pillory for ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
+              games.push({ x, title: '🎡P', text: `Your Wheel of Fortune landed on: pillory for ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
               break;
             case 'text':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡P', text: `Your Wheel of Fortune landed on a text field: ${d.payload.segment.text}!` });
+              games.push({ x, title: '🎡P', text: `Your Wheel of Fortune landed on a text field: ${d.payload.segment.text}!` });
               break;
             case 'set-unfreeze':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡🧊⬇', text: 'Your Wheel of Fortune landed on: unfreeze!' });
+              games.push({ x, title: '🎡🧊⬇', text: 'Your Wheel of Fortune landed on: unfreeze!' });
               break;
             case 'set-freeze':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡🧊⬆', text: 'Your Wheel of Fortune landed on: freeze!' });
+              games.push({ x, title: '🎡🧊⬆', text: 'Your Wheel of Fortune landed on: freeze!' });
               break;
             case 'freeze':
-              games.push({ x: Date.parse(d.updatedAt), title: '🎡🧊', text: `Your Wheel of Fortune ${d.payload.isFrozen ? 'froze' : 'unfroze'} your lock!` });
+              games.push({ x, title: '🎡🧊', text: `Your Wheel of Fortune ${d.payload.isFrozen ? 'froze' : 'unfroze'} your lock!` });
               break;
-            default: // eslint-disable-next-line no-console
+            default:
               console.warn(d.payload);
           }
           break;
         case 'dice_rolled':
-          games.push({ x: Date.parse(d.updatedAt), title: '🎲', text: `You rolled the dice with result: ${d.payload.playerDice} (you) vs. ${d.payload.adminDice} (bot)!` });
+          games.push({ x, title: '🎲', text: `You rolled the dice with result: ${d.payload.playerDice} (you) vs. ${d.payload.adminDice} (bot)!` });
           break;
         case 'verification_picture_submitted':
-          verification.push({ x: Date.parse(d.updatedAt), title: '🖼', text: `You submitted a new verification picture with code ${d.payload.verificationCode}!` });
+          verification.push({ x, title: '🖼', text: `You submitted a new verification picture with code ${d.payload.verificationCode}!` });
           break;
         case 'timer_hidden':
-          timer.push({ x: Date.parse(d.updatedAt), title: '🕑🚫', text: `Your timer was hidden by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
+          timer.push({ x, title: '🕑🚫', text: `Your timer was hidden by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
           break;
         case 'timer_revealed':
-          timer.push({ x: Date.parse(d.updatedAt), title: '🕑👁', text: `Your timer was revealed by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
+          timer.push({ x, title: '🕑👁', text: `Your timer was revealed by ${d.role === 'extension' ? d.extension : 'your keyholder'}!` });
           break;
         case 'tasks_task_assigned':
-          tasks.push({ x: Date.parse(d.updatedAt), title: '🗒+', text: `${d.role === 'keyholder' ? 'Your keyholder' : 'Yourself'} assigned you a new task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
+          tasks.push({ x, title: '🗒+', text: `${d.role === 'keyholder' ? 'Your keyholder' : 'Yourself'} assigned you a new task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
           break;
         case 'tasks_vote_ended':
-          tasks.push({ x: Date.parse(d.updatedAt), title: '🗒🗳', text: `A tasks vote ended and voted for: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
+          tasks.push({ x, title: '🗒🗳', text: `A tasks vote ended and voted for: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
           break;
         case 'tasks_task_completed':
-          tasks.push({ x: Date.parse(d.updatedAt), title: '🗒✓', text: `You successfully completed the task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
+          tasks.push({ x, title: '🗒✓', text: `You successfully completed the task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
           break;
         case 'tasks_task_failed':
-          tasks.push({ x: Date.parse(d.updatedAt), title: '🗒❌', text: `You failed to complete the task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
+          tasks.push({ x, title: '🗒❌', text: `You failed to complete the task: ${d.payload.task.task}${d.payload.task.points ? ` (for ${d.payload.task.points} points)` : ''}!` });
           break;
         case 'session_offer_accepted':
-          lock.push({ x: Date.parse(d.updatedAt), title: 'K⬆', text: `Your session offer was accepted and ${d.user.username} is now your keyholder! 🥳` });
+          lock.push({ x, title: 'K⬆', text: `Your session offer was accepted and ${d.user.username} is now your keyholder! 🥳` });
           break;
         case 'max_limit_date_increased':
-          lock.push({ x: Date.parse(d.updatedAt), title: '🔒⬆', text: `You increased your maximum lock time limi to ${new Date(d.payload.date).toLocaleString()}! 🥳` });
+          lock.push({ x, title: '🔒⬆', text: `You increased your maximum lock time limi to ${new Date(d.payload.date).toLocaleString()}! 🥳` });
           break;
         case 'max_limit_date_removed':
-          lock.push({ x: Date.parse(d.updatedAt), title: '🔒∞', text: 'You removed your maximum lock time limit, have fun! 🥳' });
+          lock.push({ x, title: '🔒∞', text: 'You removed your maximum lock time limit, have fun! 🥳' });
           break;
         case 'timer_guessed':
-          lock.push({ x: Date.parse(d.updatedAt), title: 'L✓', text: 'You correctly guessed that your time was over! 🥳' });
+          lock.push({ x, title: 'L✓', text: 'You correctly guessed that your time was over! 🥳' });
           break;
-        default: // eslint-disable-next-line no-console
+        default:
           console.warn(d);
       }
     }
