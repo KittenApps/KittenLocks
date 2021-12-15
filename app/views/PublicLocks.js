@@ -11,6 +11,7 @@ import { WarningTwoTone as Warn } from '@mui/icons-material';
 import { useQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
 import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graphql';
+import { useSnackbar } from 'notistack';
 
 export default function PublicLocks({ isDesktop }){
   const app = useRealmApp();
@@ -39,7 +40,14 @@ export default function PublicLocks({ isDesktop }){
     }
   }, [app, app.currentUser]);
 
-  const { data } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
+  const { data, error } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
+  const { enqueueSnackbar } = useSnackbar();
+  useEffect(() => {
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
+  }, [error, enqueueSnackbar]);
   useEffect(() => {
     const t = 'other KittenLocks users';
     if (data) setOptions(op => {

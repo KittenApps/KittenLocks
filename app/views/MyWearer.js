@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
-import VerficationPictureGalery from '../components/VerficationGalery';
+import VerficationPictureGallery from '../components/VerficationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,10 @@ export default function MyWearer({ setSubNav }){
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery(GetMyWearers, { variables: { status } });
   useEffect(() => {
-    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
   }, [error, enqueueSnackbar]);
   useEffect(() => {
     if (data && data.wlocks.length > 0) setSubNav({ public: null, locks: data.wlocks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
@@ -68,7 +71,7 @@ export default function MyWearer({ setSubNav }){
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
               <Typography variant="h5" gutterBottom component="p">{j.user.username}: {j.title} (verification pics):</Typography>
-              <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+              <VerficationPictureGallery lockId={j._id}/>
             </ScrollElement>
           )}
         </ScrollElement>))}

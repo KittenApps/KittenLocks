@@ -103,7 +103,9 @@ rules:
   no-bitwise: error
   no-caller: error
   no-alert: warn
-  no-console: warn
+  no-console: 
+    - warn
+    - allow: [ error ]
   no-confusing-arrow: error
   no-constructor-return: error
   no-continue: error
@@ -165,7 +167,7 @@ rules:
   no-unused-vars: warn
   no-underscore-dangle: 
     - error
-    - allow: [_id]
+    - allow: [ _id ]
   no-unused-expressions: error
   no-undefined: error
   no-unmodified-loop-condition: error
@@ -243,7 +245,7 @@ rules:
   react/prop-types: 'off'
   react/no-unescaped-entities:
     - error
-    - forbid: [">", "}", "\""]
+    - forbid: [ ">", "}", "\"" ]
   react/forbid-foreign-prop-types: 
     - warn
     - allowInPropTypes: true

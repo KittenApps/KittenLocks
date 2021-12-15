@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import VerficationPictureGalery from '../components/VerficationGalery';
+import VerficationPictureGallery from '../components/VerficationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useQuery } from '@apollo/client';
@@ -11,7 +11,10 @@ import { useSnackbar } from 'notistack';
 function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
   const { data, loading, error } = useQuery(GetPublicLocks, { variables: { userId } });
   useEffect(() => {
-    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
   }, [error, enqueueSnackbar]);
   useEffect(() => {
     if (data) setSubNav({ public: username, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: false, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
@@ -31,7 +34,7 @@ function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
               <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
-              <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+              <VerficationPictureGallery lockId={j._id}/>
             </ScrollElement>
           )}
         </ScrollElement>

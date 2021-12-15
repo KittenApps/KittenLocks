@@ -34,7 +34,8 @@ const cache = new InMemoryCache({
           }
         }*/
       }
-    }
+    },
+    VerificationPictureHistoryEntry: { keyFields: ({ imageKey }, { typename }) => `${typename}:${imageKey}` }
   }
 });
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, FormControlLabel, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
-import VerficationPictureGalery from '../components/VerficationGalery';
+import VerficationPictureGallery from '../components/VerficationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import LockHistory from '../components/LockHistory';
@@ -22,7 +22,10 @@ export default function MyLock({ setSubNav }){
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active' } });
   useEffect(() => {
-    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
   }, [error, enqueueSnackbar]);
   const locks = useMemo(() => data && [...data.mlocks].sort(lockSort), [data]);
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function MyLock({ setSubNav }){
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
               <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
-              <VerficationPictureGalery data={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+              <VerficationPictureGallery lockId={j._id}/>
             </ScrollElement>
           )}
         </ScrollElement>))}
