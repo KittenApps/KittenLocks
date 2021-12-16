@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
-import { useRealmApp } from '../RealmApp';
 import VerficationPictureGallery from '../components/VerficationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
@@ -11,7 +10,6 @@ import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
 export default function MyWearer({ setSubNav }){
-  const app = useRealmApp();
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
   const handleStatusChange = e => setStatus(e.target.value);
@@ -66,7 +64,7 @@ export default function MyWearer({ setSubNav }){
           </ScrollElement>
           <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.user.username}: {j.title} (history):</Typography>
-            <LockHistory app={app} id={j._id} startTime={j.hideTimeLogs ? 0 : Date.parse(j.minDate)} startRem={Date.parse(j.minDate) - Date.parse(j.startDate)}/>
+            <LockHistory lockId={j._id} startTime={j.hideTimeLogs ? 0 : Date.parse(j.minDate)} startRem={Date.parse(j.minDate) - Date.parse(j.startDate)}/>
           </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>

@@ -15,7 +15,28 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        users: { keyArgs: false }
+        users: { keyArgs: false },
+        lockHistoryResult: {
+          keyArgs: ['lockId'],
+          // eslint-disable-next-line default-param-last
+          merge(ex, { results, count, hasMore }, { readField, args: { input: { lastId } } }){
+            const existing = ex?.results || [];
+            if (!lastId || lastId === readField('_id', existing.at(-1))) return { results: [...existing, ...results], count, hasMore };
+            const merged = [...existing];
+            let offset = -1;
+            for (let i = existing.length - 1; i >= 0; --i){
+              if (readField('_id', existing[i]) === lastId){
+                offset = i + 1;
+                break;
+              }
+            }
+            if (offset < 0) throw new Error('LockHistory: Couldn\'t find lastId in chache!');
+            for (const [i, result] of results.entries()){
+              merged[offset + i] = result;
+            }
+            return { results: merged, count, hasMore };
+          }
+        }
         /* mlocks: {
           keyArgs: false,
           merge(existing, incoming, { readField, args: { status } }){

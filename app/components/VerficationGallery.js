@@ -21,7 +21,7 @@ function VerficationPictureGallery({ lockId }){
   const handleClose = () => setSelected(null);
   const handleShare = url => () => navigator.share({ url });
 
-  if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  if (loading || error || !data.verifications) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   if (data.verifications.history.length === 0) return (
     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
       It looks like this lock doesn't have any verification pictures yet :(

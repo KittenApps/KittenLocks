@@ -19,6 +19,13 @@ function errorFallback({ error, componentStack, resetError }){
   );
 }
 
+// eslint-disable-next-line no-extend-native
+if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', {
+  value(index){ // Pollyfill for Safari
+    return this[index >= 0 ? index : this.length + index];
+  }
+});
+
 if (process.env.CI) Sentry.init({
   dsn: 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627',
   release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
