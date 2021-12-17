@@ -1,28 +1,15 @@
-import { memo, useEffect, useState } from 'react';
-import { IconButton, ImageListItem, ImageListItemBar, Modal, Skeleton, Typography } from '@mui/material';
+import { memo, useState } from 'react';
+import { IconButton, ImageListItem, ImageListItemBar, Modal, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { IosShare } from '@mui/icons-material';
-import { useQuery } from '@apollo/client';
-import GetVerificationPictures from '../graphql/GetVerificationPicturesQuery.graphql';
-import { useSnackbar } from 'notistack';
 
-function VerficationPictureGallery({ lockId }){
-  const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetVerificationPictures, { variables: { lockId } });
-  useEffect(() => {
-    if (error){
-      enqueueSnackbar(error.toString(), { variant: 'error' });
-      console.error(error);
-    }
-  }, [error, enqueueSnackbar]);
-
+function VerificationPictureGallery({ history }){
   const [selected, setSelected] = useState(null);
   const handleClick = img => () => setSelected(img);
   const handleClose = () => setSelected(null);
   const handleShare = url => () => navigator.share({ url });
 
-  if (loading || error || !data.verifications) return <Skeleton variant="rectangular" width="100%" height={300}/>;
-  if (data.verifications.history.length === 0) return (
+  if (history.length === 0) return (
     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
       It looks like this lock doesn't have any verification pictures yet :(
     </Typography>
@@ -31,7 +18,7 @@ function VerficationPictureGallery({ lockId }){
   return (
     <>
       <Masonry columns={{ xs: 2, sm: 3, lg: 4 }} spacing={1}>
-        {data.verifications.history.map((img, i) => (
+        {history.map((img, i) => (
           <ImageListItem style={{ minHeight: 48, cursor: 'pointer' }} onClick={handleClick(img)} key={img.imageKey}>
             <img src={img.image.url} alt={new Date(img.submittedAt).toLocaleString()}/>
             <ImageListItemBar title={`${new Date(img.submittedAt).toLocaleString()} (${img.verificationCode}) #${i + 1}`}/>
@@ -51,4 +38,4 @@ function VerficationPictureGallery({ lockId }){
   );
 }
 
-export default memo(VerficationPictureGallery);
+export default memo(VerificationPictureGallery);

@@ -20,8 +20,46 @@ fragment LockFragment on Lock {
   canBeUnlockedByMaxLimitDate # Whether the lock can be unlocked because the max limit date has been reached
   isFrozen # Whether the lock is frozen
   role # The user role
-  extensions @type(name: "Extension") {
-    ...ExtensionFragment
+  extensions {
+    slug # The extension slug. 
+    config # The extension configuration.
+    _id
+    displayName
+    summary
+    subtitle
+    icon
+    mode
+    regularity
+    nbActionsRemaining
+    nextActionDate
+    isPartner
+    textConfig
+    createdAt # Created at
+    updatedAt # Updated at
+    ...on VerificationExtension {
+      userData {
+        ...VerificationPictureHistoryFragment
+      }
+    }
+    ...on PenaltyExtension {
+      userData {
+        status
+      }
+    }
+    ...on TemporaryOpeningExtension {
+      userData {
+        openedAt
+      }
+    }
+    ...on TasksExtension {
+      currentTask
+      currentTaskVote
+      points
+      status
+      userTasks
+      voteEndsAt
+      voteStartedAt
+    }
   }
   combination # The combination
   availableHomeActions # List of home actions
@@ -48,21 +86,26 @@ fragment LockFragment on Lock {
   hideTimeLogs # True if the time information should be hidden from the history
 }
 
-fragment ExtensionFragment on Extension {
-  slug # The extension slug. 
-  config # The extension configuration.
-  _id
-  displayName
-  summary
-  subtitle
-  icon
-  mode
-  regularity
-  userData
-  nbActionsRemaining
-  nextActionDate
-  isPartner
-  textConfig
-  createdAt # Created at
-  updatedAt # Updated at
+fragment VerificationPictureHistoryFragment on VerificationPictureHistory {
+  history @type(name: "VerificationPictureHistoryEntry") {
+    ...VerificationPictureHistoryEntryFragment
+  }
+  currentVerificationCode # The current verification code
+  verificationCodeRequired # True if the verification code is required in the image
+  requestedAt # The request date
+}
+
+fragment VerificationPictureHistoryEntryFragment on VerificationPictureHistoryEntry {
+  verificationCode # The verification code
+  peerVerificationId # The peer verification id
+  imageKey @export(as: "imageKey") # The peer verification image key
+  submittedAt # Submitted at
+  votes # Votes if the peer verification is enabled
+  image @rest(path: "/files/{exportVariables.imageKey}", type: "VerificationPictureImage") {
+    ...VerificationPictureImageFragment
+  }
+}
+
+fragment VerificationPictureImageFragment on VerificationPictureImage {
+  url
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
-import VerficationPictureGallery from '../components/VerficationGallery';
+import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
@@ -69,7 +69,7 @@ export default function MyWearer({ setSubNav }){
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
               <Typography variant="h5" gutterBottom component="p">{j.user.username}: {j.title} (verification pics):</Typography>
-              <VerficationPictureGallery lockId={j._id}/>
+              <VerificationPictureGallery history={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
         </ScrollElement>))}

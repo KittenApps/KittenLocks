@@ -1,4 +1,5 @@
-#import "./ProfileFragment.graphql"
+#import "./ChasterUserFragment.graphql"
+#import "./SharedLockFragment.graphql"
 #import "./LockFragment.graphql"
 
 query GetPublicProfile($username: String!) {
@@ -10,5 +11,16 @@ query GetPublicProfile($username: String!) {
 query GetPublicLocks($userId: String!) {
   locks(userId: $userId) @noauth @rest(type: "Lock", path: "/locks/user/{args.userId}") {
     ...LockFragment
+  }
+}
+
+fragment ProfileFragment on Profile {
+  user @type(name: "ChasterUser") {
+    ...ChasterUserFragment
+  }
+  stats
+  achievements
+  sharedLocks @type(name: "SharedLock") {
+    ...SharedLockFragment
   }
 }

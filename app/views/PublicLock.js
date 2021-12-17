@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import VerficationPictureGallery from '../components/VerficationGallery';
+import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useQuery } from '@apollo/client';
@@ -34,7 +34,7 @@ function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
               <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
-              <VerficationPictureGallery lockId={j._id}/>
+              <VerificationPictureGallery history={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
             </ScrollElement>
           )}
         </ScrollElement>

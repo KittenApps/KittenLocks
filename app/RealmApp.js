@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undefined */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { App as RealmApp } from 'realm-web';
@@ -9,7 +10,34 @@ import * as Sentry from '@sentry/react';
 
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
-const restLink = new RestLink({ uri: 'https://api.chaster.app', endpoints: { silizia: 'https://silizia.kittenlocks.de' } });
+const restLink = new RestLink({
+  uri: 'https://api.chaster.app',
+  endpoints: { silizia: 'https://silizia.kittenlocks.de' },
+  typePatcher: {
+    Lock(data){ // eslint-disable-next-line no-underscore-dangle
+      for (const e of data.extensions){
+        switch (e.slug){
+          case 'verification-picture':
+            e.__typename = 'VerificationExtension';
+            e.userData.__typename = 'VerificationPictureHistory';
+            break;
+          case 'penalty':
+            e.__typename = 'PenaltyExtension';
+            break;
+          case 'temporary-opening':
+            e.__typename = 'TemporaryOpeningExtension';
+            break;
+          case 'tasks':
+            e.__typename = 'TasksExtension';
+            break;
+          default:
+            e.__typename = 'Extension';
+        }
+      }
+      return data;
+    }
+  }
+ });
 const httpLink = new HttpLink({ uri: 'https://api.kittenlocks.de/graphql' });
 const cache = new InMemoryCache({
   typePolicies: {
@@ -18,7 +46,6 @@ const cache = new InMemoryCache({
         users: { keyArgs: false },
         lockHistoryResult: {
           keyArgs: ['lockId'],
-          // eslint-disable-next-line default-param-last
           merge(ex, { results, count, hasMore }, { readField, args: { input: { lastId } } }){
             const existing = ex?.results || [];
             if (!lastId || lastId === readField('_id', existing.at(-1))) return { results: [...existing, ...results], count, hasMore };
@@ -56,7 +83,6 @@ const cache = new InMemoryCache({
         }*/
       }
     },
-    VerificationPictureHistoryEntry: { keyFields: ({ imageKey }, { typename }) => `${typename}:${imageKey}` },
     LockHistory: { keyFields: false }
   }
 });
@@ -127,7 +153,7 @@ export function RealmAppProvider({ children }){
 
   const client = useMemo(() => new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
 
-  const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken };
+  const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken, cache };
 
   return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{children}</ApolloProvider></RealmAppContext.Provider>;
 }
