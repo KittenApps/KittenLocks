@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/react';
 
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
+const parseDate = { read: d => d && new Date(d) };
 const restLink = new RestLink({
   uri: 'https://api.chaster.app',
   endpoints: { silizia: 'https://silizia.kittenlocks.de' },
@@ -26,9 +27,11 @@ const restLink = new RestLink({
             break;
           case 'temporary-opening':
             e.__typename = 'TemporaryOpeningExtension';
+            e.userData.__typename = 'TemporaryOpeningUserData';
             break;
           case 'tasks':
             e.__typename = 'TasksExtension';
+            e.userData.__typename = 'TasksUserData';
             break;
           default:
             e.__typename = 'Extension';
@@ -46,9 +49,9 @@ const cache = new InMemoryCache({
         users: { keyArgs: false },
         lockHistoryResult: {
           keyArgs: ['lockId'],
-          merge(ex, { results, count, hasMore }, { readField, args: { input: { lastId } } }){
-            const existing = ex?.results || [];
-            if (!lastId || lastId === readField('_id', existing.at(-1))) return { results: [...existing, ...results], count, hasMore };
+          merge(ex, { 'results@type({"name":"LockHistory"})': results, count, hasMore }, { readField, args: { input: { lastId } } }){
+            const existing = ex ? ex['results@type({"name":"LockHistory"})'] : [];
+            if (!lastId || lastId === readField('_id', existing.at(-1))) return { 'results@type({"name":"LockHistory"})': [...existing, ...results], count, hasMore };
             const merged = [...existing];
             let offset = -1;
             for (let i = existing.length - 1; i >= 0; --i){
@@ -61,7 +64,7 @@ const cache = new InMemoryCache({
             for (const [i, result] of results.entries()){
               merged[offset + i] = result;
             }
-            return { results: merged, count, hasMore };
+            return { 'results@type({"name":"LockHistory"})': merged, count, hasMore };
           }
         }
         /* mlocks: {
@@ -83,7 +86,23 @@ const cache = new InMemoryCache({
         }*/
       }
     },
-    LockHistory: { keyFields: false }
+    LockHistory: { keyFields: false, fields: { createdAt: parseDate, updatedAt: parseDate } },
+    Lock: {
+      keyFields: ['_id', 'role'],
+      fields: { createdAt: parseDate, updatedAt: parseDate, startDate: parseDate, minDate: parseDate, maxDate: parseDate, maxLimitDate: parseDate, endDate: parseDate,
+                deletedAt: parseDate, unlockedAt: parseDate, archivedAt: parseDate, frozenAt: parseDate, keyholderArchivedAt: parseDate }
+    },
+    Achievement: { fields: { grantedAt: parseDate } },
+    SharedLock: { fields: { createdAt: parseDate, updatedAt: parseDate, deletedAt: parseDate, archivedAt: parseDate, minDate: parseDate, maxDate: parseDate, maxLimitDate: parseDate, lastSavedAt: parseDate } },
+    Extension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
+    TasksExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
+    TemporaryOpeningExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
+    PenaltyExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
+    VerificationExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
+    TemporaryOpeningUserData: { fields: { openedAt: parseDate } },
+    TasksUserData: { fields: { voteEndsAt: parseDate, voteStartedAt: parseDate } },
+    VerificationPictureHistory: { fields: { requestedAt: parseDate } },
+    VerificationPictureHistoryEntry: { fields: { submittedAt: parseDate } }
   }
 });
 

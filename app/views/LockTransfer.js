@@ -23,7 +23,7 @@ function VerifyLock({ lock, setLockOkay }){
       setLockOkay(true);
     } else {
       const timerVisible = lock.isAllowedToViewTime;
-      const remainingTime = timerVisible && (Date.parse(lock.endDate) - Date.now()) / 3600000 < 2;
+      const remainingTime = timerVisible && (Date.parse(lock.endDate) - Date.now()) / 3600000 < 2; // ToDo Remove Date.parse
       setResult(
         <>
           <p>{timerVisible ? '✅' : '❌' } in keyholder lock with visible timer</p>

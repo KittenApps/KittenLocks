@@ -20,14 +20,14 @@ export default function MyLock({ setSubNav }){
   const handleShowArchived = e => setShowArchived(e.target.checked);
 
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active' } });
+  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active', realmId: app.currentUser.id } });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
       console.error(error);
     }
   }, [error, enqueueSnackbar]);
-  const locks = useMemo(() => data && [...data.mlocks].sort(lockSort), [data]);
+  const locks = useMemo(() => data && [...data.locks].sort(lockSort), [data]);
   useEffect(() => {
     if (locks && locks.length > 0) setSubNav({ public: null, locks: locks.map(j => ({ id: j._id, title: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     return () => setSubNav(null);
@@ -48,7 +48,7 @@ export default function MyLock({ setSubNav }){
           </ScrollElement>
           <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
             <Typography variant="h5" gutterBottom component="p">{j.title} (history):</Typography>
-            <LockHistory lockId={j._id} startTime={j.hideTimeLogs ? 0 : Date.parse(j.minDate)} startRem={Date.parse(j.minDate) - Date.parse(j.startDate)}/>
+            <LockHistory lockId={j._id} startTime={j.hideTimeLogs ? 0 : j.minDate.getTime()} startRem={j.minDate.getTime() - j.startDate.getTime()}/>
           </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>

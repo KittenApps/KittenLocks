@@ -1,4 +1,4 @@
-#import "./ChasterUserFragment.graphql"
+#import "./UserFragment.graphql"
 #import "./SharedLockFragment.graphql"
 #import "./LockFragment.graphql"
 
@@ -19,8 +19,23 @@ fragment ProfileFragment on Profile {
     ...ChasterUserFragment
   }
   stats
-  achievements
+  achievements @type(name: "Achievement") {
+    ...AchievementFragment
+  }
   sharedLocks @type(name: "SharedLock") {
     ...SharedLockFragment
   }
+}
+
+fragment AchievementFragment on Achievement {
+  slug
+  granted
+  progress
+  total
+  grantedAt
+  name
+  description
+  category
+  progressEnabled
+  hideIfNotGranted
 }

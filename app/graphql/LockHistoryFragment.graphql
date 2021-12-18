@@ -1,0 +1,19 @@
+#import "./UserFragment.graphql"
+
+fragment LockHistoryFragment on LockHistory {
+  _id
+  createdAt
+  description
+  extension
+  icon
+  lock
+  payload
+  prefix
+  role
+  title
+  type
+  user @type(name: "ChasterUser") {
+    ...ChasterUserFragment
+  }
+  updatedAt
+}

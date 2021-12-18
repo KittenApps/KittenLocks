@@ -1,4 +1,4 @@
-#import "./ChasterUserFragment.graphql"
+#import "./UserFragment.graphql"
 #import "./SharedLockFragment.graphql"
 
 fragment LockFragment on Lock {

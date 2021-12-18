@@ -1,6 +1,10 @@
+#import "./LockHistoryFragment.graphql"
+
 query GetLockHistory($lockId: String!, $lastId: String, $limit: Int) {
   lockHistoryResult(lockId: $lockId, input: { lastId: $lastId, limit: $limit }) @rest(type: "LockHistoryResult", path: "/locks/{args.lockId}/history", method: "POST") {
-    results
+    results @type(name: "LockHistory") {
+      ...LockHistoryFragment
+    }
     count
     hasMore
   }

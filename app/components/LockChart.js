@@ -42,8 +42,8 @@ function LockChart({ history, startTime, startRem }){
 
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
-      const x = Date.parse(d.createdAt);
-      if (d.updatedAt !== d.createdAt) console.warn(d);
+      const x = d.createdAt.getTime();
+      if (d.updatedAt.getTime() !== d.createdAt.getTime()) console.warn(d);
       switch (d.type){
         case 'locked':
           lock.push({ x, title: 'L⬆', text: 'You started a new lock! 🥳' });
@@ -158,7 +158,7 @@ function LockChart({ history, startTime, startRem }){
           lock.push({ x, title: 'K⬆', text: `Your session offer was accepted and ${d.user.username} is now your keyholder! 🥳` });
           break;
         case 'max_limit_date_increased':
-          lock.push({ x, title: '🔒⬆', text: `You increased your maximum lock time limi to ${new Date(d.payload.date).toLocaleString()}! 🥳` });
+          lock.push({ x, title: '🔒⬆', text: `You increased your maximum lock time limit to ${new Date(d.payload.date).toLocaleString()}! 🥳` });
           break;
         case 'max_limit_date_removed':
           lock.push({ x, title: '🔒∞', text: 'You removed your maximum lock time limit, have fun! 🥳' });
