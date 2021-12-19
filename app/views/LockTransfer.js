@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
-import { Alert, AlertTitle, Button, FormControl, InputLabel, MenuItem, Paper, Select, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
+import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper,
+         Select, Skeleton, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
+import { Search } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
+import GetSharedLock from '../graphql/GetSharedLockQuery.graphql';
+import TransferLockMutation from '../graphql/TransferLockMutation.graphql';
 
 function VerifyLock({ lock, setLockOkay }){
   const [result, setResult] = useState(null);
@@ -23,7 +29,7 @@ function VerifyLock({ lock, setLockOkay }){
       setLockOkay(true);
     } else {
       const timerVisible = lock.isAllowedToViewTime;
-      const remainingTime = timerVisible && (Date.parse(lock.endDate) - Date.now()) / 3600000 < 2; // ToDo Remove Date.parse
+      const remainingTime = timerVisible && (lock.endDate.getTime() - Date.now()) / 3600000 < 2;
       setResult(
         <>
           <p>{timerVisible ? '✅' : '❌' } in keyholder lock with visible timer</p>
@@ -52,33 +58,63 @@ export default function LockTransfer(){
   const [activeStep, setActiveStep] = useState(0);
 
   const [oldLockID, setOldLockID] = useState('');
-  const [locks, setLocks] = useState([]);
   const [isLockOkay, setLockOkay] = useState(false);
 
+  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id } });
   useEffect(() => {
-    app.getAccessToken().then(({ accessToken }) => {
-      const headers = { 'Authorization': `Bearer ${accessToken}` };
-      return fetch('https://api.chaster.app/locks', { headers }).then(d => d.json()).then(j => {setLocks(j); setOldLockID(j[0]?._id || '');});
-    });
-  }, [app]);
-  const handleChangeLock = e => {setOldLockID(e.target.value); setLockOkay(false);};
-  const handleNext = () => isLockOkay && setActiveStep(s => s + 1);
+    if (data) setOldLockID(data.locks[0]?._id || '');
+  }, [data]);
+  useEffect(() => {
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
+  }, [error, enqueueSnackbar]);
 
   const [sharedLockID, setSharedLockID] = useState(searchParams.get('lock') || '');
+  const [getSharedLock, { data: sdata, error: serror }] = useLazyQuery(GetSharedLock);
+  useEffect(() => {
+    if (serror){
+      enqueueSnackbar(serror.toString(), { variant: 'error' });
+      console.error(serror);
+    }
+  }, [serror, enqueueSnackbar]);
   const [sharedLock, setSharedLock] = useState({});
   const [password, setPassword] = useState('');
 
   const handleChangeSharedLockID = e => setSharedLockID(e.target.value.trim());
-  const handleChangePassword = e => setPassword(e.target.value.trim());
-  useEffect(() => {
-    if (/^[0-9a-f]{24}$/u.test(sharedLockID)){
-      fetch(`https://api.chaster.app/public-locks/${sharedLockID}`).then(d => d.json()).then(j => setSharedLock(j));
+  const handleSelectSharedLockId = () => {
+    const sharedLockId = sharedLockID.match(/(?:chaster.app\/explore\/)?(?<id>[\da-f]{24})$/u)?.groups?.id;
+    if (sharedLockId){
+      if (sdata?.sharedLock?._id === sharedLockId) return setSharedLock(sdata.sharedLock);
+      return getSharedLock({ variables: { sharedLockId } });
     }
-  }, [sharedLockID]);
+    setSharedLock({});
+  };
+  const handleKeyDownSharedLock = e => e.key === 'Enter' && handleSelectSharedLockId();
+  useEffect(() => {
+    if (sdata) setSharedLock(sdata.sharedLock);
+  }, [sdata]);
+  const handleChangePassword = e => setPassword(e.target.value.trim());
 
-  const handleTransferLock = () => {
-    app.currentUser.functions.transferLock(oldLockID, sharedLock._id, password || '')
-      .then(r => enqueueSnackbar(r.error ? `Error: ${r.error}` : 'Success: Lock sucessfully transfered!', { variant: r.error ? 'error' : 'success' }));
+  const [transferLock, { data: mdata, error: merror }] = useMutation(TransferLockMutation);
+  useEffect(() => {
+    if (merror){
+      enqueueSnackbar(merror.toString(), { variant: 'error' });
+      console.error(merror);
+    }
+  }, [merror, enqueueSnackbar]);
+  const handleTransferLock = () => transferLock({ variables: { lockID: oldLockID, sharedLockID: sharedLock._id, password } });
+  useEffect(() => {
+    if (mdata && mdata.transferLock) enqueueSnackbar('Success: Lock sucessfully transfered!', { variant: 'success' })
+  }, [mdata, enqueueSnackbar]);
+
+  const handleChangeLock = e => {setOldLockID(e.target.value); setLockOkay(false);};
+  const handleNext = () => {
+    if (isLockOkay){
+      setActiveStep(s => s + 1);
+      handleSelectSharedLockId();
+    }
   };
 
   return (
@@ -104,28 +140,30 @@ export default function LockTransfer(){
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key="currentLock">
           <StepLabel>Select and verify your current lock</StepLabel>
-          <StepContent>
-            <FormControl fullWidth>
-              <InputLabel id="select-label">Your current lock:</InputLabel>
-              <Select labelId="select-label" value={oldLockID} label="Your current lock:" onChange={handleChangeLock} disabled={locks.length === 0}>
-                {locks.map(l => <MenuItem value={l._id} key={l._id}>{l.title} ({l._id})</MenuItem>)}
-              </Select>
-              { locks?.length === 0 && <Alert severity="error" sx={{ m: 2 }}><b>Error:</b> It looks like you aren't in any active locks currently.</Alert> }
-            </FormControl>
-            <VerifyLock lock={locks.find(l => l._id === oldLockID)} setLockOkay={setLockOkay} />
-            <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: locks?.length === 0 ? 0 : 2 }} variant="contained">Select shared lock</Button>
-          </StepContent>
+          { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : (
+            <StepContent>
+              <FormControl fullWidth>
+                <InputLabel id="select-label">Your current lock:</InputLabel>
+                <Select labelId="select-label" value={oldLockID} label="Your current lock:" onChange={handleChangeLock} disabled={data.locks.length === 0}>
+                  {data.locks.map(l => <MenuItem value={l._id} key={l._id}>{l.title} ({l._id})</MenuItem>)}
+                </Select>
+                { data.locks?.length === 0 && <Alert severity="error" sx={{ m: 2 }}><b>Error:</b> It looks like you aren't in any active locks currently.</Alert> }
+              </FormControl>
+              <VerifyLock lock={data.locks.find(l => l._id === oldLockID)} setLockOkay={setLockOkay} />
+              <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: data.locks?.length === 0 ? 0 : 2 }} variant="contained">Select shared lock</Button>
+            </StepContent>
+          )}
         </Step>
         <Step key="sharedLock">
           <StepLabel>Choose the shared lock to transfer to</StepLabel>
           <StepContent>
             <h2>Transfer to { sharedLock.name || 'shared lock (find the ID in the shared lock url)'}:</h2>
             <FormControl fullWidth>
-              <TextField label="shared lock ID" value={sharedLockID} onChange={handleChangeSharedLockID} variant="outlined" />
-              { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" />}
+              <TextField label="shared lock ID" value={sharedLockID} onChange={handleChangeSharedLockID} onBlur={handleSelectSharedLockId} onKeyDown={handleKeyDownSharedLock} variant="outlined" InputProps={{ endAdornment: <InputAdornment position="end"><IconButton onClick={handleSelectSharedLockId} edge="end"><Search/></IconButton></InputAdornment> }}/>
+              { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" /> }
             </FormControl>
             { sharedLock._id && <JsonView src={sharedLock} collapsed/>}
-            { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained">[BETA] Transfer Lock</Button> }
+            { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === data.locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained" fullWidth>Transfer Lock</Button> }
           </StepContent>
         </Step>
       </Stepper>

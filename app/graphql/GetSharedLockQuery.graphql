@@ -1,0 +1,7 @@
+#import "./SharedLockFragment.graphql"
+
+query GetMyLock($sharedLockId: String!) {
+  sharedLock(sharedLockId: $sharedLockId) @noauth @rest(type: "SharedLock", path: "/public-locks/{args.sharedLockId}") {
+    ...SharedLockFragment
+  }
+}

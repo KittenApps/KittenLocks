@@ -1,0 +1,3 @@
+mutation TransferLock($lockID: String!, $sharedLockID: String!, $password: String!) {
+  transferLock(input: { lockID: $lockID, sharedLockID: $sharedLockID, password: $password })
+}
