@@ -1,7 +1,7 @@
 #import "./LockFragment.graphql"
 
-query GetMyWearers($status: String, $realmId: String) {
-  locks(status: $status, myWearers: $realmId) @rest(type: "Lock", path: "/keyholder/wearers?status={args.status}") {
+query GetMyWearers($status: String, $realmId: String, $pathBuilder: any) {
+  locks(status: $status, myWearers: $realmId) @rest(type: "Lock", pathBuilder: $pathBuilder) {
     ...LockFragment
   }
 }

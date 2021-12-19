@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
-import { Autocomplete, Avatar, Box, Paper, TextField, Typography } from '@mui/material';
+import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
 import { BSON } from 'realm-web';
@@ -8,14 +8,16 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
 import { WarningTwoTone as Warn } from '@mui/icons-material';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
 import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graphql';
+import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
 export default function PublicLocks({ isDesktop }){
   const app = useRealmApp();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const urlUsername = useMatch('locks/:username/*')?.params.username;
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState(urlUsername || '');
@@ -26,22 +28,28 @@ export default function PublicLocks({ isDesktop }){
     { o: 'KittenLocks login required', t: 'other KittenLocks users', d: true }
   ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
 
+  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers);
   useEffect(() => {
     if (app.currentUser){
       setOptions(op => [{ o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' }, { o: 'Keyholder scope required', t: 'Your Lockees', d: true }, ...op.slice(2)]);
-      if (new Set(app.currentUser.customData.scopes).has('keyholder')) app.getAccessToken().then(({ accessToken }) => {
-        const headers = { 'Authorization': `Bearer ${accessToken}` };
-        const t = 'Your Lockees';
-        return fetch('https://api.chaster.app/keyholder/wearers', { headers }).then(d => d.json()).then(j => setOptions(op => {
-          const unique = j.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t })).filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i);
-          return [op[0], ...unique.sort((a, b) => a.o.localeCompare(b.o)), ...op.slice(2).filter(x => !new Set(unique.map(l => l.o)).has(x.o))];
-        }));
-      });
+      if (new Set(app.currentUser.customData.scopes).has('keyholder')) getAllWearers({ variables: { realmId: app.currentUser.id, status: 'all', pathBuilder: () => '/keyholder/wearers' } });
     }
-  }, [app, app.currentUser]);
+  }, [app, app.currentUser, getAllWearers]);
+  useEffect(() => {
+    const t = 'Your Lockees';
+    if (wdata) setOptions(op => {
+      const unique = wdata.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t })).filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i);
+      return [op[0], ...unique.sort((a, b) => a.o.localeCompare(b.o)), ...op.slice(2).filter(x => !new Set(unique.map(l => l.o)).has(x.o))];
+    });
+  }, [wdata]);
+  useEffect(() => {
+    if (werror){
+      enqueueSnackbar(werror.toString(), { variant: 'error' });
+      console.error(werror);
+    }
+  }, [werror, enqueueSnackbar]);
 
-  const { data, error } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
-  const { enqueueSnackbar } = useSnackbar();
+  const { data, loading, error } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -55,9 +63,6 @@ export default function PublicLocks({ isDesktop }){
       return [...op.filter(o => o.t !== t), ...data.users.filter(u => !set.has(u.username)).sort((a, b) => a.username.localeCompare(b.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: u.discordUsername === '{}' ? '' : u.discordUsername, t }))];
     });
   }, [data]);
-
-  // const { loading, error, data: data2 } = useQuery(GetMyWearers);
-  // console.log(loading, error, data2);
 
   const onChangeUsername = (e, n) => setUsername(n);
   const handleUsernameSearch = (e, n) => {
@@ -107,7 +112,7 @@ export default function PublicLocks({ isDesktop }){
           getOptionLabel={o => o.o || o}
           getOptionDisabled={o => o.d}
           options={options}
-          renderInput={params => <TextField {...params} label="Username"/>}
+          renderInput={params => <TextField {...params} label="Username" InputProps={{ ...params.InputProps, endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</> }}/>}
         />
       </ScrollElement>
       <Outlet/>

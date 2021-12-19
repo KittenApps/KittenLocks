@@ -1,9 +1,0 @@
-query GetAllMyWearers($realmId: String)  {
-  locks(myWearers: $realmId) @rest(type: "Lock", path: "/keyholder/wearers") {
-    user @type(name: "User"){
-      username
-      avatarUrl
-      discordUsername
-    }
-  }
-}

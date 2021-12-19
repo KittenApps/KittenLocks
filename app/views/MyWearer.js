@@ -16,7 +16,7 @@ export default function MyWearer({ setSubNav }){
   const [status, setStatus] = useState('locked');
   const handleStatusChange = e => setStatus(e.target.value);
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id } });
+  const { data, loading, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, pathBuilder: ({ args }) => `/keyholder/wearers?status=${args.status}` } });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
