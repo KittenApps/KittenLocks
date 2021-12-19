@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper,
-         Select, Skeleton, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
-import { Search } from '@mui/icons-material';
+         Select, Skeleton, Stack, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { CompareArrows, Search } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
@@ -60,7 +61,7 @@ export default function LockTransfer(){
   const [oldLockID, setOldLockID] = useState('');
   const [isLockOkay, setLockOkay] = useState(false);
 
-  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id } });
+  const { data, loading, error, refetch } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id } });
   useEffect(() => {
     if (data) setOldLockID(data.locks[0]?._id || '');
   }, [data]);
@@ -97,7 +98,7 @@ export default function LockTransfer(){
   }, [sdata]);
   const handleChangePassword = e => setPassword(e.target.value.trim());
 
-  const [transferLock, { data: mdata, error: merror }] = useMutation(TransferLockMutation);
+  const [transferLock, { data: mdata, loading: mloading, error: merror }] = useMutation(TransferLockMutation);
   useEffect(() => {
     if (merror){
       enqueueSnackbar(merror.toString(), { variant: 'error' });
@@ -106,16 +107,24 @@ export default function LockTransfer(){
   }, [merror, enqueueSnackbar]);
   const handleTransferLock = () => transferLock({ variables: { lockID: oldLockID, sharedLockID: sharedLock._id, password } });
   useEffect(() => {
-    if (mdata && mdata.transferLock) enqueueSnackbar('Success: Lock sucessfully transfered!', { variant: 'success' })
-  }, [mdata, enqueueSnackbar]);
+    if (mdata && mdata.transferLock){
+      enqueueSnackbar('Success: Lock sucessfully transfered!', { variant: 'success' });
+      setActiveStep(0);
+      setLockOkay(false);
+      setSharedLock({});
+      setPassword('');
+      refetch();
+    }
+  }, [mdata, enqueueSnackbar, refetch]);
 
   const handleChangeLock = e => {setOldLockID(e.target.value); setLockOkay(false);};
   const handleNext = () => {
     if (isLockOkay){
-      setActiveStep(s => s + 1);
+      setActiveStep(1);
       handleSelectSharedLockId();
     }
   };
+  const handelBack = () => setActiveStep(0);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
@@ -158,12 +167,15 @@ export default function LockTransfer(){
           <StepLabel>Choose the shared lock to transfer to</StepLabel>
           <StepContent>
             <h2>Transfer to { sharedLock.name || 'shared lock (find the ID in the shared lock url)'}:</h2>
-            <FormControl fullWidth>
+            <FormControl fullWidth sx={{ mb: sharedLock._id ? 2 : 0 }}>
               <TextField label="shared lock ID" value={sharedLockID} onChange={handleChangeSharedLockID} onBlur={handleSelectSharedLockId} onKeyDown={handleKeyDownSharedLock} variant="outlined" InputProps={{ endAdornment: <InputAdornment position="end"><IconButton onClick={handleSelectSharedLockId} edge="end"><Search/></IconButton></InputAdornment> }}/>
               { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" /> }
             </FormControl>
             { sharedLock._id && <JsonView src={sharedLock} collapsed/>}
-            { isLockOkay && <Button onClick={handleTransferLock} disabled={!sharedLock._id || sharedLock.user._id === data.locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained" fullWidth>Transfer Lock</Button> }
+            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+              <Button variant="outlined" onClick={handelBack}>Back</Button>
+              <LoadingButton loading={mloading} loadingPosition="end" endIcon={<CompareArrows/>} onClick={handleTransferLock} disabled={mloading || !isLockOkay || !sharedLock._id || sharedLock.user._id === data.locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained" fullWidth>Transfer Lock</LoadingButton>
+            </Stack>
           </StepContent>
         </Step>
       </Stepper>
