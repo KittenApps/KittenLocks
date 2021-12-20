@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { Avatar, Grid, Link, Paper, Typography } from '@mui/material';
 
-export default function Home(){
+function Home(){
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} lg={4}>
@@ -43,3 +44,5 @@ export default function Home(){
     </Grid>
   );
 }
+
+export default memo(Home);

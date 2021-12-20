@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
@@ -10,7 +10,7 @@ import { useQuery } from '@apollo/client';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
-export default function MyWearer({ setSubNav }){
+function MyWearers({ setSubNav }){
   const app = useRealmApp();
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
@@ -77,3 +77,5 @@ export default function MyWearer({ setSubNav }){
     </Paper>
   );
 }
+
+export default memo(MyWearers);

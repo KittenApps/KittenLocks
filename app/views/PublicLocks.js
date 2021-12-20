@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
@@ -14,7 +14,7 @@ import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graph
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
-export default function PublicLocks({ isDesktop }){
+function PublicLocks({ isDesktop }){
   const app = useRealmApp();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -138,3 +138,5 @@ export default function PublicLocks({ isDesktop }){
     </Paper>
   );
 }
+
+export default memo(PublicLocks);

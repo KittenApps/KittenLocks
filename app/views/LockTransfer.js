@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper,
@@ -12,7 +12,7 @@ import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
 import GetSharedLock from '../graphql/GetSharedLockQuery.graphql';
 import TransferLockMutation from '../graphql/TransferLockMutation.graphql';
 
-function VerifyLock({ lock, setLockOkay }){
+const VerifyLock = memo(({ lock, setLockOkay }) => {
   const [result, setResult] = useState(null);
 
   useEffect(() => {
@@ -49,9 +49,10 @@ function VerifyLock({ lock, setLockOkay }){
       <JsonView src={lock} collapsed/>
     </>
   );
-}
+});
+VerifyLock.displayName = 'VerifyLock';
 
-export default function LockTransfer(){
+function LockTransfer(){
   const app = useRealmApp();
   const { enqueueSnackbar } = useSnackbar();
   const [searchParams] = useSearchParams();
@@ -182,3 +183,5 @@ export default function LockTransfer(){
     </Paper>
   );
 }
+
+export default memo(LockTransfer);

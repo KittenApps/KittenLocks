@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { Fragment, Suspense, forwardRef, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, Suspense, forwardRef, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, Collapse, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton,
@@ -16,7 +16,7 @@ import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as Char
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
-const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearer'));
+const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
 const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
 const PublicCharts = lazy(() => import(/* webpackChunkName: "public_charts" */ './views/PublicCharts'));
@@ -86,7 +86,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end'
 }));
 
-function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose, children }){
+const ResponsiveDrawer = memo(({ isDesktop, open, handleDrawerOpen, handleDrawerClose, children }) => {
   if (isDesktop) return (
     <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
       <DrawerHeader>
@@ -97,9 +97,10 @@ function ResponsiveDrawer({ isDesktop, open, handleDrawerOpen, handleDrawerClose
     </Drawer>
   );
   return <SwipeableDrawer elevation={2} sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
-}
+});
+ResponsiveDrawer.displayName = 'ResponsiveDrawer';
 
-export default function App(){
+function App(){
   const app = useRealmApp();
   const navigate = useNavigate();
   const notistackRef = useRef(null);
@@ -341,3 +342,5 @@ export default function App(){
     </ThemeProvider>
   );
 }
+
+export default memo(App);

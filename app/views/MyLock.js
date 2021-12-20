@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Alert, FormControlLabel, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerificationPictureGallery from '../components/VerificationGallery';
@@ -14,7 +14,7 @@ function lockSort(a, b){
   return a.startDate < b.startDate ? 1 : -1;
 }
 
-export default function MyLock({ setSubNav }){
+function MyLock({ setSubNav }){
   const app = useRealmApp();
   const [showArchived, setShowArchived] = useState(false);
   const handleShowArchived = e => setShowArchived(e.target.checked);
@@ -59,3 +59,5 @@ export default function MyLock({ setSubNav }){
     </Paper>
   );
 }
+
+export default memo(MyLock);

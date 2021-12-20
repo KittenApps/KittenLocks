@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, memo, useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
 import { ExpandMore, UploadFileTwoTone } from '@mui/icons-material';
 import LockChart from '../components/LockChart';
@@ -7,7 +7,7 @@ import GetSiliziaDemo from '../graphql/GetSiliziaDemoQuery.graphql';
 import { useSnackbar } from 'notistack';
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/Chart'));
 
-function SampleChart(){
+const SampleChart = memo(() => {
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery(GetSiliziaDemo);
   useEffect(() => {
@@ -18,9 +18,10 @@ function SampleChart(){
   }, [error, enqueueSnackbar]);
   if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   return <LockChart history={data.siliziaHistory} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
-}
+});
+SampleChart.displayName = 'SampleChart';
 
-export default function PublicCharts(){
+function PublicCharts(){
   const [options, setOptions] = useState(null);
   const handleOpen = e => e.target.files[0].text().then(j => setOptions(JSON.parse(j)));
 
@@ -42,3 +43,5 @@ export default function PublicCharts(){
     </Paper>
   );
 }
+
+export default memo(PublicCharts);

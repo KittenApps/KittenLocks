@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VerificationPictureGallery from '../components/VerificationGallery';
@@ -8,7 +8,7 @@ import { useQuery } from '@apollo/client';
 import { GetPublicLocks, GetPublicProfile } from '../graphql/GetPublicLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
 
-function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
+const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
   const { data, loading, error } = useQuery(GetPublicLocks, { variables: { userId } });
   useEffect(() => {
     if (error){
@@ -41,9 +41,10 @@ function PLocks({ userId, enqueueSnackbar, setSubNav, username }){
       ))}
     </>
   );
-}
+});
+PLocks.displayName = 'PLocks';
 
-export default function PublicLocks({ setSubNav }){
+function PublicLocks({ setSubNav }){
   const { username } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -71,3 +72,5 @@ export default function PublicLocks({ setSubNav }){
     </>
   );
 }
+
+export default memo(PublicLocks);
