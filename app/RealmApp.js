@@ -47,11 +47,28 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         users: { keyArgs: false },
-        lockHistoryResult: {
+        lockHistory: {
           keyArgs: ['lockId'],
           merge(ex, { 'results@type({"name":"LockHistory"})': results, count, hasMore }, { readField, args: { input: { lastId } } }){
             const existing = ex ? ex['results@type({"name":"LockHistory"})'] : [];
-            if (!lastId || lastId === readField('_id', existing.at(-1))) return { 'results@type({"name":"LockHistory"})': [...existing, ...results], count, hasMore };
+            if (!lastId || ex.refresh > 0){
+              if (existing.length === 0) return { 'results@type({"name":"LockHistory"})': [...results], count, hasMore, refresh: 0 };
+              const firstId = readField('_id', existing[ex.refresh || 0]);
+              let offset = -1;
+              for (const [i, result] of results.entries()){
+                if (readField('_id', result) === firstId){
+                  offset = i;
+                  break;
+                }
+              }
+              if (offset === -1){
+                if (!hasMore) throw new Error('LockHistory: Couldn\'t find firstId in chache!');
+                return { 'results@type({"name":"LockHistory"})': [...existing.slice(0, ex.refresh), ...results, ...existing.slice(ex.refresh)], count, hasMore, refresh: ex.refresh + results.length };
+              }
+              if (ex.refresh > 0) return { 'results@type({"name":"LockHistory"})': [...existing.slice(0, ex.refresh), ...results.slice(0, offset), ...existing.slice(ex.refresh)], count, hasMore: false, refresh: 0 };
+              return { 'results@type({"name":"LockHistory"})': [...results.slice(0, offset), ...existing], count, hasMore: false, refresh: 0 };
+            }
+            if (lastId === readField('_id', existing.at(-1))) return { 'results@type({"name":"LockHistory"})': [...existing, ...results], count, hasMore, refresh: 0 };
             const merged = [...existing];
             let offset = -1;
             for (let i = existing.length - 1; i >= 0; --i){
@@ -64,7 +81,7 @@ const cache = new InMemoryCache({
             for (const [i, result] of results.entries()){
               merged[offset + i] = result;
             }
-            return { 'results@type({"name":"LockHistory"})': merged, count, hasMore };
+            return { 'results@type({"name":"LockHistory"})': merged, count, hasMore, refresh: 0 };
           }
         }
         /* mlocks: {

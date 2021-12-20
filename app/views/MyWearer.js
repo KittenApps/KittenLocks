@@ -34,7 +34,7 @@ export default function MyWearer({ setSubNav }){
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
       <Typography variant="h4" gutterBottom component="div">
         My Wearer's Locks:
-        <FormControl sx={{ float: 'right', mr: 2 }}>
+        <FormControl sx={{ float: 'right' }}>
           <InputLabel id="filter-label">Filter</InputLabel>
           <Select labelId="filter-label" label="Filter" value={status} onChange={handleStatusChange}>
             <MenuItem value="locked">locked</MenuItem>
@@ -65,8 +65,7 @@ export default function MyWearer({ setSubNav }){
             <JsonView src={j} collapsed={1}/>
           </ScrollElement>
           <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
-            <Typography variant="h5" gutterBottom component="p">{j.user.username}: {j.title} (history):</Typography>
-            <LockHistory lockId={j._id} startTime={j.hideTimeLogs ? 0 : j.minDate.getTime()} startRem={j.minDate.getTime() - j.startDate.getTime()}/>
+            <LockHistory title={`${j.user.username}: ${j.title} (history):`} lockId={j._id} startTime={j.hideTimeLogs ? 0 : j.minDate.getTime()} startRem={j.minDate.getTime() - j.startDate.getTime()}/>
           </ScrollElement>
           { j.extensions.find(e => e.slug === 'verification-picture') && (
             <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>

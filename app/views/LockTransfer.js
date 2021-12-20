@@ -3,7 +3,7 @@ import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper,
          Select, Skeleton, Stack, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
+import { LoadingButton } from '@mui/lab';
 import { CompareArrows, Search } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
