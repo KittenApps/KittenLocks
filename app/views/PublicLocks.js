@@ -8,7 +8,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
 import { WarningTwoTone as Warn } from '@mui/icons-material';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
 import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graphql';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
@@ -28,20 +28,15 @@ export default function PublicLocks({ isDesktop }){
     { o: 'KittenLocks login required', t: 'other KittenLocks users', d: true }
   ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
 
-  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers);
+  const [getAllKittenLocksUsers, { data, loading, error }] = useLazyQuery(GetAllKittenLocksUsers);
   useEffect(() => {
-    if (app.currentUser){
-      setOptions(op => [{ o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' }, { o: 'Keyholder scope required', t: 'Your Lockees', d: true }, ...op.slice(2)]);
-      if (new Set(app.currentUser.customData.scopes).has('keyholder')) getAllWearers({ variables: { realmId: app.currentUser.id, status: 'all', pathBuilder: () => '/keyholder/wearers' } });
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
     }
-  }, [app, app.currentUser, getAllWearers]);
-  useEffect(() => {
-    const t = 'Your Lockees';
-    if (wdata) setOptions(op => {
-      const unique = wdata.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t })).filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i);
-      return [op[0], ...unique.sort((a, b) => a.o.localeCompare(b.o)), ...op.slice(2).filter(x => !new Set(unique.map(l => l.o)).has(x.o))];
-    });
-  }, [wdata]);
+  }, [error, enqueueSnackbar]);
+
+  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers);
   useEffect(() => {
     if (werror){
       enqueueSnackbar(werror.toString(), { variant: 'error' });
@@ -49,20 +44,31 @@ export default function PublicLocks({ isDesktop }){
     }
   }, [werror, enqueueSnackbar]);
 
-  const { data, loading, error } = useQuery(GetAllKittenLocksUsers, { variables: { userId: new BSON.ObjectID(app.currentUser?.customData._id) } });
   useEffect(() => {
-    if (error){
-      enqueueSnackbar(error.toString(), { variant: 'error' });
-      console.error(error);
+    if (app.currentUser){
+      getAllKittenLocksUsers({ variables: { userId: new BSON.ObjectID(app.currentUser.customData._id) } });
+      if (new Set(app.currentUser.customData.scopes).has('keyholder')){
+        getAllWearers({ variables: { realmId: app.currentUser.id, status: 'all', pathBuilder: () => '/keyholder/wearers' } });
+      }
+    } // keep app scope here to refresh on newly granted keyholder scope
+  }, [app, app.currentUser, getAllWearers, getAllKittenLocksUsers]);
+
+  useEffect(() => {
+    if (app.currentUser){
+      const yourself = { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' };
+      const wearers = wdata ? wdata.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t: 'Your Lockees' }))
+                                         .filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i).sort((a, b) => a.o.localeCompare(b.o))
+                            : (new Set(app.currentUser.customData.scopes).has('keyholder') ? [{ o: 'loading your lockees ...', t: 'Your Lockees', d: true }]
+                                                                                           : [{ o: 'Keyholder scope required', t: 'Your Lockees', d: true }]);
+      const set = new Set(wearers.map(o => o.o)).add(yourself.o);
+      const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
+      const klusers = data ? data.users.filter(u => !set.has(u.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: fd(u), t: 'other KittenLocks users' }))
+                                       .sort((a, b) => a.o.localeCompare(b.o)) : [{ o: 'loading other KittenLocks users ...', t: 'other KittenLocks users', d: true }];
+      setOptions([yourself, ...wearers, ...klusers]);
+    } else {
+      setOptions([{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
     }
-  }, [error, enqueueSnackbar]);
-  useEffect(() => {
-    const t = 'other KittenLocks users';
-    if (data) setOptions(op => {
-      const set = new Set(op.map(o => o.o));
-      return [...op.filter(o => o.t !== t), ...data.users.filter(u => !set.has(u.username)).sort((a, b) => a.username.localeCompare(b.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: u.discordUsername === '{}' ? '' : u.discordUsername, t }))];
-    });
-  }, [data]);
+  }, [app.currentUser, data, wdata]);
 
   const onChangeUsername = (e, n) => setUsername(n);
   const handleUsernameSearch = (e, n) => {
@@ -102,9 +108,13 @@ export default function PublicLocks({ isDesktop }){
             const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
             return (
               <Box component="li" {...props}>
-                { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a || 'https://api.chaster.app/users/avatar/default_avatar.jpg'} sx={{ width: 24, height: 24, mr: 2 }}/> }
+                { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a} sx={{ width: 24, height: 24, mr: 2 }}/> }
                 {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
-                { op.h && <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})</Typography> }
+                { op.h && (
+                  <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
+                    ({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})
+                  </Typography>
+                )}
               </Box>
             );
           }}
@@ -112,7 +122,16 @@ export default function PublicLocks({ isDesktop }){
           getOptionLabel={o => o.o || o}
           getOptionDisabled={o => o.d}
           options={options}
-          renderInput={params => <TextField {...params} label="Username" InputProps={{ ...params.InputProps, endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</> }}/>}
+          renderInput={params => (
+            <TextField
+              {...params}
+              label="Username"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
+              }}
+            />
+          )}
         />
       </ScrollElement>
       <Outlet/>
