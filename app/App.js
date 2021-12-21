@@ -10,7 +10,7 @@ import { Link as ScrollLink } from 'react-scroll';
 import RequiredScopes from './components/RequiredScopes';
 import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
-import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, Close, CompareArrows as CompareIcon,
+import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, Clear, Close, CompareArrows as CompareIcon,
          ExpandLess, ExpandMore, HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon,
          Lock as LockIcon, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Restore, Search, Settings } from '@mui/icons-material';
 import Home from './views/Home';
@@ -158,6 +158,7 @@ function App(){
   const [openLogin, showLogin] = useState(logScopes.length > 0);
   const handleLogin = () => showLogin(true);
   const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
+  const handleResetCache = () => {app.client.resetStore(); setProfileMenuAnchorEl(null);};
 
   const notistackClose = useCallback(key => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
@@ -225,6 +226,7 @@ function App(){
               >
                 <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
                 <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem>
+                <MenuItem onClick={handleResetCache}><ListItemIcon><Clear/></ListItemIcon>Reset Cache</MenuItem>
                 <Divider/>
                 <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem>
               </Menu>

@@ -3,8 +3,8 @@ import { memo, useCallback, useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
-import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Button, Dialog, DialogActions, DialogContent,
-         DialogTitle, FormControlLabel, FormGroup, FormHelperText, IconButton, Stack, Switch, useMediaQuery } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Backdrop, Button, CircularProgress, Dialog, DialogActions,
+         DialogContent, DialogTitle, FormControlLabel, FormGroup, FormHelperText, IconButton, Stack, Switch, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import { Close, ExpandMore } from '@mui/icons-material';
@@ -57,6 +57,8 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
     };
   }, [closeSnackbar, onMissingScopes]);
 
+  const [loading, setLoading] = useState(false);
+
   const handleLogin = () => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
     const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
@@ -74,9 +76,10 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
         app.logIn(Credentials.function({ authCode: e.data.authCode, redUrl })).then(u => {
           const mis = u.grantedScopes.filter(x => !new Set(u.scopes).has(x));
           if (mis.length > 0) enqueueSnackbar('Missing granted scopes: You\'re not using all your already granted scopes :(', { variant: 'warning', action: missingScopesAction(u.grantedScopes) });
+          if (showLogin) showLogin(false);
         });
         localStorage.setItem('scopes', [...scopes].join(','));
-        if (showLogin) showLogin(false);
+        setLoading(true);
       } else if (e.data.authCode === null){
         e.source.close();
         enqueueSnackbar('Login failed: You need to accept the Chaster OAuth request!', { variant: 'error' });
@@ -90,6 +93,8 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
     }
     navigate('/');
   };
+
+  if (loading) return <Backdrop sx={{ color: '#fff', zIndex: t => t.zIndex.drawer + 1 }} open><CircularProgress color="inherit" /></Backdrop>;
 
   return (
     <Dialog fullScreen={fullScreen} BackdropProps={{ sx: { backgroundColor: 'rgba(0, 0, 0, 0.75)' } }} open>

@@ -189,7 +189,7 @@ export function RealmAppProvider({ children }){
 
   const client = useMemo(() => new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
 
-  const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken, cache };
+  const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken, cache, client };
 
   return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{children}</ApolloProvider></RealmAppContext.Provider>;
 }
