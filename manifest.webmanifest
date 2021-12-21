@@ -14,8 +14,8 @@
       "sizes": "192x192"
     }
   ],
-  "start_url": "https://www.kittenlocks.de/",
-  "scope": "https://www.kittenlocks.de",
+  "start_url": "http://localhost:8080/",
+  "scope": "http://localhost:8080",
   "display": "standalone",
   "theme_color": "#1f1d2b",
   "background_color": "#1f1d2b",

@@ -25,7 +25,7 @@ function Home(){
             <li key="2">improved login / scopes management</li>
             <li key="3">new Chaster like theme</li>
             <li key="4">lock transfer</li>
-            <li key="5">removed Locktober stats (<Link href="https://619c4d2212c3bc00070daf20--kittenlocks.netlify.app/" target="_blank" rel="noopener">old version</Link>)</li>
+            <li key="5">removed Locktober stats</li>
             <li key="6">lots of optimisations and bug fixes</li>
           </ul>
         </Paper>
