@@ -8,6 +8,22 @@ import { useQuery } from '@apollo/client';
 import { GetPublicLocks, GetPublicProfile } from '../graphql/GetPublicLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
 
+const PLock = memo(({ lock }) => (
+  <ScrollElement name={lock._id}>
+    <ScrollElement name={`info-${lock._id}`} style={{ paddingBottom: 8 }}>
+      <Typography variant="h5" gutterBottom component="p">{lock.title} (info):</Typography>
+      <JsonView src={lock} collapsed={1}/>
+    </ScrollElement>
+    { lock.extensions.find(e => e.slug === 'verification-picture') && (
+      <ScrollElement name={`veri-${lock._id}`} style={{ paddingBottom: 8 }}>
+        <Typography variant="h5" gutterBottom component="p">{lock.title} (verification pics):</Typography>
+        <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+      </ScrollElement>
+    )}
+  </ScrollElement>
+));
+PLock.displayName = 'PLock';
+
 const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
   const { data, loading, error } = useQuery(GetPublicLocks, { variables: { userId } });
   useEffect(() => {
@@ -23,24 +39,7 @@ const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
 
   if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   if (data?.locks.length === 0) return <Alert severity="warning">It looks like <b>{username}</b> doesn't have any public locks yet :(</Alert>;
-  return (
-    <>
-      { data.locks.map(j => (
-        <ScrollElement key={j._id} name={j._id}>
-          <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
-            <Typography variant="h5" gutterBottom component="p">{j.title} (info):</Typography>
-            <JsonView src={j} collapsed={1}/>
-          </ScrollElement>
-          { j.extensions.find(e => e.slug === 'verification-picture') && (
-            <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
-              <Typography variant="h5" gutterBottom component="p">{j.title} (verification pics):</Typography>
-              <VerificationPictureGallery history={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
-            </ScrollElement>
-          )}
-        </ScrollElement>
-      ))}
-    </>
-  );
+  return data.locks.map(l => <PLock key={l._id} lock={l}/>);
 });
 PLocks.displayName = 'PLocks';
 

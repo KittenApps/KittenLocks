@@ -10,6 +10,44 @@ import { useQuery } from '@apollo/client';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
+const WLock = memo(({ lock, navigate }) => {
+  const handleUsernameClick = useCallback(() => navigate(`/locks/${lock.user.username}`), [lock.user.username, navigate]);
+  return (
+    <ScrollElement name={lock._id}>
+      <ScrollElement name={`info-${lock._id}`} style={{ paddingBottom: 8 }}>
+        <Stack direction="row" alignItems="center">
+          <CardHeader
+            sx={{ cursor: 'pointer' }}
+            avatar={<Avatar src={lock.user.avatarUrl}/>}
+            onClick={handleUsernameClick}
+            title={lock.user.username}
+            titleTypographyProps={{ fontSize: 16 }}
+            subheader={<Link>Public Lock Profile</Link>}
+            subheaderTypographyProps={{ fontSize: 10 }}
+          />
+          <Typography variant="h5" gutterBottom component="div">{lock.title} (info):</Typography>
+        </Stack>
+        <JsonView src={lock} collapsed={1}/>
+      </ScrollElement>
+      <ScrollElement name={`hist-${lock._id}`} style={{ paddingBottom: 8 }}>
+        <LockHistory
+          title={`${lock.user.username}: ${lock.title} (history):`}
+          lockId={lock._id}
+          startTime={lock.hideTimeLogs ? 0 : lock.minDate.getTime()}
+          startRem={lock.minDate.getTime() - lock.startDate.getTime()}
+        />
+      </ScrollElement>
+      { lock.extensions.find(e => e.slug === 'verification-picture') && (
+        <ScrollElement name={`veri-${lock._id}`} style={{ paddingBottom: 8 }}>
+          <Typography variant="h5" gutterBottom component="p">{lock.user.username}: {lock.title} (verification pics):</Typography>
+          <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+        </ScrollElement>
+      )}
+    </ScrollElement>
+  );
+});
+WLock.displayName = 'WLock';
+
 function MyWearers({ setSubNav }){
   const app = useRealmApp();
   const navigate = useNavigate();
@@ -24,11 +62,11 @@ function MyWearers({ setSubNav }){
     }
   }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (data && data.locks.length > 0) setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data && data.locks.length > 0){
+      setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    }
     return () => setSubNav(null);
   }, [data, setSubNav]);
-
-  const handleUsernameClick = username => () => navigate(`/locks/${username}`); // ToDo: useCallback
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
@@ -45,35 +83,7 @@ function MyWearers({ setSubNav }){
         </FormControl>
       </Typography>
       { data?.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
-      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(j => (
-        <ScrollElement key={j._id} name={j._id}>
-          <ScrollElement name={`info-${j._id}`} style={{ paddingBottom: 8 }}>
-            <Stack direction="row" alignItems="center">
-              <CardHeader
-                sx={{ cursor: 'pointer' }}
-                avatar={<Avatar src={j.user.avatarUrl}/>}
-                onClick={handleUsernameClick(j.user.username)}
-                title={j.user.username}
-                titleTypographyProps={{ fontSize: 16 }}
-                subheader={<Link>Public Lock Profile</Link>}
-                subheaderTypographyProps={{ fontSize: 10 }}
-              />
-              <Typography variant="h5" gutterBottom component="div">
-                {j.title} (info):
-              </Typography>
-            </Stack>
-            <JsonView src={j} collapsed={1}/>
-          </ScrollElement>
-          <ScrollElement name={`hist-${j._id}`} style={{ paddingBottom: 8 }}>
-            <LockHistory title={`${j.user.username}: ${j.title} (history):`} lockId={j._id} startTime={j.hideTimeLogs ? 0 : j.minDate.getTime()} startRem={j.minDate.getTime() - j.startDate.getTime()}/>
-          </ScrollElement>
-          { j.extensions.find(e => e.slug === 'verification-picture') && (
-            <ScrollElement name={`veri-${j._id}`} style={{ paddingBottom: 8 }}>
-              <Typography variant="h5" gutterBottom component="p">{j.user.username}: {j.title} (verification pics):</Typography>
-              <VerificationPictureGallery history={j.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
-            </ScrollElement>
-          )}
-        </ScrollElement>))}
+      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) }
     </Paper>
   );
 }
