@@ -13,6 +13,22 @@ import ScopeBadges from './ScopeBadges';
 const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
 const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
 
+const ScopeSwitch = memo(({ s, scopes, setScopes, reqScopes, val, mb, text, i }) => {
+  const handleChange = useCallback(e => {
+    const set = new Set(scopes);
+    if (e.target.checked) return setScopes(set.add(s));
+    set.delete(s);
+    setScopes(set);
+  }, [s, scopes, setScopes]);
+  return (
+    <>
+      <FormControlLabel disabled={reqScopes.includes(s)} onChange={handleChange} checked={scopes.has(s)} control={<Switch color={val[i] === 0 ? 'primary' : (val[i] === 1 ? 'warning' : 'success')}/>} label={scopeMap[s]}/>
+      <FormHelperText disabled sx={{ mb, mt: 0 }}>to access {text} { val[i] > 0 && <b>({val[i] === 1 ? 'required' : (val[i] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+    </>
+  );
+});
+ScopeSwitch.displayName = 'ScopeSwitch';
+
 // eslint-disable-next-line complexity
 function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const app = useRealmApp();
@@ -34,13 +50,6 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   }), [reqScopes, app, component]);
 
   const [scopes, setScopes] = useState(new Set([...exScopes, ...reqScopes]));
-
-  const handleChange = s => e => { // ToDo: useCallback
-    const set = new Set(scopes);
-    if (e.target.checked) return setScopes(set.add(s));
-    set.delete(s);
-    setScopes(set);
-  };
 
   const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
   const handleAdvancedChange = useCallback(() => setAdvanced(!advanced), [advanced]);
@@ -114,19 +123,15 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
         <FormGroup sx={{ my: 2, ml: 2 }}>
           <FormControlLabel disabled control={<Switch defaultChecked color={val[0] === 0 ? 'primary' : (val[0] === 1 ? 'warning' : 'success')}/>} label={scopeMap.profile}/>
           <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account { val[0] && <b>({val[0] > 1 ? 'granted' : 'always required to login'})</b>}</FormHelperText>
-          <FormControlLabel disabled={reqScopes.includes('locks')} onChange={handleChange('locks')} checked={scopes.has('locks')} control={<Switch color={val[1] === 0 ? 'primary' : (val[1] === 1 ? 'warning' : 'success')}/>} label={scopeMap.locks}/>
-          <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access the data and manage your Chaster locks { val[1] > 0 && <b>({val[1] === 1 ? 'required' : (val[1] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
-          <FormControlLabel disabled={reqScopes.includes('keyholder')} onChange={handleChange('keyholder')} checked={scopes.has('keyholder')} control={<Switch color={val[2] === 0 ? 'primary' : (val[2] === 1 ? 'warning' : 'success')}/>} label={scopeMap.keyholder}/>
-          <FormHelperText disabled sx={{ mt: 0 }}>to access the data and manage your Chaster lockees { val[2] > 0 && <b>({val[2] === 1 ? 'required' : (val[2] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+          <ScopeSwitch s="locks" i={1} mb={1} text="the data and manage your Chaster locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
+          <ScopeSwitch s="keyholder" i={2} mb={0} text="the data and manage your Chaster lockees" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
         </FormGroup>
         <Accordion expanded={advanced} onChange={handleAdvancedChange} disableGutters>
           <AccordionSummary expandIcon={<ExpandMore/>}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
-              <FormControlLabel disabled={reqScopes.includes('shared_locks')} onChange={handleChange('shared_locks')} checked={scopes.has('shared_locks')} control={<Switch color={val[3] === 0 ? 'primary' : (val[3] === 1 ? 'warning' : 'success')}/>} label={scopeMap.shared_locks}/>
-              <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access and manage your Chaster shared locks { val[3] > 0 && <b>({val[3] === 1 ? 'required' : (val[3] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
-              <FormControlLabel disabled={reqScopes.includes('messaging')} onChange={handleChange('messaging')} checked={scopes.has('messaging')} control={<Switch color={val[4] === 0 ? 'primary' : (val[4] === 1 ? 'warning' : 'success')}/>} label={scopeMap.messaging}/>
-              <FormHelperText disabled sx={{ mt: 0 }}>to access your Chaster messaging { val[4] > 0 && <b>({val[4] === 1 ? 'required' : (val[4] === 3 ? 'granted' : 'additionally granted')})</b>}</FormHelperText>
+              <ScopeSwitch s="shared_locks" i={3} mb={1} text="and manage your Chaster shared locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
+              <ScopeSwitch s="messaging" i={4} mb={0} text="your Chaster messaging" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
             </FormGroup>
           </AccordionDetails>
         </Accordion>

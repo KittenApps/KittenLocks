@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Clear, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
+import { useRealmApp } from '../RealmApp';
 import ScopeBadges from './ScopeBadges';
 import AppIcon from '../../assets/appicon.png';
 
@@ -25,7 +26,8 @@ const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p 
   })
 }));
 
-function AppHeader({ isDesktop, app, setOpen, showLogin }){
+function AppHeader({ isDesktop, setOpen, showLogin, open }){
+  const app = useRealmApp();
   const navigate = useNavigate();
   const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
 

@@ -36,17 +36,56 @@ if (isDesktop) return (
     {children}
   </Drawer>
 );
-return <SwipeableDrawer elevation={2} sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+return <SwipeableDrawer elevation={2} sx={{ zIndex: t => t.zIndex.drawer, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 });
 ResponsiveDrawer.displayName = 'ResponsiveDrawer';
+
+const SubNavElement = memo(({ nav, handleListClick, subNavSelected, setSubNavSelected }) => {
+  const handleSubNavExpand = useCallback(e => {setSubNavSelected(nav.id === subNavSelected ? '' : nav.id); e.stopPropagation();}, [nav.id, setSubNavSelected, subNavSelected]);
+  const handleSubNavActive = useCallback(() => setSubNavSelected(nav.id), [nav.id, setSubNavSelected]);
+  return (
+    <>
+      <ListItem
+        onClick={handleListClick}
+        component={SLink}
+        to={nav.id}
+        onSetActive={handleSubNavActive}
+        dense
+        disablePadding
+        secondaryAction={<IconButton onClick={handleSubNavExpand} edge="end">{subNavSelected === nav.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}
+      >
+        <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={nav.title} secondary={nav.subtitle}/></ListItemButton>
+      </ListItem>
+      <Collapse in={subNavSelected === nav.id} timeout="auto">
+        <List component="div" disablePadding>
+          <ListItemButton key={`info-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${nav.id}`} dense sx={{ pl: 4 }}>
+            <ListItemIcon><InfoTwoTone/></ListItemIcon>
+            <ListItemText primary="Lock Information"/>
+          </ListItemButton>
+          { nav.hist && (
+            <ListItemButton key={`hist-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${nav.id}`} dense sx={{ pl: 4 }}>
+              <ListItemIcon><Restore/></ListItemIcon>
+              <ListItemText primary="Lock History"/>
+            </ListItemButton>
+          )}
+          { nav.veri && (
+            <ListItemButton key={`veri-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${nav.id}`} dense sx={{ pl: 4 }}>
+              <ListItemIcon><ImageTwoTone/></ListItemIcon>
+              <ListItemText primary="Verifications"/>
+            </ListItemButton>
+          )}
+        </List>
+      </Collapse>
+    </>
+  );
+});
+SubNavElement.displayName = 'SubNavElement';
 
 function AppDrawer({ isDesktop, setOpen, open, subNav }){
   const [subNavSelected, setSubNavSelected] = useState('');
   useEffect(() => {
     if (subNav && subNav.locks.length > 0) setSubNavSelected(subNav.locks[0].id);
   }, [subNav]);
-  const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();}; // ToDo: useCallback
-  const handleSubNavActive = s => () => setSubNavSelected(s); // ToDo: useCallback
 
   const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
   const handleDrawerClose = useCallback(() => setOpen(false), [setOpen]);
@@ -77,32 +116,8 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
               <ListItemButton onClick={handleListClick} component={SLink} to="profile" hashSpy dense><ListItemIcon><AccountBox/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
             </Fragment>
           )}
-          { subNav.locks.map(j => (
-            <Fragment key={j.id}>
-              <ListItem onClick={handleListClick} component={SLink} to={j.id} onSetActive={handleSubNavActive(j.id)} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
-                <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title} secondary={j.subtitle}/></ListItemButton>
-              </ListItem>
-              <Collapse in={subNavSelected === j.id} timeout="auto">
-                <List component="div" disablePadding>
-                  <ListItemButton key={`info-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${j.id}`} dense sx={{ pl: 4 }}>
-                    <ListItemIcon><InfoTwoTone/></ListItemIcon>
-                    <ListItemText primary="Lock Information"/>
-                  </ListItemButton>
-                  { j.hist && (
-                    <ListItemButton key={`hist-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
-                      <ListItemIcon><Restore/></ListItemIcon>
-                      <ListItemText primary="Lock History"/>
-                    </ListItemButton>
-                  )}
-                  { j.veri && (
-                    <ListItemButton key={`veri-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
-                      <ListItemIcon><ImageTwoTone/></ListItemIcon>
-                      <ListItemText primary="Verifications"/>
-                    </ListItemButton>
-                  )}
-                </List>
-              </Collapse>
-            </Fragment>
+          { subNav.locks.map(nav => (
+            <SubNavElement key={nav.id} nav={nav} handleListClick={handleListClick} subNavSelected={subNavSelected} setSubNavSelected={setSubNavSelected}/>
           ))}
         </List>
       )}

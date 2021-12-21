@@ -126,7 +126,7 @@ function App(){
         <Box sx={{ display: 'flex' }}>
           <CssBaseline/>
           { openLogin && <Login showLogin={showLogin} rScopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
-          <AppHeader isDesktop={isDesktop} app={app} setOpen={setOpen} showLogin={showLogin}/>
+          <AppHeader isDesktop={isDesktop} open={open} setOpen={setOpen} showLogin={showLogin}/>
           <AppDrawer isDesktop={isDesktop} open={open} setOpen={setOpen} subNav={subNav}/>
           <Main open={open} isDesktop={isDesktop}>
             <Toolbar/>
