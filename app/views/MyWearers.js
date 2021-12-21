@@ -33,7 +33,7 @@ function MyWearers({ setSubNav }){
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
       <Typography variant="h4" gutterBottom component="div">
-        My Wearer's Locks:
+        My Wearers Locks:
         <FormControl sx={{ float: 'right' }}>
           <InputLabel id="filter-label">Filter</InputLabel>
           <Select labelId="filter-label" label="Filter" value={status} onChange={handleStatusChange}>

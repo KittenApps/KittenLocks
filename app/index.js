@@ -6,6 +6,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { Integrations as TracingIntegrations } from '@sentry/tracing';
+import AppIcon from '../assets/appicon.png';
+import FavIcon from '../assets/favicon.png';
 
 function errorFallback({ error, componentStack, resetError }){
   return (
@@ -51,10 +53,11 @@ render(
               <meta property="og:title" content="KittenLocks"/>
               <meta property="og:type" content="website"/>
               <meta property="og:url" content="https://www.kittenlocks.de/"/>
-              <meta property="og:image" content="https://www.kittenlocks.de/appicon.png"/>
+              <meta property="og:image" content={`https://www.kittenlocks.de${AppIcon}`}/>
               <meta property="og:description" content="KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella."/>
+              <link rel="icon" href={FavIcon}/>
               <link rel="manifest" href="/manifest.webmanifest"/>
-              <link rel="apple-touch-icon" sizes="192x192" href="/appicon.png"/>
+              <link rel="apple-touch-icon" sizes="192x192" href={AppIcon}/>
               <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
             </Helmet>
             <App/>

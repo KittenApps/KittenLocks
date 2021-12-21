@@ -4,6 +4,7 @@ import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link
 import { useNavigate } from 'react-router-dom';
 import { Clear, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
 import ScopeBadges from './ScopeBadges';
+import AppIcon from '../../assets/appicon.png';
 
 const drawerWidth = 250;
 
@@ -46,7 +47,7 @@ function AppHeader({ isDesktop, app, setOpen, showLogin }){
       <StyledAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon/></IconButton>
-          <Avatar src="/appicon.png" sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
+          <Avatar src={AppIcon} sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
             KittenLocks
           </Typography>

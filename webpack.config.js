@@ -14,7 +14,8 @@ module.exports = {
     path: path.join(__dirname, 'public'),
     filename: 'static/js/[name].js',
     chunkFilename: 'static/js/[name].js',
-    clean: true
+    clean: true,
+    assetModuleFilename: 'static/images/[name][ext]'
   },
   resolve: { extensions: ['.js'], fallback: { 'crypto': false } },
   module: {
@@ -30,13 +31,17 @@ module.exports = {
             plugins: ['import-graphql', ['direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/system'] }]]
           }
         }
+      },
+      {
+        test: /\.png/u,
+        type: 'asset/resource'
       }
     ]
   },
   plugins: [
     // eslint-disable-next-line camelcase
     new webpack.EnvironmentPlugin({ CI: '', COMMIT_REF: 'dev', npm_package_version: 'dev', REDURL: `${process.env.CI ? `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de` : 'http://localhost:8080'}/static/html/oauthcb` }),
-    new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/', favicon: 'favicon.png' }),
+    new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/' }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
       <html>
@@ -57,10 +62,7 @@ module.exports = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [
-      { from: 'appicon.png', to: '.' },
-      { from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) }
-    ] }),
+    new CopyPlugin({ patterns: [{ from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) }] }),
     ...(process.env.NETLIFY && [
       new SentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: 'kittenlocks',

@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Avatar, Grid, Link, Paper, Typography } from '@mui/material';
+import AppIcon from '../../assets/appicon.png';
 
 function Home(){
   return (
@@ -8,7 +9,7 @@ function Home(){
         <Paper elevation={6} sx={{ textAlign: 'center', p: 2, backgroundColor: '#1b192a' }}>
           <h2>Welcome to KittenLocks!</h2>
           <p>A pawtastic WebApp to enchance your Chaster experience, <Link href="https://github.com/KittenApps/KittenLocks" target="_blank" rel="noreferrer">built with</Link> ❤ <Link href="https://chaster.app/user/Silizia" target="_blank" rel="noopener">by Silizia ~ Stella</Link>.</p>
-          <Avatar src="/appicon.png" sx={{ width: 192, height: 192, m: 'auto' }} />
+          <Avatar src={AppIcon} sx={{ width: 192, height: 192, m: 'auto' }} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
         </Paper>
       </Grid>

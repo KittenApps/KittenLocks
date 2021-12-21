@@ -4,12 +4,12 @@
   "description": "KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.",
   "icons": [
     {
-      "src": "favicon.png",
+      "src": "static/images/favicon.png",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "appicon.png",
+      "src": "static/images/appicon.png",
       "type": "image/png",
       "sizes": "192x192"
     }
@@ -23,6 +23,10 @@
     {
       "name": "My Lock Profile",
       "url": "/lock"
+    },
+    {
+      "name": "My Wearers Locks",
+      "url": "/wearers"
     },
     {
       "name": "Public Lock Profiles",
