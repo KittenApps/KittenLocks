@@ -313,7 +313,6 @@ rules:
   import/no-webpack-loader-syntax: error
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
-  unicorn/prefer-module: 'off'
   unicorn/prevent-abbreviations: 'off'
   unicorn/no-null: 'off'
   unicorn/filename-case:

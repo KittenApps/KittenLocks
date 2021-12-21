@@ -1,19 +1,18 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-env node */
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const SentryWebpackPlugin = require('@sentry/webpack-plugin');
+import { URL, fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unresolved
+import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin'; // eslint-disable-line import/default
+import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
-module.exports = {
+const config = {
   mode: process.env.NODE_ENV || 'development',
-  context: path.join(__dirname, './'),
+  context: fileURLToPath(new URL('./', import.meta.url)),
   entry: { index: './app/index.js' },
   output: {
-    path: path.join(__dirname, 'public'),
+    path: fileURLToPath(new URL('./public', import.meta.url)),
     filename: 'static/js/[name].js',
-    chunkFilename: 'static/js/[name].js',
     clean: true,
     assetModuleFilename: 'static/images/[name][ext]'
   },
@@ -23,7 +22,7 @@ module.exports = {
       {
         test: /\.jsx?$/u,
         exclude: /node_modules/u,
-        include: path.join(__dirname, 'app'),
+        include: fileURLToPath(new URL('./app', import.meta.url)),
         use: {
           loader: 'babel-loader',
           options: {
@@ -80,3 +79,5 @@ module.exports = {
   devServer: { historyApiFallback: true },
   devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map'
 };
+
+export default config;
