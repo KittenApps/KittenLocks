@@ -1,4 +1,4 @@
-#import "./LockHistoryFragment.graphql"
+# import "./LockHistoryFragment.graphql"
 
 query GetLockHistory($lockId: String!, $lastId: String, $limit: Int) {
   lockHistory(lockId: $lockId, input: { lastId: $lastId, limit: $limit }) @rest(type: "LockHistoryResult", path: "/locks/{args.lockId}/history", method: "POST") {

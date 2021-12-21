@@ -1,5 +1,5 @@
-#import "./UserFragment.graphql"
-#import "./SharedLockFragment.graphql"
+# import "./ChasterUserFragment.graphql"
+# import "./SharedLockFragment.graphql"
 
 fragment LockFragment on Lock {
   _id # The lock id
@@ -21,7 +21,7 @@ fragment LockFragment on Lock {
   isFrozen # Whether the lock is frozen
   role # The user role
   extensions {
-    slug # The extension slug. 
+    slug # The extension slug.
     config # The extension configuration.
     _id
     displayName

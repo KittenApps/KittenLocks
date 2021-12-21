@@ -4,6 +4,7 @@ plugins:
   - import
   - jsx-a11y
   - unicorn
+  - sonarjs
 extends:
   - eslint:recommended
   - plugin:react/recommended
@@ -12,6 +13,7 @@ extends:
   - plugin:import/recommended
   - plugin:jsx-a11y/strict
   - plugin:unicorn/all
+  - plugin:sonarjs/recommended
 root: true
 env:
   browser: true
@@ -26,6 +28,54 @@ parserOptions:
 settings:
   react:
     version: detect
+overrides:
+  - files: 
+    - '*.graphql'
+    extends: plugin:@graphql-eslint/operations-all
+    parserOptions:
+      operations: './app/graphql/*.graphql'
+    rules:
+      '@graphql-eslint/require-id-when-available': off
+      '@graphql-eslint/executable-definitions': off
+      '@graphql-eslint/fields-on-correct-type': off
+      '@graphql-eslint/fragments-on-composite-type': off
+      '@graphql-eslint/known-argument-names': off
+      '@graphql-eslint/known-directives': off
+      '@graphql-eslint/known-fragment-names': off
+      '@graphql-eslint/known-type-names': off
+      '@graphql-eslint/lone-anonymous-operation': off
+      '@graphql-eslint/no-fragment-cycles': off
+      '@graphql-eslint/no-undefined-variables': off
+      '@graphql-eslint/no-unused-fragments': off
+      '@graphql-eslint/no-unused-variables': off
+      '@graphql-eslint/one-field-subscriptions': off
+      '@graphql-eslint/overlapping-fields-can-be-merged': off
+      '@graphql-eslint/possible-fragment-spread': off
+      '@graphql-eslint/provided-required-arguments': off
+      '@graphql-eslint/scalar-leafs': off
+      '@graphql-eslint/unique-argument-names': off
+      '@graphql-eslint/unique-directive-names-per-location': off
+      '@graphql-eslint/unique-variable-names': off
+      '@graphql-eslint/value-literals-of-correct-type': off
+      '@graphql-eslint/variables-are-input-types': off
+      '@graphql-eslint/variables-in-allowed-position': off
+      '@graphql-eslint/no-deprecated': off
+      '@graphql-eslint/alphabetize': off
+      '@graphql-eslint/match-document-filename':
+        - error
+        - fragment:
+            style: PascalCase
+          query:
+            style: PascalCase
+            suffix: Query
+          mutation:
+            style: PascalCase
+            suffix: Mutation
+      '@graphql-eslint/naming-convention':
+        - error
+        - types: PascalCase
+          FieldDefinition: PascalCase
+          allowLeadingUnderscore: true
 rules:
   accessor-pairs: error
   array-bracket-newline: error
@@ -242,7 +292,7 @@ rules:
   wrap-iife: error
   yield-star-spacing: error
   yoda: error
-  react/prop-types: 'off'
+  react/prop-types: off
   react/no-unescaped-entities:
     - error
     - forbid: [ ">", "}", "\"" ]
@@ -313,11 +363,18 @@ rules:
   import/no-webpack-loader-syntax: error
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: warn
-  unicorn/prevent-abbreviations: 'off'
-  unicorn/no-null: 'off'
+  unicorn/prevent-abbreviations: off
+  unicorn/no-null: off
   unicorn/filename-case:
     - error
     - case: pascalCase
   unicorn/numeric-separators-style:
     - error
     - onlyIfContainsSeparator: true
+  sonarjs/no-duplicate-string: 
+    - error
+    - 7
+  sonarjs/no-nested-template-literals: off
+  sonarjs/cognitive-complexity:
+    - error
+    - 25

@@ -1,4 +1,4 @@
-#import "./LockHistoryFragment.graphql"
+# import "./LockHistoryFragment.graphql"
 
 query GetSiliziaDemo {
   siliziaHistory @noauth @rest(type: "LockHistory", endpoint: "silizia", path: "/Silizia.json") {

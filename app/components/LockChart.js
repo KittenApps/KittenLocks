@@ -4,8 +4,7 @@ const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ './Chart'))
 
 function LockChart({ history, startTime, startRem }){
   const [options, setOptions] = useState(null);
-  // eslint-disable-next-line complexity
-  useEffect(() => {
+  useEffect(() => { // eslint-disable-line sonarjs/cognitive-complexity, complexity
     const unlockDate = [];
     const remTime = [];
     const timeChanges = [];
@@ -101,7 +100,7 @@ function LockChart({ history, startTime, startRem }){
           handleaddTime(0, x);
           break;
         case 'wheel_of_fortune_turned':
-          switch (d.payload.segment.type){
+          switch (d.payload.segment.type){ // eslint-disable-line sonarjs/no-nested-switch
             case 'add-time':
               games.push({ x, title: '🎡+', text: `Your Wheel of Fortune landed on: adding ${(d.payload.segment.duration / (60 * 60)).toFixed(2)}h!` });
               break;

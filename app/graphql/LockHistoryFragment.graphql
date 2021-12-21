@@ -1,4 +1,4 @@
-#import "./UserFragment.graphql"
+# import "./ChasterUserFragment.graphql"
 
 fragment LockHistoryFragment on LockHistory {
   _id

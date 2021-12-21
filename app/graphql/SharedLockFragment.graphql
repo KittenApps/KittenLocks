@@ -1,4 +1,4 @@
-#import "./UserFragment.graphql"
+# import "./ChasterUserFragment.graphql"
 
 fragment SharedLockFragment on SharedLock {
   _id # The shared lock id
@@ -16,7 +16,7 @@ fragment SharedLockFragment on SharedLock {
   updatedAt # Updated at
   deletedAt # Deleted at
   archivedAt # Archived at
-  #locks: [LockForPublic] # List of locks  Only returned in shared locks endpoints
+  # locks: [LockForPublic] # List of locks  Only returned in shared locks endpoints
   requirePassword # Whether the lock requires a password
   durationMode # Duration mode
   maxLimitDuration # The maximum duration of the lock, in seconds  After this duration, the wearer can release themself regardless of the timer or extension restrictions.
