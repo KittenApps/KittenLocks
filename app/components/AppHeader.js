@@ -2,8 +2,8 @@ import { memo, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ScopeBadges from './ScopeBadges';
 import { Clear, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
+import ScopeBadges from './ScopeBadges';
 
 const drawerWidth = 250;
 
@@ -27,6 +27,7 @@ const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p 
 function AppHeader({ isDesktop, app, setOpen, showLogin }){
   const navigate = useNavigate();
   const handleDrawerOpen = () => setOpen(true);
+
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const handleProfileMenuOpen = e => setProfileMenuAnchorEl(e.currentTarget);
   const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
@@ -35,6 +36,7 @@ function AppHeader({ isDesktop, app, setOpen, showLogin }){
     app.logOut();
     setProfileMenuAnchorEl(null);
   };
+
   const handleLogin = () => showLogin(true);
   const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
   const handleResetCache = () => {app.client.resetStore(); setProfileMenuAnchorEl(null);};
