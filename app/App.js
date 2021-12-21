@@ -1,18 +1,15 @@
-/* eslint-disable max-lines */
-import { Fragment, Suspense, forwardRef, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, Collapse, CssBaseline, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton,
-         ListItemIcon, ListItemText, ListSubheader, Menu, MenuItem, Paper, Stack, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
-import { NavLink, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
+import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, IconButton, Link,
+         ListItemIcon, Menu, MenuItem, Paper, Stack, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
+import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import { Link as ScrollLink } from 'react-scroll';
 import RequiredScopes from './components/RequiredScopes';
 import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
-import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, Clear, Close, CompareArrows as CompareIcon,
-         ExpandLess, ExpandMore, HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon,
-         Lock as LockIcon, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Restore, Search, Settings } from '@mui/icons-material';
+import AppDrawer from './components/AppDrawer';
+import { Clear, Close, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
@@ -32,13 +29,6 @@ function ErrorFallback({ error, componentStack, resetError }){
     </Alert>
   );
 }
-
-const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
-NLink.displayName = 'NLink';
-
-// eslint-disable-next-line no-unused-vars
-const SLink = forwardRef((props, _) => <ScrollLink smooth offset={-72} spyThrottle={500} activeClass="Mui-selected" spy {...props}/>);
-SLink.displayName = 'SLink';
 
 const drawerWidth = 250;
 
@@ -78,28 +68,6 @@ const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p 
   })
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end'
-}));
-
-const ResponsiveDrawer = memo(({ isDesktop, open, handleDrawerOpen, handleDrawerClose, children }) => {
-  if (isDesktop) return (
-    <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
-      <DrawerHeader>
-        <IconButton onClick={handleDrawerClose}><ChevronLeft/></IconButton>
-      </DrawerHeader>
-      <Divider />
-      {children}
-    </Drawer>
-  );
-  return <SwipeableDrawer elevation={2} sx={{ zIndex: 1350, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
-});
-ResponsiveDrawer.displayName = 'ResponsiveDrawer';
-
 function App(){
   const app = useRealmApp();
   const navigate = useNavigate();
@@ -127,8 +95,6 @@ function App(){
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true });
   const [open, setOpen] = useState(isDesktop);
   const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
-  const handleListClick = () => !isDesktop && setOpen(false);
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   const handleProfileMenuOpen = e => setProfileMenuAnchorEl(e.currentTarget);
@@ -185,12 +151,6 @@ function App(){
   }), [installPromptAction]);
 
   const [subNav, setSubNav] = useState(null);
-  const [subNavSelected, setSubNavSelected] = useState('');
-  useEffect(() => {
-    if (subNav && subNav.locks.length > 0) setSubNavSelected(subNav.locks[0].id);
-  }, [subNav]);
-  const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();};
-  const handleSubNavActive = s => () => setSubNavSelected(s);
 
   return (
     <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
@@ -232,64 +192,9 @@ function App(){
               </Menu>
             </Toolbar>
           </StyledAppBar>
-          <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >
-            <List onClick={handleListClick}>
-              <ListItemButton key={0} component={NLink} to="/">         <ListItemIcon><HomeIcon/></ListItemIcon>   <ListItemText primary="Home"/></ListItemButton>
-              <Divider key={-1}/>
-              <ListItemButton key={1} component={NLink} to="/lock">     <ListItemIcon><LockIcon/></ListItemIcon>   <ListItemText primary="My Lock Profile"/></ListItemButton>
-              <ListItemButton key={2} component={NLink} to="/wearers">  <ListItemIcon><KeyIcon/></ListItemIcon>    <ListItemText primary="My Wearers Locks"/></ListItemButton>
-              <ListItemButton key={3} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
-              <Divider key={-2}/>
-              <ListItemButton key={4} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
-              <ListItemButton disabled key={5} component={NLink} to="/"><ListItemIcon><AddLockIcon/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
-              <ListItemButton key={6} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
-              <Divider key={-3}/>
-              <ListItemButton key={7} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
-            </List>
-            { subNav && (
-              <List disablePadding>
-                <Divider key={-1}/>
-                <ListSubheader sx={{ textAlign: 'center' }}>SUB-NAVIGATION BAR</ListSubheader>
-                { subNav.public && (
-                  <Fragment key="public">
-                    <ListItemButton onClick={handleListClick} component={SLink} to="search" hashSpy dense><ListItemIcon><Search/></ListItemIcon><ListItemText primary="Lock Profiles Search"/></ListItemButton>
-                    <ListItemButton onClick={handleListClick} component={SLink} to="profile" hashSpy dense><ListItemIcon><AccountBox/></ListItemIcon><ListItemText primary={`${subNav.public}'s Profile`}/></ListItemButton>
-                  </Fragment>
-                )}
-                { subNav.locks.map(j => (
-                  <Fragment key={j.id}>
-                    <ListItem onClick={handleListClick} component={SLink} to={j.id} onSetActive={handleSubNavActive(j.id)} dense disablePadding secondaryAction={<IconButton onClick={handleSubNavExpand(j.id)} edge="end">{subNavSelected === j.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}>
-                      <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={j.title} secondary={j.subtitle}/></ListItemButton>
-                    </ListItem>
-                    <Collapse in={subNavSelected === j.id} timeout="auto">
-                      <List component="div" disablePadding>
-                        <ListItemButton key={`info-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${j.id}`} dense sx={{ pl: 4 }}>
-                          <ListItemIcon><InfoTwoTone/></ListItemIcon>
-                          <ListItemText primary="Lock Information"/>
-                        </ListItemButton>
-                        { j.hist && (
-                          <ListItemButton key={`hist-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${j.id}`} dense sx={{ pl: 4 }}>
-                            <ListItemIcon><Restore/></ListItemIcon>
-                            <ListItemText primary="Lock History"/>
-                          </ListItemButton>
-                        )}
-                        { j.veri && (
-                          <ListItemButton key={`veri-${j.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${j.id}`} dense sx={{ pl: 4 }}>
-                            <ListItemIcon><ImageTwoTone/></ListItemIcon>
-                            <ListItemText primary="Verifications"/>
-                          </ListItemButton>
-                        )}
-                      </List>
-                    </Collapse>
-                  </Fragment>
-                ))}
-              </List>
-            )}
-            <div style={{ flexGrow: 1 }}/>
-            <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v{process.env.npm_package_version} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
-          </ResponsiveDrawer>
+          <AppDrawer isDesktop={isDesktop} open={open} setOpen={setOpen} subNav={subNav}/>
           <Main open={open} isDesktop={isDesktop}>
-            <DrawerHeader/>
+            <Toolbar/>
             <ErrorBoundary fallback={ErrorFallback} showDialog>
               <Routes>
                 <Route
