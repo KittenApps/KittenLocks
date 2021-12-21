@@ -92,7 +92,7 @@ function LockTransfer(){
       return getSharedLock({ variables: { sharedLockId } });
     }
     setSharedLock({});
-  }, [getSharedLock, sdata.sharedLock, sharedLockID]);
+  }, [getSharedLock, sdata, sharedLockID]);
   const handleKeyDownSharedLock = useCallback(e => e.key === 'Enter' && handleSelectSharedLockId(), [handleSelectSharedLockId]);
   useEffect(() => {
     if (sdata) setSharedLock(sdata.sharedLock);
