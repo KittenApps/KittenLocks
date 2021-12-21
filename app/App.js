@@ -30,6 +30,7 @@ function ErrorFallback({ error, componentStack, resetError }){
 }
 
 const drawerWidth = 250;
+const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
 
 const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isDesktop' })(({ theme, open, isDesktop }) => ({
   flexGrow: 1,
@@ -77,20 +78,19 @@ function App(){
   const [open, setOpen] = useState(isDesktop);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
   const [logScopes, setLogScopes] = useState(() => {
     let l = searchParams.get('login')?.split(',').filter(x => ks.has(x)) || [];
     if (app.currentUser?.customData?.scopes) l = l.filter(x => !app.currentUser?.customData?.scopes.includes(x));
     return l;
   });
-  const handleLoginModalClose = () => {
+  const handleLoginModalClose = useCallback(() => {
     setLogScopes([]);
     const p = {};
     for (const [k, v] of searchParams.entries()){
       if (k !== 'login') p[k] = v;
     }
     setSearchParams(p);
-  };
+  }, [searchParams, setSearchParams]);
 
   const [openLogin, showLogin] = useState(logScopes.length > 0);
 
@@ -98,7 +98,7 @@ function App(){
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
     return <IconButton onClick={handleNotistackClose(key)} color="inherit" size="small"><Close fontSize="inherit"/></IconButton>;
   }, []);
-  const onMissingScopes = s => {setLogScopes(s); showLogin(true);};
+  const onMissingScopes = useCallback(s => {setLogScopes(s); showLogin(true);}, []);
 
   const installPromptAction = useCallback(prompt => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);

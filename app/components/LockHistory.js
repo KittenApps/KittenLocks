@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import JsonView from '../components/JsonView';
@@ -26,10 +26,10 @@ function LockHistory({ lockId, startTime, startRem, title }){
     if (data && !data.lockHistory.hasMore) setInProgress(false);
   }, [data, fetchMore]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     setInProgress(true);
     fetchMore({ variables: { limit: 100 } }).then(d => !d.data.lockHistory.hasMore && setInProgress(false));
-  };
+  }, [fetchMore]);
 
   return (
     <>

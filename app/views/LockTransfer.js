@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper,
@@ -84,20 +84,20 @@ function LockTransfer(){
   const [sharedLock, setSharedLock] = useState({});
   const [password, setPassword] = useState('');
 
-  const handleChangeSharedLockID = e => setSharedLockID(e.target.value.trim());
-  const handleSelectSharedLockId = () => {
+  const handleChangeSharedLockID = useCallback(e => setSharedLockID(e.target.value.trim()), []);
+  const handleSelectSharedLockId = useCallback(() => {
     const sharedLockId = sharedLockID.match(/(?:chaster.app\/explore\/)?(?<id>[\da-f]{24})$/u)?.groups?.id;
     if (sharedLockId){
       if (sdata?.sharedLock?._id === sharedLockId) return setSharedLock(sdata.sharedLock);
       return getSharedLock({ variables: { sharedLockId } });
     }
     setSharedLock({});
-  };
-  const handleKeyDownSharedLock = e => e.key === 'Enter' && handleSelectSharedLockId();
+  }, [getSharedLock, sdata.sharedLock, sharedLockID]);
+  const handleKeyDownSharedLock = useCallback(e => e.key === 'Enter' && handleSelectSharedLockId(), [handleSelectSharedLockId]);
   useEffect(() => {
     if (sdata) setSharedLock(sdata.sharedLock);
   }, [sdata]);
-  const handleChangePassword = e => setPassword(e.target.value.trim());
+  const handleChangePassword = useCallback(e => setPassword(e.target.value.trim()), []);
 
   const [transferLock, { data: mdata, loading: mloading, error: merror }] = useMutation(TransferLockMutation);
   useEffect(() => {
@@ -106,7 +106,7 @@ function LockTransfer(){
       console.error(merror);
     }
   }, [merror, enqueueSnackbar]);
-  const handleTransferLock = () => transferLock({ variables: { lockID: oldLockID, sharedLockID: sharedLock._id, password } });
+  const handleTransferLock = useCallback(() => transferLock({ variables: { lockID: oldLockID, sharedLockID: sharedLock._id, password } }), [oldLockID, password, sharedLock._id, transferLock]);
   useEffect(() => {
     if (mdata && mdata.transferLock){
       enqueueSnackbar('Success: Lock sucessfully transfered!', { variant: 'success' });
@@ -118,14 +118,14 @@ function LockTransfer(){
     }
   }, [mdata, enqueueSnackbar, refetch]);
 
-  const handleChangeLock = e => {setOldLockID(e.target.value); setLockOkay(false);};
-  const handleNext = () => {
+  const handleChangeLock = useCallback(e => {setOldLockID(e.target.value); setLockOkay(false);}, []);
+  const handleNext = useCallback(() => {
     if (isLockOkay){
       setActiveStep(1);
       handleSelectSharedLockId();
     }
-  };
-  const handelBack = () => setActiveStep(0);
+  }, [handleSelectSharedLockId, isLockOkay]);
+  const handelBack = useCallback(() => setActiveStep(0), []);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >

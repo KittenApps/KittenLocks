@@ -1,15 +1,16 @@
-import { memo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { IconButton, ImageListItem, ImageListItemBar, Modal, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { IosShare } from '@mui/icons-material';
 
 function VerificationPictureGallery({ history }){
   const [selected, setSelected] = useState(null);
-  const handleClick = img => () => setSelected(img);
-  const handleClose = () => setSelected(null);
-  const handleShare = url => () => navigator.share({ url });
+  const handleClick = img => () => setSelected(img); // ToDo: useCallback
+  const handleClose = useCallback(() => setSelected(null), []);
+  const handleShare = url => () => navigator.share({ url }); // ToDo: useCallback
+  const empty = useMemo(() => history.length === 0, [history]);
 
-  if (history.length === 0) return (
+  if (empty) return (
     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
       It looks like this lock doesn't have any verification pictures yet :(
     </Typography>

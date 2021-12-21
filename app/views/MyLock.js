@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, FormControlLabel, Paper, Skeleton, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerificationPictureGallery from '../components/VerificationGallery';
@@ -17,7 +17,7 @@ function lockSort(a, b){
 function MyLock({ setSubNav }){
   const app = useRealmApp();
   const [showArchived, setShowArchived] = useState(false);
-  const handleShowArchived = e => setShowArchived(e.target.checked);
+  const handleShowArchived = useCallback(e => setShowArchived(e.target.checked), []);
 
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active', realmId: app.currentUser.id } });

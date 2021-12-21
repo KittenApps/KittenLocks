@@ -300,7 +300,7 @@ rules:
   react/jsx-newline: 
     - error
     - prevent: true
-  react/jsx-no-bind: 'off'
+  react/jsx-no-bind: error
   react/jsx-no-script-url: error
   react/jsx-no-useless-fragment: error
   react/jsx-pascal-case: error

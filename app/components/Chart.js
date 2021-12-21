@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import Highcharts from 'highcharts/highstock';
 import Exporting from 'highcharts/modules/exporting';
 import OfflineExporting from 'highcharts/modules/offline-exporting';
@@ -12,7 +12,7 @@ Exporting(Highcharts);
 OfflineExporting(Highcharts);
 
 function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks }){
-  const options = {
+  const options = useMemo(() => ({
     title: { text: 'added Time' },
     series: [ // eslint-disable-next-line react/no-this-in-sfc
       { name: 'unlock date', tooltip: { pointFormatter(){return `unlock date: ${new Date(this.y).toLocaleString()}`;} }, id: 'date', data: unlockDate },
@@ -45,7 +45,7 @@ function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock,
         a.click();
       } } }
     }
-  };
+  }), [freeze, games, hygiene, lock, pillory, remTime, tasks, timeChanges, timer, unlockDate, verification]);
   return <HighchartsReact highcharts={Highcharts} constructorType="stockChart" containerProps={{ style: { marginTop: 12 } }} options={options}/>;
 }
 

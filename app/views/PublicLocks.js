@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
@@ -22,11 +22,11 @@ function PublicLocks({ isDesktop }){
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState(urlUsername || '');
   const [selected, setSelected] = useState(urlUsername || '');
-  const [options, setOptions] = useState(app.currentUser ? [
+  const [options, setOptions] = useState(() => (app.currentUser ? [
     { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' },
     { o: 'Keyholder scope required', t: 'Your Lockees', d: true },
-    { o: 'KittenLocks login required', t: 'other KittenLocks users', d: true }
-  ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
+    { o: 'KittenLocks login required', t: 'other Kitte)nLocks users', d: true }
+  ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]));
 
   const [getAllKittenLocksUsers, { data, loading, error }] = useLazyQuery(GetAllKittenLocksUsers);
   useEffect(() => {
@@ -70,16 +70,44 @@ function PublicLocks({ isDesktop }){
     }
   }, [app.currentUser, data, wdata]);
 
-  const onChangeUsername = (e, n) => setUsername(n);
-  const handleUsernameSearch = (e, n) => {
+  const onChangeUsername = useCallback((e, n) => setUsername(n), []);
+  const handleUsernameSearch = useCallback((e, n) => {
     if (n){
       setSelected(n.o || n.trim());
       navigate(`/locks/${n.o || n.trim()}`);
     }
-  };
-  const filterOptions = createFilterOptions({ stringify: o => (o.d ? '' : `${o.o} ${o.h}`), trim: true });
-  const handleOpen = () => setOpen(true);
-  const handleClose = (e, r) => (isDesktop || r !== 'blur' || username.trim() === '' || username.trim() === selected) && setOpen(false);
+  }, [navigate]);
+  const filterOptions = useMemo(() => createFilterOptions({ stringify: o => (o.d ? '' : `${o.o} ${o.h}`), trim: true }), []);
+  const handleOpen = useCallback(() => setOpen(true), []);
+  const handleClose = useCallback((e, r) => (isDesktop || r !== 'blur' || username.trim() === '' || username.trim() === selected) && setOpen(false), [isDesktop, selected, username]);
+  const groupBy = useCallback(o => o.t, []);
+  const getOptionLabel = useCallback(o => o.o || o, []);
+  const getOptionDisabled = useCallback(o => o.d, []);
+  const renderInput = useCallback(params => (
+    <TextField
+      {...params}
+      label="Username"
+      InputProps={{
+        ...params.InputProps,
+        endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
+      }}
+    />
+  ), [loading, wloading]);
+  const renderOption = useCallback((props, op, { inputValue }) => {
+    const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
+    const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
+    return (
+      <Box component="li" {...props}>
+        { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a} sx={{ width: 24, height: 24, mr: 2 }}/> }
+        {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
+        { op.h && (
+          <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
+            ({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})
+          </Typography>
+        )}
+      </Box>
+    );
+  }, []);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
@@ -103,35 +131,12 @@ function PublicLocks({ isDesktop }){
           onOpen={handleOpen}
           onClose={handleClose}
           filterOptions={filterOptions}
-          renderOption={(props, op, { inputValue }) => {
-            const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
-            const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
-            return (
-              <Box component="li" {...props}>
-                { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a} sx={{ width: 24, height: 24, mr: 2 }}/> }
-                {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
-                { op.h && (
-                  <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
-                    ({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})
-                  </Typography>
-                )}
-              </Box>
-            );
-          }}
-          groupBy={o => o.t}
-          getOptionLabel={o => o.o || o}
-          getOptionDisabled={o => o.d}
+          renderOption={renderOption}
+          groupBy={groupBy}
+          getOptionLabel={getOptionLabel}
+          getOptionDisabled={getOptionDisabled}
           options={options}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Username"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
-              }}
-            />
-          )}
+          renderInput={renderInput}
         />
       </ScrollElement>
       <Outlet/>

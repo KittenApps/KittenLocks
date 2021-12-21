@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, useEffect, useState } from 'react';
+import { Suspense, lazy, memo, useCallback, useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
 import { ExpandMore, UploadFileTwoTone } from '@mui/icons-material';
 import LockChart from '../components/LockChart';
@@ -23,7 +23,7 @@ SampleChart.displayName = 'SampleChart';
 
 function PublicCharts(){
   const [options, setOptions] = useState(null);
-  const handleOpen = e => e.target.files[0].text().then(j => setOptions(JSON.parse(j)));
+  const handleOpen = useCallback(e => e.target.files[0].text().then(j => setOptions(JSON.parse(j))), []);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>

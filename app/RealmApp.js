@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable no-undefined */
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { App as RealmApp } from 'realm-web';
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client';
 import { RestLink } from 'apollo-link-rest';
@@ -15,7 +14,7 @@ const restLink = new RestLink({
   uri: 'https://api.chaster.app',
   endpoints: { silizia: 'https://silizia.kittenlocks.de' },
   typePatcher: {
-    Lock(data){ // eslint-disable-next-line no-underscore-dangle
+    Lock(data){
       for (const e of data.extensions){
         switch (e.slug){
           case 'verification-picture':
@@ -84,23 +83,6 @@ const cache = new InMemoryCache({
             return { 'results@type({"name":"LockHistory"})': merged, count, hasMore, refresh: 0 };
           }
         }
-        /* mlocks: {
-          keyArgs: false,
-          merge(existing, incoming, { readField, args: { status } }){
-            const merged = { ...existing };
-            for (const item of incoming) merged[readField('_id', item)] = item;
-            if (status === 'all') merged.all = 'all';
-            return merged;
-          },
-          read(existing, { args: { status }, readField }){
-            if (!existing) return;
-            if (status === 'all'){
-              if (existing.all === 'all') return Object.values(existing).filter(x => x !== 'all');
-              return;
-            }
-            return existing.all === 'all' ? Object.values(existing).filter(x => x !== 'all' && readField('archivedAt', x) === null) : Object.values(existing);
-          }
-        }*/
       }
     },
     LockHistory: { keyFields: false, fields: { createdAt: parseDate, updatedAt: parseDate } },
@@ -129,6 +111,8 @@ export function useRealmApp(){
   return app;
 }
 
+let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) };
+
 export function RealmAppProvider({ children }){
   const app = useMemo(() => new RealmApp({ id: 'kittenlocks-gcfgb', baseUrl: 'https://api.kittenlocks.de', skipLocationRequest: true }), []);
   const [currentUser, setCurrentUser] = useState(app.currentUser);
@@ -139,7 +123,7 @@ export function RealmAppProvider({ children }){
     setLastAuth(Date.now());
   }, [currentUser]);
 
-  async function logIn(credentials){
+  const logIn = useCallback(async credentials => {
     await app.logIn(credentials);
     if (currentUser === app.currentUser){ // scope upgrade
       await currentUser?.refreshCustomData();
@@ -148,16 +132,14 @@ export function RealmAppProvider({ children }){
       setCurrentUser(app.currentUser);
     }
     return app.currentUser.customData;
-  }
-  async function logOut(){
+  }, [app, currentUser]);
+  const logOut = useCallback(async() => {
     await app.currentUser?.logOut();
     Sentry.setUser(null);
     setCurrentUser(app.currentUser); // other logged in user or null
-  }
+  }, [app]);
 
-  let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) };
-
-  function getAccessToken(){
+  const getAccessToken = useCallback(() => {
     if (!currentUser) throw new Error('Login required');
     const cDaT = currentUser?.customData?.access_token;
     const cDaE = currentUser?.customData?.access_expires.$date.$numberLong;
@@ -171,9 +153,9 @@ export function RealmAppProvider({ children }){
       return accessTokenPromise;
     });
     return accessTokenPromise;
-  }
+  }, [currentUser, logOut]);
 
-  const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
+  const authTokenLink = useMemo(() => setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
     if (body.includes('@noauth')) return; // unauthenticated Chaster API
     if (!currentUser) throw new Error('Login required!');
     if (body.includes('@rest')){
@@ -185,11 +167,11 @@ export function RealmAppProvider({ children }){
       return currentUser.refreshCustomData().then(() => ({ headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } }));
     }
     return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
-  });
+  }), [currentUser, getAccessToken, lastAuth]);
 
   const client = useMemo(() => new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
 
-  const wrapped = { ...app, currentUser, logIn, logOut, getAccessToken, cache, client };
+  const wrapped = { ...app, currentUser, logIn, logOut, cache, client };
 
   return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{children}</ApolloProvider></RealmAppContext.Provider>;
 }

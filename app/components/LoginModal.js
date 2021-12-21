@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/consistent-destructuring */
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
 import { useNavigate } from 'react-router-dom';
@@ -10,31 +10,32 @@ import { useSnackbar } from 'notistack';
 import { Close, ExpandMore } from '@mui/icons-material';
 import ScopeBadges from './ScopeBadges';
 
+const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
+const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
+
 // eslint-disable-next-line complexity
 function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const app = useRealmApp();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const savScopes = localStorage.getItem('scopes')?.split(',');
-  const exScopes = app.currentUser?.customData?.scopes || savScopes || [];
-  const reqScopes = ['profile', ...(rScopes || [])];
-  const misScopes = reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s));
+  const savScopes = useMemo(() => localStorage.getItem('scopes')?.split(','), []);
+  const exScopes = useMemo(() => app.currentUser?.customData?.scopes || savScopes || [], [app, savScopes]);
+  const reqScopes = useMemo(() => ['profile', ...(rScopes || [])], [rScopes]);
+  const misScopes = useMemo(() => reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s)), [app, reqScopes]);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
-  const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
-  const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
-  const val = ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
+  const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
       if (new Set(reqScopes).has(s)) return 3;
       return component ? 2 : 3;
     }
     if (new Set(reqScopes).has(s)) return 1;
     return 0;
-  });
+  }), [reqScopes, app, component]);
 
   const [scopes, setScopes] = useState(new Set([...exScopes, ...reqScopes]));
 
-  const handleChange = s => e => {
+  const handleChange = s => e => { // ToDo: useCallback
     const set = new Set(scopes);
     if (e.target.checked) return setScopes(set.add(s));
     set.delete(s);
@@ -42,7 +43,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   };
 
   const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
-  const handleAdvancedChange = () => setAdvanced(!advanced);
+  const handleAdvancedChange = useCallback(() => setAdvanced(!advanced), [advanced]);
 
   const missingScopesAction = useCallback(grantedScopes => {
     const handleNotistackClose = k => () => closeSnackbar(k);
@@ -59,7 +60,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
 
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
     const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
     const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.has(x));
@@ -85,14 +86,14 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
         enqueueSnackbar('Login failed: You need to accept the Chaster OAuth request!', { variant: 'error' });
       }
     }, false);
-  };
-  const handleAbort = () => {
+  }, [app, enqueueSnackbar, missingScopesAction, scopes, showLogin]);
+  const handleAbort = useCallback(() => {
     if (showLogin){
       if (onClose) onClose();
       return showLogin(false);
     }
     navigate('/');
-  };
+  }, [navigate, showLogin, onClose]);
 
   if (loading) return <Backdrop sx={{ backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: t => t.zIndex.drawer + 1 }} open><CircularProgress color="inherit" /></Backdrop>;
 

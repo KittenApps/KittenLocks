@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VerificationPictureGallery from '../components/VerificationGallery';
@@ -53,7 +53,9 @@ function PublicLocks({ setSubNav }){
     if (profileError) enqueueSnackbar(profileError.toString(), { variant: 'error' });
   }, [profileError, enqueueSnackbar]);
 
-  if (profileData?.profile === null) return (
+  const notFound = useMemo(() => profileData?.profile === null, [profileData]);
+
+  if (notFound) return (
     <Alert severity="error" sx={{ mt: 2 }}>
       <AlertTitle>Error: User not found!</AlertTitle>
       A Chaster user with the username <b>{username}</b> doesn't exist.

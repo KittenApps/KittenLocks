@@ -1,4 +1,4 @@
-import { Fragment, forwardRef, memo, useEffect, useState } from 'react';
+import { Fragment, forwardRef, memo, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Collapse, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SwipeableDrawer, Typography } from '@mui/material';
 import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, ExpandLess, ExpandMore,
@@ -8,7 +8,10 @@ import { Link as ScrollLink } from 'react-scroll';
 
 const drawerWidth = 250;
 
-const NLink = forwardRef(({ ...props }, ref) => <NavLink ref={ref} {...props} className={({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' ')}/>);
+const NLink = forwardRef(({ ...props }, ref) => {
+  const NLinkClassName = useCallback(({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' '), [props.className]);
+  return <NavLink ref={ref} {...props} className={NLinkClassName}/>;
+});
 NLink.displayName = 'NLink';
 
 // eslint-disable-next-line no-unused-vars
@@ -42,12 +45,12 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
   useEffect(() => {
     if (subNav && subNav.locks.length > 0) setSubNavSelected(subNav.locks[0].id);
   }, [subNav]);
-  const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();};
-  const handleSubNavActive = s => () => setSubNavSelected(s);
+  const handleSubNavExpand = s => e => {setSubNavSelected(s === subNavSelected ? '' : s); e.stopPropagation();}; // ToDo: useCallback
+  const handleSubNavActive = s => () => setSubNavSelected(s); // ToDo: useCallback
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
-  const handleListClick = () => !isDesktop && setOpen(false);
+  const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
+  const handleDrawerClose = useCallback(() => setOpen(false), [setOpen]);
+  const handleListClick = useCallback(() => !isDesktop && setOpen(false), [isDesktop, setOpen]);
 
   return (
     <ResponsiveDrawer open={open} isDesktop={isDesktop} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} >

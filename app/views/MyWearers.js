@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
@@ -14,7 +14,7 @@ function MyWearers({ setSubNav }){
   const app = useRealmApp();
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
-  const handleStatusChange = e => setStatus(e.target.value);
+  const handleStatusChange = useCallback(e => setStatus(e.target.value), []);
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, pathBuilder: ({ args }) => `/keyholder/wearers?status=${args.status}` } });
   useEffect(() => {
@@ -28,7 +28,7 @@ function MyWearers({ setSubNav }){
     return () => setSubNav(null);
   }, [data, setSubNav]);
 
-  const handleUsernameClick = username => () => navigate(`/locks/${username}`);
+  const handleUsernameClick = username => () => navigate(`/locks/${username}`); // ToDo: useCallback
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>

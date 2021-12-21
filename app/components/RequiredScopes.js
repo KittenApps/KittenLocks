@@ -1,13 +1,14 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { Paper, Skeleton } from '@mui/material';
 import LoginModal from './LoginModal';
 
 function RequiredScopes({ rScopes, onMissingScopes, component, children }){
   const app = useRealmApp();
-  const scopes = app.currentUser?.customData?.scopes;
+  const scopes = useMemo(() => app.currentUser?.customData?.scopes, [app]);
+  const includeScope = useMemo(() => scopes && rScopes.every(s => scopes.includes(s)), [rScopes, scopes]);
 
-  if (scopes && rScopes.every(s => scopes.includes(s))) return children;
+  if (includeScope) return children;
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }} >
       <h2><Skeleton variant="text"/></h2>

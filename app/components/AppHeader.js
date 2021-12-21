@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -27,20 +27,21 @@ const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p 
 
 function AppHeader({ isDesktop, app, setOpen, showLogin }){
   const navigate = useNavigate();
-  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
 
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
-  const handleProfileMenuOpen = e => setProfileMenuAnchorEl(e.currentTarget);
-  const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
-  const handleProfileMenuLogout = () => {
+  const handleProfileMenuOpen = useCallback(e => setProfileMenuAnchorEl(e.currentTarget), []);
+  const handleProfileMenuClose = useCallback(() => setProfileMenuAnchorEl(null), []);
+  const handleProfileMenuLogout = useCallback(() => {
     navigate('/');
     app.logOut();
     setProfileMenuAnchorEl(null);
-  };
+  }, [app, navigate]);
 
-  const handleLogin = () => showLogin(true);
-  const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
-  const handleResetCache = () => {app.client.resetStore(); setProfileMenuAnchorEl(null);};
+  const handleLogin = useCallback(() => showLogin(true), [showLogin]);
+  const handleManage = useCallback(() => {handleLogin(); setProfileMenuAnchorEl(null);}, [handleLogin]);
+  const handleResetCache = useCallback(() => {app.client.resetStore(); setProfileMenuAnchorEl(null);}, [app.client]);
+
   return (
     <>
       <Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: t => t.zIndex.drawer + 1, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
