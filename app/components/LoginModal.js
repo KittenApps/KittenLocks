@@ -94,7 +94,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
     navigate('/');
   };
 
-  if (loading) return <Backdrop sx={{ color: '#fff', zIndex: t => t.zIndex.drawer + 1 }} open><CircularProgress color="inherit" /></Backdrop>;
+  if (loading) return <Backdrop sx={{ backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: t => t.zIndex.drawer + 1 }} open><CircularProgress color="inherit" /></Backdrop>;
 
   return (
     <Dialog fullScreen={fullScreen} BackdropProps={{ sx: { backgroundColor: 'rgba(0, 0, 0, 0.75)' } }} open>

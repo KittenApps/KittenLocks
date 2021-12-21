@@ -1,15 +1,14 @@
 import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useRealmApp } from './RealmApp';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { Alert, AlertTitle, AppBar, Avatar, Backdrop, Box, Button, CardHeader, CssBaseline, Divider, IconButton, Link,
-         ListItemIcon, Menu, MenuItem, Paper, Stack, TextField, Toolbar, Typography, useMediaQuery } from '@mui/material';
-import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
+import { Alert, AlertTitle, Box, Button, CssBaseline, IconButton, Paper, Stack, TextField, Toolbar, useMediaQuery } from '@mui/material';
+import { Route, Routes, useSearchParams } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import RequiredScopes from './components/RequiredScopes';
-import ScopeBadges from './components/ScopeBadges';
 import Login from './components/LoginModal';
+import AppHeader from './components/AppHeader';
 import AppDrawer from './components/AppDrawer';
-import { Clear, Close, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import Home from './views/Home';
 import { ErrorBoundary } from '@sentry/react';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
@@ -51,26 +50,8 @@ const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isD
   })
 }));
 
-const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p !== 'isDesktop' })(({ theme, open, isDesktop }) => ({
-  ...(isDesktop && {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    }),
-    ...(open && {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: `${drawerWidth}px`,
-      transition: theme.transitions.create(['margin', 'width'], {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen
-      })
-    })
-  })
-}));
-
 function App(){
   const app = useRealmApp();
-  const navigate = useNavigate();
   const notistackRef = useRef(null);
 
   const theme = createTheme({
@@ -94,16 +75,6 @@ function App(){
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true });
   const [open, setOpen] = useState(isDesktop);
-  const handleDrawerOpen = () => setOpen(true);
-
-  const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
-  const handleProfileMenuOpen = e => setProfileMenuAnchorEl(e.currentTarget);
-  const handleProfileMenuClose = () => setProfileMenuAnchorEl(null);
-  const handleProfileMenuLogout = () => {
-    navigate('/');
-    app.logOut();
-    setProfileMenuAnchorEl(null);
-  };
 
   const [searchParams, setSearchParams] = useSearchParams();
   const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
@@ -122,9 +93,6 @@ function App(){
   };
 
   const [openLogin, showLogin] = useState(logScopes.length > 0);
-  const handleLogin = () => showLogin(true);
-  const handleManage = () => {handleLogin(); setProfileMenuAnchorEl(null);};
-  const handleResetCache = () => {app.client.resetStore(); setProfileMenuAnchorEl(null);};
 
   const notistackClose = useCallback(key => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
@@ -153,45 +121,12 @@ function App(){
   const [subNav, setSubNav] = useState(null);
 
   return (
-    <ThemeProvider theme={theme}><Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: 1201, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
+    <ThemeProvider theme={theme}>
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline/>
           { openLogin && <Login showLogin={showLogin} rScopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
-          <StyledAppBar open={open} isDesktop={isDesktop} >
-            <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon /></IconButton>
-              <Avatar src="/appicon.png" sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
-                KittenLocks
-              </Typography>
-              { app.currentUser
-                ? <CardHeader
-                    sx={{ p: 0, cursor: 'pointer', '& .MuiCardHeader-action': { mt: 0 } }}
-                    avatar={<Avatar src={app.currentUser.customData.avatarUrl}/>}
-                    onClick={handleProfileMenuOpen}
-                    action={<IconButton aria-label="settings" onClick={handleProfileMenuOpen}><MoreVert/></IconButton>}
-                    title={app.currentUser.customData.username}
-                    titleTypographyProps={{ fontSize: 16 }}
-                    subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
-                  />
-                : <Button variant="contained" onClick={handleLogin} size="small">Login with Chaster</Button>}
-              <Menu
-                anchorEl={profileMenuAnchorEl}
-                open={Boolean(profileMenuAnchorEl)}
-                onClose={handleProfileMenuClose}
-                sx={{ mt: 1 }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              >
-                <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
-                <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem>
-                <MenuItem onClick={handleResetCache}><ListItemIcon><Clear/></ListItemIcon>Reset Cache</MenuItem>
-                <Divider/>
-                <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem>
-              </Menu>
-            </Toolbar>
-          </StyledAppBar>
+          <AppHeader isDesktop={isDesktop} app={app} setOpen={setOpen} showLogin={showLogin}/>
           <AppDrawer isDesktop={isDesktop} open={open} setOpen={setOpen} subNav={subNav}/>
           <Main open={open} isDesktop={isDesktop}>
             <Toolbar/>
