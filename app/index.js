@@ -37,6 +37,7 @@ if (process.env.CI) Sentry.init({
 });
 const div = document.createElement('div');
 div.id = 'container';
+document.body.style.backgroundColor = '#272533';
 document.body.append(div);
 
 render(
@@ -48,7 +49,7 @@ render(
             <Helmet>
               <meta name="apple-mobile-web-app-capable" content="yes"/>
               <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-              <meta name="theme-color" content="#1f1d2b"/>
+              <meta name="theme-color" content="#272533"/>
               <meta name="description" content="a pawtastic WebApp to enchance your Chaster experience"/>
               <meta property="og:title" content="KittenLocks"/>
               <meta property="og:type" content="website"/>

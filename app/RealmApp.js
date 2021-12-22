@@ -8,6 +8,7 @@ import { RetryLink } from '@apollo/client/link/retry';
 import * as Sentry from '@sentry/react';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
+import AppIcon from '../assets/appicon.png';
 
 const VERSION = '0.1.0';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
@@ -181,7 +182,13 @@ export function RealmAppProvider({ children }){
     .then(() => setClient(new ApolloClient({ link: from([authTokenLink, retryLink, restLink, httpLink]), cache }))), [authTokenLink]);
 
   if (!client){
-    return <h2>Initializing app...</h2>;
+    return (
+      <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, right: 0, textAlign: 'center', color: 'white', fontFamily: 'Roboto, Helvetica, Arial, sans-serif' }}>
+        <h1>KittenLocks</h1>
+        <img src={AppIcon} alt="KittenLocks icon"/>
+        <h4>loading...</h4>
+      </div>
+    );
   }
 
   const wrapped = { ...app, currentUser, logIn, logOut, cache, client, persistor };
