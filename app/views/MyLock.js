@@ -44,7 +44,7 @@ function MyLock({ setSubNav }){
   const handleShowArchived = useCallback(e => setShowArchived(e.target.checked), []);
 
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active', realmId: app.currentUser.id } });
+  const { data, error } = useQuery(GetMyLocks, { variables: { status: showArchived ? 'all' : 'active', realmId: app.currentUser.id }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -64,7 +64,7 @@ function MyLock({ setSubNav }){
         <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start" sx={{ float: 'right' }}/>
       </Typography>
       { locks?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }
-      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : locks.map(l => <MLock key={l._id} lock={l}/>) }
+      { data ? locks.map(l => <MLock key={l._id} lock={l}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
 }

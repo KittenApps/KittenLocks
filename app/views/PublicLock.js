@@ -25,7 +25,7 @@ const PLock = memo(({ lock }) => (
 PLock.displayName = 'PLock';
 
 const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
-  const { data, loading, error } = useQuery(GetPublicLocks, { variables: { userId } });
+  const { data, error } = useQuery(GetPublicLocks, { variables: { userId }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -37,7 +37,7 @@ const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
     return () => setSubNav(null);
   }, [data, setSubNav, username]);
 
-  if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  if (!data) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   if (data?.locks.length === 0) return <Alert severity="warning">It looks like <b>{username}</b> doesn't have any public locks yet :(</Alert>;
   return data.locks.map(l => <PLock key={l._id} lock={l}/>);
 });
@@ -47,7 +47,7 @@ function PublicLocks({ setSubNav }){
   const { username } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GetPublicProfile, { variables: { username } });
+  const { data: profileData, error: profileError } = useQuery(GetPublicProfile, { variables: { username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (profileError) enqueueSnackbar(profileError.toString(), { variant: 'error' });
   }, [profileError, enqueueSnackbar]);
@@ -65,11 +65,11 @@ function PublicLocks({ setSubNav }){
     <>
       <ScrollElement name="profile" style={{ paddingBottom: 8 }}>
         <Typography variant="h4" gutterBottom component="p">Public profile of {profileData?.profile?.user.username || username}</Typography>
-        { profileLoading || profileError ? <Skeleton variant="rectangular" width="100%" height={300} /> : <JsonView src={profileData.profile} collapsed={2}/> }
+        { profileData ? <JsonView src={profileData.profile} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300}/> }
       </ScrollElement>
       <Typography variant="h4" gutterBottom component="p">Public locks of {profileData?.profile?.user.username || username}</Typography>
-      { profileLoading || profileError ? <Skeleton variant="rectangular" width="100%" height={300} />
-        : <PLocks userId={profileData.profile.user._id} enqueueSnackbar={enqueueSnackbar} setSubNav={setSubNav} username={profileData.profile.user.username || username}/> }
+      { profileData ? <PLocks userId={profileData.profile.user._id} enqueueSnackbar={enqueueSnackbar} setSubNav={setSubNav} username={profileData.profile.user.username || username}/>
+                    : <Skeleton variant="rectangular" width="100%" height={300}/> }
     </>
   );
 }

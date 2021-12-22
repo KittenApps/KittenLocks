@@ -9,14 +9,14 @@ const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../compone
 
 const SampleChart = memo(() => {
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetSiliziaDemo);
+  const { data, error } = useQuery(GetSiliziaDemo, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
       console.error(error);
     }
   }, [error, enqueueSnackbar]);
-  if (loading || error) return <Skeleton variant="rectangular" width="100%" height={300}/>;
+  if (!data) return <Skeleton variant="rectangular" width="100%" height={300}/>;
   return <LockChart history={data.siliziaHistory} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
 });
 SampleChart.displayName = 'SampleChart';

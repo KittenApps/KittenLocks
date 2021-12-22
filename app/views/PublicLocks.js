@@ -28,7 +28,7 @@ function PublicLocks({ isDesktop }){
     { o: 'KittenLocks login required', t: 'other Kitte)nLocks users', d: true }
   ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]));
 
-  const [getAllKittenLocksUsers, { data, loading, error }] = useLazyQuery(GetAllKittenLocksUsers);
+  const [getAllKittenLocksUsers, { data, loading, error }] = useLazyQuery(GetAllKittenLocksUsers, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -36,7 +36,7 @@ function PublicLocks({ isDesktop }){
     }
   }, [error, enqueueSnackbar]);
 
-  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers);
+  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (werror){
       enqueueSnackbar(werror.toString(), { variant: 'error' });

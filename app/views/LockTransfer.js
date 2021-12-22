@@ -62,7 +62,7 @@ function LockTransfer(){
   const [oldLockID, setOldLockID] = useState('');
   const [isLockOkay, setLockOkay] = useState(false);
 
-  const { data, loading, error, refetch } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id } });
+  const { data, error, refetch } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (data) setOldLockID(data.locks[0]?._id || '');
   }, [data]);
@@ -74,7 +74,7 @@ function LockTransfer(){
   }, [error, enqueueSnackbar]);
 
   const [sharedLockID, setSharedLockID] = useState(searchParams.get('lock') || '');
-  const [getSharedLock, { data: sdata, error: serror }] = useLazyQuery(GetSharedLock);
+  const [getSharedLock, { data: sdata, error: serror }] = useLazyQuery(GetSharedLock, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (serror){
       enqueueSnackbar(serror.toString(), { variant: 'error' });
@@ -150,7 +150,7 @@ function LockTransfer(){
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key="currentLock">
           <StepLabel>Select and verify your current lock</StepLabel>
-          { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : (
+          { data ? (
             <StepContent>
               <FormControl fullWidth>
                 <InputLabel id="select-label">Your current lock:</InputLabel>
@@ -162,7 +162,7 @@ function LockTransfer(){
               <VerifyLock lock={data.locks.find(l => l._id === oldLockID)} setLockOkay={setLockOkay} />
               <Button onClick={handleNext} disabled={!isLockOkay} sx={{ mt: data.locks?.length === 0 ? 0 : 2 }} variant="contained">Select shared lock</Button>
             </StepContent>
-          )}
+          ) : <Skeleton variant="rectangular" width="100%" height={300}/> }
         </Step>
         <Step key="sharedLock">
           <StepLabel>Choose the shared lock to transfer to</StepLabel>

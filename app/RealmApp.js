@@ -178,7 +178,7 @@ export function RealmAppProvider({ children }){
   const [client, setClient] = useState(null);
 
   useEffect(() => localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION))))
-    .then(() => setClient(new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }))), [authTokenLink]);
+    .then(() => setClient(new ApolloClient({ link: from([authTokenLink, retryLink, restLink, httpLink]), cache }))), [authTokenLink]);
 
   if (!client){
     return <h2>Initializing app...</h2>;

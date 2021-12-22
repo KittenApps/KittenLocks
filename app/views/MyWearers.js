@@ -54,7 +54,7 @@ function MyWearers({ setSubNav }){
   const [status, setStatus] = useState('locked');
   const handleStatusChange = useCallback(e => setStatus(e.target.value), []);
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, pathBuilder: ({ args }) => `/keyholder/wearers?status=${args.status}` } });
+  const { data, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, pathBuilder: ({ args }) => `/keyholder/wearers?status=${args.status}` }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -83,7 +83,7 @@ function MyWearers({ setSubNav }){
         </FormControl>
       </Typography>
       { data?.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
-      { loading || error ? <Skeleton variant="rectangular" width="100%" height={300} /> : data.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) }
+      { data ? data.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
 }

@@ -11,7 +11,7 @@ import { useSnackbar } from 'notistack';
 function LockHistory({ lockId, startTime, startRem, title }){
   const [inProgress, setInProgress] = useState(true);
   const { enqueueSnackbar } = useSnackbar(); // d && !d.lockHistory.hasMore && setInProgress(false)
-  const { data, error, fetchMore } = useQuery(GetLockHistory, { variables: { lockId, limit: 100 } });
+  const { data, error, fetchMore } = useQuery(GetLockHistory, { variables: { lockId, limit: 100 }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -38,7 +38,7 @@ function LockHistory({ lockId, startTime, startRem, title }){
         <LoadingButton loading={inProgress} loadingPosition="end" endIcon={<Refresh/>} onClick={handleRefresh} disabled={inProgress} variant="outlined" sx={{ float: 'right' }}>Refresh</LoadingButton>
       </Typography>
       { inProgress && data && <LinearProgress variant="buffer" value={data.lockHistory.results.length / data.lockHistory.count * 100} valueBuffer={(data.lockHistory.results.length + 100) / data.lockHistory.count * 100}/> }
-      { !data || error ? <Skeleton variant="rectangular" width="100%" height={300}/> : <JsonView src={data.lockHistory.results} collapsed={0}/> }
+      { data ? <JsonView src={data.lockHistory.results} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={300}/> }
       { !inProgress && !error && startTime !== 0 && <LockChart history={data.lockHistory.results} startTime={startTime} startRem={startRem}/> }
     </>
   );
