@@ -10,7 +10,7 @@ import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
 
 const VERSION = '0.1.0';
-localForage.config({ name: 'KittenLocks', version: 0.2, storeName: 'kittenlocks' });
+localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
 const parseDate = { read: d => d && new Date(d) };
@@ -109,6 +109,8 @@ const cache = new InMemoryCache({
   }
 });
 
+const persistor = new CachePersistor({ cache, storage: new LocalForageWrapper(localForage), serialize: false, key: 'cache', maxSize: false });
+
 export function useRealmApp(){
   const app = useContext(RealmAppContext);
   if (!app) throw new Error('You must call useRealmApp() inside of a <RealmAppProvider />');
@@ -173,19 +175,16 @@ export function RealmAppProvider({ children }){
     return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
   }), [currentUser, getAccessToken, lastAuth]);
 
-  const [client, setClient] = useState();
+  const [client, setClient] = useState(null);
 
-  useEffect(() => {
-    const persistor = new CachePersistor({ cache, storage: new LocalForageWrapper(localForage), serialize: false, key: 'cache', maxSize: false });
-    localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION))))
-      .then(() => setClient(new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache })));
-  }, [authTokenLink]);
+  useEffect(() => localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION))))
+    .then(() => setClient(new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }))), [authTokenLink]);
 
   if (!client){
     return <h2>Initializing app...</h2>;
   }
 
-  const wrapped = { ...app, currentUser, logIn, logOut, cache, client };
+  const wrapped = { ...app, currentUser, logIn, logOut, cache, client, persistor };
 
   return <RealmAppContext.Provider value={wrapped}><ApolloProvider client={client}>{children}</ApolloProvider></RealmAppContext.Provider>;
 }

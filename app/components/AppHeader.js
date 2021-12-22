@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Clear, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
+import { DeleteForeverTwoTone, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
 import { useRealmApp } from '../RealmApp';
 import ScopeBadges from './ScopeBadges';
 import AppIcon from '../../assets/appicon.png';
@@ -42,7 +42,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
 
   const handleLogin = useCallback(() => showLogin(true), [showLogin]);
   const handleManage = useCallback(() => {handleLogin(); setProfileMenuAnchorEl(null);}, [handleLogin]);
-  const handleResetCache = useCallback(() => {app.client.resetStore(); setProfileMenuAnchorEl(null);}, [app.client]);
+  const handleResetCache = useCallback(() => {app.client.resetStore(); app.persistor.purge(); setProfileMenuAnchorEl(null);}, [app.client, app.persistor]);
 
   return (
     <>
@@ -75,7 +75,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
           >
             <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
             <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem>
-            <MenuItem onClick={handleResetCache}><ListItemIcon><Clear/></ListItemIcon>Reset Cache</MenuItem>
+            <MenuItem onClick={handleResetCache}><ListItemIcon><DeleteForeverTwoTone/></ListItemIcon>Reset Cache</MenuItem>
             <Divider/>
             <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem>
           </Menu>
