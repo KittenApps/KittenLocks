@@ -122,7 +122,7 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
         </List>
       )}
       <div style={{ flexGrow: 1 }}/>
-      <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v{process.env.npm_package_version} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
+      <Typography variant="caption" sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>KittenLocks v{process.env.VERSION} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
     </ResponsiveDrawer>
   );
 }

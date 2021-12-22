@@ -29,8 +29,8 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', {
 });
 
 if (process.env.CI) Sentry.init({
-  dsn: 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627',
-  release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
+  dsn: process.env.SENTRY,
+  release: `kittenlocks@${process.env.VERSION}+${process.env.COMMIT_REF}`,
   integrations: [new TracingIntegrations.BrowserTracing()],
   tracesSampleRate: 1,
   ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded', 'ResizeObserver loop completed with undelivered notifications.']

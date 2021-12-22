@@ -39,7 +39,13 @@ const config = {
   },
   plugins: [
     // eslint-disable-next-line camelcase
-    new webpack.EnvironmentPlugin({ CI: '', COMMIT_REF: 'dev', npm_package_version: 'dev', REDURL: `${process.env.CI ? `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de` : 'http://localhost:8080'}/static/html/oauthcb` }),
+    new webpack.EnvironmentPlugin({
+      CI: '',
+      COMMIT_REF: 'dev',
+      VERSION: process.env.BRANCH ? `${process.env.npm_package_version}${process.env.BRANCH === 'beta' ? '-beta' : ''}` : `${process.env.npm_package_version}-dev`,
+      REDURL: `${process.env.CI ? `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de` : 'http://localhost:8080'}/static/html/oauthcb`,
+      SENTRY: process.env.BRANCH === 'beta' ? 'https://a7ed71bbcd69473f87d243c8a00d378e@o1079625.ingest.sentry.io/6117777' : 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627'
+    }),
     new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/' }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
@@ -64,8 +70,8 @@ const config = {
     new CopyPlugin({ patterns: [{ from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) }] }),
     ...(process.env.NETLIFY && [
       new SentryWebpackPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: 'kittenlocks',
-        release: `kittenlocks@${process.env.npm_package_version}+${process.env.COMMIT_REF}`,
+        authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: `${process.env.BRANCH === 'beta' ? 'beta-' : ''}kittenlocks`,
+        release: `kittenlocks@${process.env.npm_package_version}${process.env.BRANCH === 'beta' ? '-beta' : ''}+${process.env.COMMIT_REF}`,
         include: './public',
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
