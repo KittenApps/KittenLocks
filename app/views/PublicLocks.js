@@ -50,8 +50,8 @@ function PublicLocks({ isDesktop }){
       if (new Set(app.currentUser.customData.scopes).has('keyholder')){
         getAllWearers({ variables: { realmId: app.currentUser.id, status: 'all', pathBuilder: () => '/keyholder/wearers' } });
       }
-    } // keep app scope here to refresh on newly granted keyholder scope
-  }, [app, app.currentUser, getAllWearers, getAllKittenLocksUsers]);
+    }
+  }, [app.currentUser, getAllWearers, getAllKittenLocksUsers]);
 
   useEffect(() => {
     if (app.currentUser){

@@ -1,16 +1,16 @@
 import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-import { Alert, AlertTitle, Box, Button, CssBaseline, IconButton, Paper, Stack, TextField, Toolbar, useMediaQuery } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CssBaseline, IconButton, Stack, TextField, Toolbar, useMediaQuery } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { Route, Routes, useSearchParams } from 'react-router-dom';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import { ErrorBoundary } from '@sentry/react';
 import { useRealmApp } from './RealmApp';
 import AppHeader from './components/AppHeader';
 import AppDrawer from './components/AppDrawer';
-import RequiredScopes from './components/RequiredScopes';
 import Login from './components/LoginModal';
 import Home from './views/Home';
+import Discord from './views/Discord';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
@@ -50,6 +50,19 @@ const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isD
     })
   })
 }));
+
+const InstallAction = memo(({ index, installPrompt }) => {
+  const { closeSnackbar } = useSnackbar();
+  const handleNotistackClose = useCallback(() => closeSnackbar(index), [index, closeSnackbar]);
+  const handlePromp = useCallback(() => {installPrompt.prompt(); closeSnackbar(index);}, [closeSnackbar, index, installPrompt]);
+  return (
+    <Stack spacing={1} direction="row">
+      <Button color="inherit" variant="outlined" onClick={handlePromp} size="small">Install now</Button>
+      <IconButton color="inherit" onClick={handleNotistackClose} size="small"><Close fontSize="inherit"/></IconButton>
+    </Stack>
+  );
+});
+InstallAction.displayName = 'installAction';
 
 function App(){
   const app = useRealmApp();
@@ -94,28 +107,20 @@ function App(){
 
   const [openLogin, showLogin] = useState(logScopes.length > 0);
 
-  const notistackClose = useCallback(key => {
+  const notistackClose = useCallback(index => {
     const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
-    return <IconButton onClick={handleNotistackClose(key)} color="inherit" size="small"><Close fontSize="inherit"/></IconButton>;
+    return <IconButton onClick={handleNotistackClose(index)} color="inherit" size="small"><Close fontSize="inherit"/></IconButton>;
   }, []);
   const onMissingScopes = useCallback(s => {setLogScopes(s); showLogin(true);}, []);
 
-  const installPromptAction = useCallback(prompt => {
-    const handleNotistackClose = k => () => notistackRef.current.closeSnackbar(k);
-    const handlePromp = k => () => {prompt(); notistackRef.current.closeSnackbar(k);};
-    return function installAction(key){
-      return (
-        <Stack spacing={1} direction="row">
-          <Button color="inherit" variant="outlined" onClick={handlePromp(key)} size="small">Install now</Button>
-          <IconButton color="inherit" onClick={handleNotistackClose(key)} size="small"><Close fontSize="inherit"/></IconButton>
-        </Stack>
-      );
-    };
-  }, [notistackRef]);
-
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const installPromptAction = useCallback(index => <InstallAction index={index} installPrompt={installPrompt}/>, [installPrompt]);
+  useEffect(() => {
+    if (installPrompt) notistackRef.current.enqueueSnackbar('Add KittenLocks to your HomeScreen?', { variant: 'info', action: installPromptAction });
+  }, [installPrompt, installPromptAction]);
   useEffect(() => window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
-    notistackRef.current.enqueueSnackbar('Add KittenLocks to your HomeScreen?', { variant: 'info', action: installPromptAction(e.prompt) });
+    setInstallPrompt(e);
   }), [installPromptAction]);
 
   const [subNav, setSubNav] = useState(null);
@@ -132,49 +137,14 @@ function App(){
             <Toolbar/>
             <ErrorBoundary fallback={ErrorFallback} showDialog>
               <Routes>
-                <Route
-                  path="lock/*"
-                  element={
-                    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
-                      <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense>
-                    </RequiredScopes>
-                  }
-                />
-                <Route
-                  path="wearers/*"
-                  element={
-                    <RequiredScopes rScopes={['keyholder']} onMissingScopes={onMissingScopes} component="wearer">
-                      <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense>
-                    </RequiredScopes>
-                  }
-                />
+                <Route path="lock/*" element={<Suspense fallback={<p>loading...</p>}><MyLock onMissingScopes={onMissingScopes} setSubNav={setSubNav}/></Suspense>}/>
+                <Route path="wearers/*" element={<Suspense fallback={<p>loading...</p>}><MyWearer onMissingScopes={onMissingScopes} setSubNav={setSubNav}/></Suspense>}/>
                 <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
                   <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense>}/>
                 </Route>
-                <Route
-                  path="charts/*"
-                  element={
-                    /* <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="charts"> */
-                    <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>
-                    /* </RequiredScopes> */
-                  }
-                />
-                <Route
-                  path="trans/*"
-                  element={
-                    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
-                      <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>
-                    </RequiredScopes>
-                  }
-                />
-                <Route
-                  path="discord/*"
-                  element={
-                    <Paper elevation={6} sx={{ position: 'absolute', backgroundColor: '#1b192a', top: isDesktop ? 80 : 64, left: isDesktop ? (open ? 256 : 16) : 0, right: isDesktop ? 16 : 0, bottom: isDesktop ? 16 : 0, p: 2 }} >
-                      <iframe src="https://e.widgetbot.io/channels/879777377541033984/879777377968869465" title="Discord" width="100%" height="100%" allowtransparency="true" frameBorder="0"/>
-                    </Paper>
-                  }
-                />
+                <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
+                <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer onMissingScopes={onMissingScopes}/></Suspense>}/>
+                <Route path="discord/*" element={<Discord isDesktop={isDesktop}/>}/>
                 <Route path="*" element={<Home/>} />
               </Routes>
             </ErrorBoundary>

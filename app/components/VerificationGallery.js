@@ -6,7 +6,7 @@ import { IosShare } from '@mui/icons-material';
 const VerificationPicture = memo(({ i, img, setSelected }) => {
   const handleClick = useCallback(() => setSelected(img), [img, setSelected]);
   return (
-    <ImageListItem style={{ minHeight: 48, cursor: 'pointer' }} onClick={handleClick} key={img.imageKey}>
+    <ImageListItem style={{ minHeight: 48, cursor: 'pointer' }} onClick={handleClick}>
       <img src={img.image.url} alt={img.submittedAt.toLocaleString()}/>
       <ImageListItemBar title={`${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`}/>
     </ImageListItem>

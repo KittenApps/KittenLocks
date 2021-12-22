@@ -5,6 +5,7 @@ import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, Inp
          Select, Skeleton, Stack, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { CompareArrows, Search } from '@mui/icons-material';
+import RequiredScopes from '../components/RequiredScopes';
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
@@ -52,7 +53,7 @@ const VerifyLock = memo(({ lock, setLockOkay }) => {
 });
 VerifyLock.displayName = 'VerifyLock';
 
-function LockTransfer(){
+const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-complexity
   const app = useRealmApp();
   const { enqueueSnackbar } = useSnackbar();
   const [searchParams] = useSearchParams();
@@ -182,6 +183,15 @@ function LockTransfer(){
       </Stepper>
     </Paper>
   );
+});
+LockTransfer.displayName = 'LockTransfer';
+
+function PermissionWrapper({ onMissingScopes }){
+  return (
+    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
+      <LockTransfer/>
+    </RequiredScopes>
+  );
 }
 
-export default memo(LockTransfer);
+export default memo(PermissionWrapper);

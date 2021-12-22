@@ -112,6 +112,27 @@ const cache = new InMemoryCache({
 
 const persistor = new CachePersistor({ cache, storage: new LocalForageWrapper(localForage), serialize: false, key: 'cache', maxSize: false });
 
+const immutableCurrentUser = u => Object.create(Object.getPrototypeOf(u), {
+  customData: { enumerable: true, writable: true, value: u.customData },
+  accessToken: { enumerable: true, writable: true, value: u.accessToken },
+  deviceId: { enumerable: true, writable: true, value: u.deviceId },
+  identities: { enumerable: true, writable: true, value: u.identities },
+  isLoggedIn: { enumerable: true, writable: true, value: u.isLoggedIn },
+  profile: { enumerable: true, writable: true, value: u.profile },
+  refreshToken: { enumerable: true, writable: true, value: u.refreshToken },
+  state: { enumerable: true, writable: true, value: u.state },
+  apiKeys: { enumerable: true, writable: true, value: u.apiKeys },
+  app: { enumerable: true, writable: true, value: u.app },
+  fetcher: { enumerable: true, writable: true, value: u.fetcher },
+  functions: { enumerable: true, writable: true, value: u.functions },
+  id: { enumerable: true, writable: true, value: u.id },
+  providerType: { enumerable: true, writable: true, value: u.providerType },
+  storage: { enumerable: true, writable: true, value: u.storage },
+  _accessToken: { enumerable: true, writable: true, value: u._accessToken },
+  _profile: { enumerable: true, writable: true, value: u._profile },
+  _refreshToken: { enumerable: true, writable: true, value: u._refreshToken }
+});
+
 export function useRealmApp(){
   const app = useContext(RealmAppContext);
   if (!app) throw new Error('You must call useRealmApp() inside of a <RealmAppProvider />');
@@ -122,66 +143,27 @@ let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) };
 
 export function RealmAppProvider({ children }){
   const app = useMemo(() => new RealmApp({ id: 'kittenlocks-gcfgb', baseUrl: 'https://api.kittenlocks.de', skipLocationRequest: true }), []);
-  const [currentUser, setCurrentUser] = useState(app.currentUser);
+  const [currentUser, setCurrentUser] = useState(app.currentUser ? immutableCurrentUser(app.currentUser) : null);
   const [lastAuth, setLastAuth] = useState(0);
 
-  useEffect(() => {
-    currentUser?.refreshCustomData().then(d => Sentry.setUser({ username: d.username }));
-    setLastAuth(Date.now());
-  }, [currentUser]);
-
   const logIn = useCallback(async credentials => {
-    await app.logIn(credentials);
-    if (currentUser === app.currentUser){ // scope upgrade
-      await currentUser?.refreshCustomData();
-      setLastAuth(Date.now());
-    } else { // user logged in / switching users
-      setCurrentUser(app.currentUser);
-    }
-    return app.currentUser.customData;
-  }, [app, currentUser]);
+    const user = await app.logIn(credentials);
+    setLastAuth(Date.now());
+    setCurrentUser(immutableCurrentUser(user));
+    Sentry.setUser({ username: app.currentUser.customData.username });
+  }, [app]);
+
   const logOut = useCallback(async() => {
     await app.currentUser?.logOut();
     Sentry.setUser(null);
     setCurrentUser(app.currentUser); // other logged in user or null
-  }, [app]);
+    setLastAuth(0);
+  }, [app.currentUser]);
 
-  const getAccessToken = useCallback(() => {
-    if (!currentUser) throw new Error('Login required');
-    const cDaT = currentUser?.customData?.access_token;
-    const cDaE = currentUser?.customData?.access_expires.$date.$numberLong;
-    if ((cDaE - Date.now()) / 60000 > 3) return Promise.resolve({ accessToken: cDaT, accessExpires: new Date(cDaE) });
-    if (accessTokenPromise.then) return accessTokenPromise;
-    const { accessToken, accessExpires } = accessTokenPromise;
-    if ((accessExpires.getTime() - Date.now()) / 60000 > 3) return Promise.resolve({ accessToken, accessExpires });
-    accessTokenPromise = currentUser.functions.getAccessToken().then(res => {
-      if (res.error === 'Invalid refresh token') logOut();
-      accessTokenPromise = { accessToken: res.accessToken, accessExpires: res.accessExpires };
-      return accessTokenPromise;
-    });
-    return accessTokenPromise;
-  }, [currentUser, logOut]);
+  const [cacheReady, setCacheReady] = useState(false);
+  useEffect(() => localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION)))).then(() => setCacheReady(true)), []);
 
-  const authTokenLink = useMemo(() => setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
-    if (body.includes('@noauth')) return; // unauthenticated Chaster API
-    if (!currentUser) throw new Error('Login required!');
-    if (body.includes('@rest')){
-      return getAccessToken().then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
-    }
-    const now = Date.now();
-    if (now - lastAuth > 1795000){
-      setLastAuth(now);
-      return currentUser.refreshCustomData().then(() => ({ headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } }));
-    }
-    return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
-  }), [currentUser, getAccessToken, lastAuth]);
-
-  const [client, setClient] = useState(null);
-
-  useEffect(() => localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION))))
-    .then(() => setClient(new ApolloClient({ link: from([authTokenLink, retryLink, restLink, httpLink]), cache }))), [authTokenLink]);
-
-  if (!client){
+  if (!cacheReady){
     return (
       <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, right: 0, textAlign: 'center', color: 'white', fontFamily: 'Roboto, Helvetica, Arial, sans-serif' }}>
         <h1>KittenLocks</h1>
@@ -190,6 +172,36 @@ export function RealmAppProvider({ children }){
       </div>
     );
   }
+
+  const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
+    if (body.includes('@noauth')) return; // unauthenticated Chaster API
+    if (!currentUser?.customData) throw new Error('Login required!');
+    const now = Date.now();
+    if (body.includes('@rest')){
+      const cDaT = currentUser?.customData?.access_token;
+      const cDaE = currentUser?.customData?.access_expires.$date.$numberLong;
+      if ((cDaE - now) / 60000 > 3) return { headers: { ...headers, Authorization: `Bearer ${cDaT}` } };
+      if (accessTokenPromise.then) return accessTokenPromise.then(({ accessToken }) => ({ headers: { ...headers, Authorization: `Bearer ${accessToken}` } }));
+      const { accessToken, accessExpires } = accessTokenPromise;
+      if ((accessExpires.getTime() - now) / 60000 > 3) return { headers: { ...headers, Authorization: `Bearer ${accessToken}` } };
+      const getATP = res => {
+        if (res.error === 'Invalid refresh token') return app.currentUser?.logOut().then(() => window.location.reload());
+        accessTokenPromise = { accessToken: res.accessToken, accessExpires: res.accessExpires };
+        return accessTokenPromise;
+      };
+      accessTokenPromise = now - lastAuth > 1795000
+        ? app.currentUser.refreshAccessToken().then(() => {setLastAuth(Date.now()); return app.currentUser.functions.getAccessToken();}).then(getATP)
+        : app.currentUser.functions.getAccessToken().then(getATP);
+      return accessTokenPromise.then(({ accessToken: at }) => ({ headers: { ...headers, Authorization: `Bearer ${at}` } }));
+    }
+    if (now - lastAuth > 1795000) return app.currentUser.refreshAccessToken().then(() => {
+      setLastAuth(Date.now());
+      return { headers: { ...headers, Authorization: `Bearer ${app.currentUser.accessToken}` } };
+    });
+    return { headers: { ...headers, Authorization: `Bearer ${app.currentUser.accessToken}` } };
+  });
+
+  const client = new ApolloClient({ link: from([retryLink, authTokenLink, restLink, httpLink]), cache });
 
   const wrapped = { ...app, currentUser, logIn, logOut, cache, client, persistor };
 
