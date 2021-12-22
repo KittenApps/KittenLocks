@@ -6,7 +6,11 @@ import { RestLink } from 'apollo-link-rest';
 import { setContext } from '@apollo/client/link/context';
 import { RetryLink } from '@apollo/client/link/retry';
 import * as Sentry from '@sentry/react';
+import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
+import localForage from 'localforage';
 
+const VERSION = '0.1.0';
+localForage.config({ name: 'KittenLocks', version: 0.2, storeName: 'kittenlocks' });
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
 const parseDate = { read: d => d && new Date(d) };
@@ -169,7 +173,17 @@ export function RealmAppProvider({ children }){
     return { headers: { ...headers, Authorization: `Bearer ${currentUser.accessToken}` } };
   }), [currentUser, getAccessToken, lastAuth]);
 
-  const client = useMemo(() => new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache }), [authTokenLink]);
+  const [client, setClient] = useState();
+
+  useEffect(() => {
+    const persistor = new CachePersistor({ cache, storage: new LocalForageWrapper(localForage), serialize: false, key: 'cache', maxSize: false });
+    localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION))))
+      .then(() => setClient(new ApolloClient({ connectToDevTools: true, link: from([authTokenLink, retryLink, restLink, httpLink]), cache })));
+  }, [authTokenLink]);
+
+  if (!client){
+    return <h2>Initializing app...</h2>;
+  }
 
   const wrapped = { ...app, currentUser, logIn, logOut, cache, client };
 
