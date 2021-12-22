@@ -8,6 +8,10 @@ import * as Sentry from '@sentry/react';
 import { Integrations as TracingIntegrations } from '@sentry/tracing';
 import AppIcon from '../assets/appicon.png';
 import FavIcon from '../assets/favicon.png';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 function errorFallback({ error, componentStack, resetError }){
   return (
@@ -59,7 +63,6 @@ render(
               <link rel="icon" href={FavIcon}/>
               <link rel="manifest" href="/manifest.webmanifest"/>
               <link rel="apple-touch-icon" sizes="192x192" href={AppIcon}/>
-              <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap"/>
             </Helmet>
             <App/>
           </HelmetProvider>

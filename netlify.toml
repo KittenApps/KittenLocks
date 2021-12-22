@@ -12,3 +12,8 @@
     from = "/*"
     to = "/index.html"
     status = 200
+
+[[headers]]
+    for = "/*.js"
+    [headers.values]
+        cache-control = 'no-cache'

@@ -19,24 +19,24 @@ const SLink = forwardRef((props, _) => <ScrollLink smooth offset={-72} spyThrott
 SLink.displayName = 'SLink';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
-display: 'flex',
-alignItems: 'center',
-padding: theme.spacing(0, 1),
-...theme.mixins.toolbar,
-justifyContent: 'flex-end'
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end'
 }));
 
 const ResponsiveDrawer = memo(({ isDesktop, open, handleDrawerOpen, handleDrawerClose, children }) => {
-if (isDesktop) return (
-  <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
-    <DrawerHeader>
-      <IconButton onClick={handleDrawerClose}><ChevronLeft/></IconButton>
-    </DrawerHeader>
-    <Divider />
-    {children}
-  </Drawer>
-);
-return <SwipeableDrawer elevation={2} sx={{ zIndex: t => t.zIndex.drawer, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+  if (isDesktop) return (
+    <Drawer variant="persistent" anchor="left" open={open} sx={{ width: drawerWidth, flexShrink: 0, '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' } }}>
+      <DrawerHeader>
+        <IconButton onClick={handleDrawerClose}><ChevronLeft/></IconButton>
+      </DrawerHeader>
+      <Divider />
+      {children}
+    </Drawer>
+  );
+  return <SwipeableDrawer elevation={2} sx={{ zIndex: t => t.zIndex.drawer, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
 });
 ResponsiveDrawer.displayName = 'ResponsiveDrawer';
 

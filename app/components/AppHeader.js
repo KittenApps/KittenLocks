@@ -1,11 +1,14 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { AppBar, Avatar, Backdrop, Button, CardHeader, Divider, IconButton, Link, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Backdrop, Button, ButtonGroup, CardHeader, Checkbox, CircularProgress, Divider, IconButton,
+         Link, ListItemIcon, ListSubheader, Menu, MenuItem, Stack, Toolbar, Typography, useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { DeleteForeverTwoTone, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
+import { ArrowDropDown, Bookmark, BookmarkBorder, DeleteForeverTwoTone, Login, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
 import { useRealmApp } from '../RealmApp';
 import ScopeBadges from './ScopeBadges';
 import AppIcon from '../../assets/appicon.png';
+import { useSnackbar } from 'notistack';
+import { register, unregister } from '../SwUtils';
 
 const drawerWidth = 250;
 
@@ -26,8 +29,38 @@ const StyledAppBar = styled(AppBar, { shouldForwardProp: p => p !== 'open' && p 
   })
 }));
 
+const UpdateAction = memo(({ index, wsw, setWSW }) => {
+  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
+  const updatePromptAction = useCallback(k => <UpdateAction index={k} wsw={wsw} setWSW={setWSW}/>, [setWSW, wsw]);
+  const handleNotistackClose = useCallback(() => {
+    closeSnackbar(index);
+    setTimeout(() => enqueueSnackbar('A new KittenLocks update is available! Please upgrade to the latest version by reloading the page now.',
+                                     { variant: 'warning', persist: true, action: updatePromptAction }), 5 * 60 * 1000);
+  }, [closeSnackbar, enqueueSnackbar, index, updatePromptAction]);
+  const handleSWPromp = useCallback(() => {
+    wsw.addEventListener('statechange', e => {
+      if (e.target.state === 'activated'){
+        wsw.postMessage({ type: 'RELOAD_ALL_CLIENTS' }); // eslint-disable-line unicorn/require-post-message-target-origin
+        window.location.reload();
+      }
+    });
+    wsw.postMessage({ type: 'SKIP_WAITING' }); // eslint-disable-line unicorn/require-post-message-target-origin
+    closeSnackbar(index);
+    setWSW(42);
+  }, [closeSnackbar, index, setWSW, wsw]);
+  return (
+    <Stack spacing={1} direction="row">
+      <Button color="warning" variant="contained" onClick={handleSWPromp} size="small">Reload now</Button>
+      <Button color="inherit" variant="outlined" onClick={handleNotistackClose} size="small">Remind me later</Button>
+    </Stack>
+  );
+});
+UpdateAction.displayName = 'UpdateAction';
+
 function AppHeader({ isDesktop, setOpen, showLogin, open }){
   const app = useRealmApp();
+  const { enqueueSnackbar } = useSnackbar();
+  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
 
@@ -44,8 +77,36 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
   const handleManage = useCallback(() => {handleLogin(); setProfileMenuAnchorEl(null);}, [handleLogin]);
   const handleResetCache = useCallback(() => {app.client.resetStore(); app.persistor.purge(); setProfileMenuAnchorEl(null);}, [app.client, app.persistor]);
 
+  const [noOffline, setNoOffline] = useState(localStorage.getItem('noOffline') === 'true');
+  const [waitingServiceWorker, setWaitingServiceWorker] = useState(null);
+  const updatePromptAction = useCallback(index => <UpdateAction index={index} wsw={waitingServiceWorker} setWSW={setWaitingServiceWorker}/>, [waitingServiceWorker]);
+  useEffect(() => {
+    if (waitingServiceWorker && waitingServiceWorker !== 42){
+      enqueueSnackbar('A new KittenLocks update is available! Please upgrade to the latest version by reloading now.', { variant: 'warning', persist: true, action: updatePromptAction });
+    }
+  }, [enqueueSnackbar, updatePromptAction, waitingServiceWorker]);
+
+  useEffect(() => {
+    const onMessage = event => event.data && event.data.type === 'CLIENT_RELOAD' && window.location.reload();
+    if (noOffline || process.env.BRANCH === 'beta' || process.env.NODE_ENV !== 'production'){
+      unregister();
+      navigator.serviceWorker.removeEventListener('message', onMessage);
+    } else register({
+      onUpdate: reg => setWaitingServiceWorker(reg.waiting),
+      onSuccess: () => enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' })
+    }).then(() => navigator.serviceWorker.addEventListener('message', onMessage));
+  }, [enqueueSnackbar, noOffline]);
+
+  const handleToggleOffline = useCallback(() => {
+    localStorage.setItem('noOffline', !noOffline);
+    if (noOffline) window.location.reload();
+    setNoOffline(!noOffline);
+    setProfileMenuAnchorEl(null);
+  }, [noOffline]);
+
   return (
     <>
+      { waitingServiceWorker === 42 && <Backdrop sx={{ backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: t => t.zIndex.drawer + 1 }} open><CircularProgress color="inherit"/></Backdrop> }
       <Backdrop open={Boolean(profileMenuAnchorEl)} sx={{ zIndex: t => t.zIndex.drawer + 1, backgroundColor: 'rgba(0, 0, 0, 0.75)' }}/>
       <StyledAppBar open={open} isDesktop={isDesktop} >
         <Toolbar>
@@ -64,7 +125,12 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
                 titleTypographyProps={{ fontSize: 16 }}
                 subheader={<ScopeBadges scopes={app.currentUser.customData.scopes}/>}
               />
-            : <Button variant="contained" onClick={handleLogin} size="small">Login with Chaster</Button>}
+            : (
+              <ButtonGroup variant="contained" size="small">
+                <Button onClick={handleLogin} size="small" sx={{ px: 2 }}>{isTinyScreen ? 'Login' : 'Login with Chaster ...'}</Button>
+                <Button onClick={handleProfileMenuOpen} size="small"><Settings/><ArrowDropDown/></Button>
+              </ButtonGroup>
+            )}
           <Menu
             anchorEl={profileMenuAnchorEl}
             open={Boolean(profileMenuAnchorEl)}
@@ -73,11 +139,20 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
-            <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem>
-            <MenuItem onClick={handleResetCache}><ListItemIcon><DeleteForeverTwoTone/></ListItemIcon>Reset Cache</MenuItem>
-            <Divider/>
-            <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem>
+            { app.currentUser ? <MenuItem onClick={handleManage}><ListItemIcon><ManageAccounts/></ListItemIcon>Manage scopes</MenuItem>
+                              : <MenuItem onClick={handleLogin}><ListItemIcon><Login/></ListItemIcon>Login with Chaster ...</MenuItem> }
+            { app.currentUser && <MenuItem component={Link} href="https://chaster.app/settings/profile" target="_blank" rel="noopener"><ListItemIcon><Settings/></ListItemIcon>Chaster settings</MenuItem> }
+            { app.currentUser && <Divider/> }
+            { app.currentUser && <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem> }
+            <Divider style={{ marginBottom: 0 }}/>
+            <ListSubheader sx={{ textAlign: 'center', lineHeight: '32px' }}>Advanced Settings:</ListSubheader>
+            { process.env.BRANCH !== 'beta' && process.env.NODE_ENV === 'production' && (
+              <MenuItem dense onClick={handleToggleOffline}>
+                <ListItemIcon><Checkbox sx={{ p: 0 }} checked={!noOffline} icon={<BookmarkBorder/>} checkedIcon={<Bookmark/>}/></ListItemIcon>
+                {noOffline ? 'enable offline PWA' : 'remove PWA cache'}
+              </MenuItem>
+            )}
+            <MenuItem dense onClick={handleResetCache}><ListItemIcon><DeleteForeverTwoTone/></ListItemIcon>Reset Cache</MenuItem>
           </Menu>
         </Toolbar>
       </StyledAppBar>

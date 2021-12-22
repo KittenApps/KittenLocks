@@ -17,8 +17,10 @@ function Home(){
         <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
           <h3>Changelog v0.2 (WIP):</h3>
           <ul>
-            <li key="1">My Wearers Locks</li>
-            <li key="2">Lock Charts (WIP)</li>
+            <li key="1">KittenLocks.de is now a PWA and will be updated with bigger version updates from now on</li>
+            <li key="2">use <Link href="https://beta.kittenlocks.de" target="_blank" rel="noreferrer">beta.KittenLocks.de</Link> to follow the latest development version (no PWA mode)</li>
+            <li key="3">My Wearers Locks</li>
+            <li key="4">[WIP] Lock Charts (visualize your unlock date over time)</li>
           </ul>
           <h3>Changelog v0.1:</h3>
           <ul>
@@ -36,9 +38,9 @@ function Home(){
           <h3>Roadmap:</h3>
           <ul>
             <li key="1">improved GUI for lock details (instead of pure JSON)</li>
-            <li key="2">Lock Charts (visualize your unlock date over time)</li>
-            <li key="3">Voting Game (vote for other lockees with this game)</li>
-            <li key="4">Multiplayer Extensions (once the API is released)</li>
+            <li key="2">Voting Game (vote for other lockees with this game)</li>
+            <li key="3">Multiplayer Extensions (once the API is released)</li>
+            <li key="4">Shortcuts-like Extensions (once the API is released)</li>
           </ul>
         </Paper>
       </Grid>

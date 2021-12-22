@@ -7,7 +7,7 @@
     "build": "webpack",
     "build:dev": "NODE_ENV=development webpack",
     "build:prod": "NODE_ENV=production webpack",
-    "serve": "NODE_ENV=production webpack && npx http-server --proxy=http://127.0.0.1:8080?",
+    "serve": "NODE_ENV=production webpack && npx http-server -c-1 --proxy=http://127.0.0.1:8080?",
     "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public",
     "lint": "eslint . --ignore-path=.gitignore"
   },
@@ -37,6 +37,7 @@
     "@babel/preset-react": "^7.16.5",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@fontsource/roboto": "^4.5.1",
     "@mui/icons-material": "^5.2.5",
     "@mui/lab": "^5.0.0-alpha.61",
     "@mui/material": "^5.2.5",
@@ -50,6 +51,7 @@
     "babel-plugin-direct-import": "^1.0.0",
     "babel-plugin-import-graphql": "^2.8.1",
     "copy-webpack-plugin": "^10.2.0",
+    "css-loader": "^6.5.1",
     "graphql": "^15.8.0",
     "highcharts": "^9.3.2",
     "highcharts-react-official": "^3.1.0",
@@ -63,18 +65,20 @@
     "react-router-dom": "^6.2.1",
     "react-scroll": "^1.8.4",
     "realm-web": "^1.5.1",
+    "style-loader": "^3.3.1",
     "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1"
+    "webpack-cli": "^4.9.1",
+    "workbox-webpack-plugin": "^6.4.2"
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.2.0",
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-react": "^7.27.1",
+    "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-sonarjs": "^0.11.0",
     "eslint-plugin-unicorn": "^39.0.0",
-    "webpack-dev-server": "^4.7.0"
+    "webpack-dev-server": "^4.7.1"
   }
 }

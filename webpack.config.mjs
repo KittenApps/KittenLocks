@@ -4,6 +4,7 @@ import { URL, fileURLToPath } from 'node:url'; // eslint-disable-line import/no-
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin'; // eslint-disable-line import/default
+import { GenerateSW } from 'workbox-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
 const config = {
@@ -20,7 +21,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/u,
+        test: /\.jsx?$/ui,
         exclude: /node_modules/u,
         include: fileURLToPath(new URL('./app', import.meta.url)),
         use: {
@@ -32,7 +33,11 @@ const config = {
         }
       },
       {
-        test: /\.png/u,
+        test: /\.css$/ui,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.png/ui,
         type: 'asset/resource'
       }
     ]
@@ -42,8 +47,9 @@ const config = {
     new webpack.EnvironmentPlugin({
       CI: '',
       COMMIT_REF: 'dev',
-      VERSION: process.env.BRANCH ? `${process.env.npm_package_version}${process.env.BRANCH === 'beta' ? '-beta' : ''}` : `${process.env.npm_package_version}-dev`,
-      REDURL: `${process.env.CI ? `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de` : 'http://localhost:8080'}/static/html/oauthcb`,
+      NODE_ENV: 'development',
+      BRANCH: 'beta',
+      VERSION: `${process.env.npm_package_version}${process.env.BRANCH ? (process.env.BRANCH === 'beta' ? '-beta' : '') : '-dev'}`,
       SENTRY: process.env.BRANCH === 'beta' ? 'https://a7ed71bbcd69473f87d243c8a00d378e@o1079625.ingest.sentry.io/6117777' : 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627'
     }),
     new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/' }),
@@ -62,27 +68,31 @@ const config = {
             const searchParams = new URLSearchParams(window.location.search);
             const authCode = searchParams.get('code');
             const state = searchParams.get('state');
-            window.opener.postMessage({ authCode, state }, '${process.env.CI ? `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de` : 'http://localhost:8080'}' );
+            window.opener.postMessage({ authCode, state }, window.location.origin );
           </script>
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [{ from: 'manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) }] }),
-    ...(process.env.NETLIFY && [
+    new CopyPlugin({ patterns: [
+      { from: 'assets/manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) },
+      { from: 'assets/push-worker.js', to: '.' }
+    ] }),
+    ...(process.env.NETLIFY ? [
       new SentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: `${process.env.BRANCH === 'beta' ? 'beta-' : ''}kittenlocks`,
         release: `kittenlocks@${process.env.npm_package_version}${process.env.BRANCH === 'beta' ? '-beta' : ''}+${process.env.COMMIT_REF}`,
         include: './public',
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
-    ] || [])
+    ] : []),
+    ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js'], importScripts: ['./push-worker.js'] })] : [])
   ],
   optimization: {
     splitChunks: {
       chunks: 'all'
     }
   },
-  devServer: { historyApiFallback: true },
+  devServer: { historyApiFallback: true, port: 5000 },
   devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map'
 };
 

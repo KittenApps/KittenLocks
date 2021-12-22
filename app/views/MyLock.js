@@ -5,6 +5,7 @@ import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import LockHistory from '../components/LockHistory';
+import RequiredScopes from '../components/RequiredScopes';
 import { useQuery } from '@apollo/client';
 import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
@@ -38,7 +39,7 @@ const lockSort = (a, b) => {
   return a.startDate < b.startDate ? 1 : -1;
 };
 
-function MyLock({ setSubNav }){
+const MyLock = memo(({ setSubNav }) => {
   const app = useRealmApp();
   const [showArchived, setShowArchived] = useState(false);
   const handleShowArchived = useCallback(e => setShowArchived(e.target.checked), []);
@@ -67,6 +68,15 @@ function MyLock({ setSubNav }){
       { data ? locks.map(l => <MLock key={l._id} lock={l}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
+});
+MyLock.displayName = 'MyLock';
+
+function PermissionWrapper({ setSubNav, onMissingScopes }){
+  return (
+    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
+      <MyLock setSubNav={setSubNav}/>
+    </RequiredScopes>
+  );
 }
 
-export default memo(MyLock);
+export default memo(PermissionWrapper);

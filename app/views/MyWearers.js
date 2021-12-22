@@ -7,6 +7,7 @@ import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
 import LockHistory from '../components/LockHistory';
 import { useQuery } from '@apollo/client';
+import RequiredScopes from '../components/RequiredScopes';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 
@@ -48,7 +49,7 @@ const WLock = memo(({ lock, navigate }) => {
 });
 WLock.displayName = 'WLock';
 
-function MyWearers({ setSubNav }){
+const MyWearers = memo(({ setSubNav }) => {
   const app = useRealmApp();
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
@@ -86,6 +87,15 @@ function MyWearers({ setSubNav }){
       { data ? data.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
+});
+MyWearers.displayName = 'MyWearers';
+
+function PermissionWrapper({ setSubNav, onMissingScopes }){
+  return (
+    <RequiredScopes rScopes={['keyholder']} onMissingScopes={onMissingScopes} component="wearer">
+      <MyWearers setSubNav={setSubNav}/>
+    </RequiredScopes>
+  );
 }
 
-export default memo(MyWearers);
+export default memo(PermissionWrapper);
