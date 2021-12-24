@@ -14,6 +14,11 @@
     status = 200
 
 [[headers]]
-    for = "/*.js"
+    for = "/*-worker.js"
+    [headers.values]
+        cache-control = 'no-cache'
+
+[[headers]]
+    for = "/workbox-*.js"
     [headers.values]
         cache-control = 'no-cache'
