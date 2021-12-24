@@ -73,7 +73,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
     setProfileMenuAnchorEl(null);
   }, [app, navigate]);
 
-  const handleLogin = useCallback(() => showLogin(true), [showLogin]);
+  const handleLogin = useCallback(() => {showLogin(true); setProfileMenuAnchorEl(null);}, [showLogin]);
   const handleManage = useCallback(() => {handleLogin(); setProfileMenuAnchorEl(null);}, [handleLogin]);
   const handleResetCache = useCallback(() => {app.client.resetStore(); app.persistor.purge(); setProfileMenuAnchorEl(null);}, [app.client, app.persistor]);
 
