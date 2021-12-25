@@ -55,7 +55,8 @@ function PublicLocks({ isDesktop }){
 
   useEffect(() => {
     if (app.currentUser){
-      const yourself = { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' };
+      const yourself = { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, t: 'Yourself' };
+      if (!app.currentUser.customData.discordUsername.$undefined) yourself.h = app.currentUser.customData.discordUsername;
       const wearers = wdata ? wdata.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t: 'Your Lockees' }))
                                          .filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i).sort((a, b) => a.o.localeCompare(b.o))
                             : (new Set(app.currentUser.customData.scopes).has('keyholder') ? [{ o: 'loading your lockees ...', t: 'Your Lockees', d: true }]
