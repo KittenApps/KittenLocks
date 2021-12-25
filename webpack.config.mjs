@@ -85,7 +85,7 @@ const config = {
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
-    ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js'], importScripts: ['./push-worker.js'] })] : [])
+    ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js'], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
   ],
   optimization: {
     splitChunks: {

@@ -18,7 +18,7 @@ function registerValidSW(swUrl, config){
       wr.addEventListener('statechange', e => e.target.state === 'activated' && window.location.reload());
       wr.postMessage({ type: 'SKIP_WAITING' }); // eslint-disable-line unicorn/require-post-message-target-origin
     }
-    nIntervId = setInterval(() => navigator.onLine && registration.update(), 5 * 60 * 1000);
+    nIntervId = setInterval(() => navigator.onLine && registration?.update && registration.update(), 5 * 60 * 1000);
     return registration;
   }).catch(error => {
     console.error('Error during service worker registration:', error);
