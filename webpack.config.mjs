@@ -1,8 +1,9 @@
-/* eslint-disable unicorn/filename-case */
+/* eslint-disable unicorn/filename-case, camelcase */
 /* eslint-env node */
 import { URL, fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unresolved
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin'; // eslint-disable-line import/default
 import { GenerateSW } from 'workbox-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
@@ -52,7 +53,28 @@ const config = {
       VERSION: `${process.env.npm_package_version}${process.env.BRANCH ? (process.env.BRANCH === 'beta' ? '-beta' : '') : '-dev'}`,
       SENTRY: process.env.BRANCH === 'beta' ? 'https://a7ed71bbcd69473f87d243c8a00d378e@o1079625.ingest.sentry.io/6117777' : 'https://97ce662232dc48e8967956f7bcae23f5@o1079625.ingest.sentry.io/6084627'
     }),
-    new HtmlWebpackPlugin({ title: 'Kitten Locks', publicPath: '/' }),
+    new FaviconsWebpackPlugin({ logo: './assets/appicon.png', prefix: 'static/images/', inject: i => i.userOptions.publicPath === '/', favicons: {
+      appName: 'KittenLocks',
+      appleStatusBarStyle: 'black',
+      appDescription: 'KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.',
+      background: '#272533',
+      theme_color: '#272533',
+      start_url: '/',
+      scope: '/',
+      icons: {
+        appleIcon: { background: '#272533' },
+        appleStartup: { background: '#272533' }
+      }
+    } }),
+    new HtmlWebpackPlugin({ title: 'KittenLocks', publicPath: '/', meta: {
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1',
+      description: 'a pawtastic WebApp to enchance your Chaster experience',
+      OGtitle: { property: 'og:title', content: 'KittenLocks' },
+      OGtype: { property: 'og:type', content: 'website' },
+      OGurl: { property: 'og:url', content: 'https://www.kittenlocks.de/' },
+      OGimage: { property: 'og:image', content: 'https://www.kittenlocks.de/static/images/appicon.png' },
+      OGdescription: { property: 'og:description', content: 'KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.' }
+    } }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `
       <!DOCTYPE html>
       <html>
@@ -73,10 +95,7 @@ const config = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [
-      { from: 'assets/manifest.webmanifest', to: '.', transform: c => (process.env.CI ? Buffer.from(c.toString().replaceAll('http://localhost:8080', `https://${process.env.BRANCH === 'beta' ? 'beta' : 'www'}.kittenlocks.de`)) : c) },
-      { from: 'assets/push-worker.js', to: '.' }
-    ] }),
+    new CopyPlugin({ patterns: [{ from: 'assets/push-worker.js', to: '.' }] }),
     ...(process.env.NETLIFY ? [
       new SentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: `${process.env.BRANCH === 'beta' ? 'beta-' : ''}kittenlocks`,
@@ -85,7 +104,7 @@ const config = {
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
-    ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js'], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
+  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js', /^static\/images\/(?:apple-touch-|android-chrome-|firefox_app_|mstile-).*/ui], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
   ],
   optimization: {
     splitChunks: {

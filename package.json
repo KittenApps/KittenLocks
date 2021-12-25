@@ -1,7 +1,7 @@
 {
   "name": "kittenlocks",
   "version": "0.1.0",
-  "description": "additional Stats and Charts for your Chaster",
+  "description": "a pawtastic WebApp to enchance your Chaster experience",
   "scripts": {
     "start": "NODE_ENV=development webpack serve",
     "build": "webpack",
@@ -18,7 +18,10 @@
     "type": "git",
     "url": "git+https://github.com/KittenApps/KittenLocks.git"
   },
-  "author": "Silizia",
+  "author": {
+    "name": "Silizia",
+    "url": "https://github.com/KittenApps"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/KittenApps/KittenLocks/issues"
@@ -52,6 +55,8 @@
     "babel-plugin-import-graphql": "^2.8.1",
     "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
+    "favicons": "^6.2.2",
+    "favicons-webpack-plugin": "^5.0.2",
     "graphql": "^15.8.0",
     "highcharts": "^9.3.2",
     "highcharts-react-official": "^3.1.0",
@@ -60,12 +65,11 @@
     "notistack": "^2.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-helmet-async": "^1.2.2",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.2.1",
     "react-scroll": "^1.8.4",
     "react-viewer": "^3.2.2",
-    "react-virtuoso": "^2.3.1",
+    "react-virtuoso": "^2.3.3",
     "realm-web": "^1.5.1",
     "style-loader": "^3.3.1",
     "webpack": "^5.65.0",
