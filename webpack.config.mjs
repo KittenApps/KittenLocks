@@ -65,7 +65,14 @@ const config = {
       icons: {
         appleIcon: { background: '#272533' },
         appleStartup: { background: '#272533' }
-      }
+      },
+      shortcuts: [
+        { name: 'My Lock Profile', url: '/lock' },
+        { name: 'My Wearers Locks', url: '/wearers' },
+        { name: 'Public Lock Profiles', url: '/locks' },
+        { name: 'Public Lock Charts', url: '/charts' },
+        { name: 'Lock Transfer', url: '/trans' }
+      ]
     } }),
     new HtmlWebpackPlugin({ title: 'KittenLocks', publicPath: '/', meta: {
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1',
