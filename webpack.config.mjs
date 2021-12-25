@@ -61,6 +61,7 @@ const config = {
       theme_color: '#272533',
       start_url: '/',
       scope: '/',
+      manifestMaskable: true,
       icons: {
         appleIcon: { background: '#272533' },
         appleStartup: { background: '#272533' }
@@ -104,7 +105,7 @@ const config = {
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
-  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js', /^static\/images\/(?:apple-touch-|android-chrome-|firefox_app_|mstile-).*/ui], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
+  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js', /^static\/images\/(?:apple-touch-|android-chrome-|mstile-).*/ui], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
   ],
   optimization: {
     splitChunks: {

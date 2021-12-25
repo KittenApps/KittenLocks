@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo, useState } from 'react';
-import { ImageListItem, ImageListItemBar, Typography, useMediaQuery } from '@mui/material';
+import { ImageListItem, ImageListItemBar, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { IosShare } from '@mui/icons-material';
 import ReactViewer from 'react-viewer';
@@ -17,7 +17,6 @@ const VerificationPicture = memo(({ img, setSelected }) => {
 VerificationPicture.displayName = 'VerificationPicture';
 
 function VerificationPictureGallery({ history }){
-  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [selected, setSelected] = useState(-1);
   const handleClose = useCallback(() => setSelected(-1), []);
   const imgs = useMemo(() => history.map((img, i) => ({ src: img.image.url, downloadUrl: img.image.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i, key: img.imageKey })), [history]);
@@ -39,7 +38,6 @@ function VerificationPictureGallery({ history }){
           <ReactViewer
             visible={selected >= 0}
             onClose={handleClose}
-            zoomable={!isTinyScreen}
             images={imgs}
             activeIndex={selected}
             zIndex={1201}

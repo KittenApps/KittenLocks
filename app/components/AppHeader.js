@@ -90,7 +90,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
     const onMessage = event => event.data && event.data.type === 'CLIENT_RELOAD' && window.location.reload();
     if (noOffline || process.env.BRANCH === 'beta' || process.env.NODE_ENV !== 'production'){
       unregister();
-      navigator.serviceWorker.removeEventListener('message', onMessage);
+      if (navigator.serviceWorker) navigator.serviceWorker.removeEventListener('message', onMessage);
     } else register({
       onUpdate: reg => setWaitingServiceWorker(reg.waiting),
       onSuccess: () => enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' })
