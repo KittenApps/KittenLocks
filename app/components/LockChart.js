@@ -172,8 +172,8 @@ function LockChart({ history, startTime, startRem }){
     setOptions({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks });
   }, [history, startRem, startTime]);
 
-  if (!options) return <Skeleton variant="rectangular" width="100%" height={300}/>;
-  return <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={300}/>}><Chart {...options}/></Suspense>;
+  if (!options) return <Skeleton variant="rectangular" width="100%" height={500}/>;
+  return <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={500}/>}><Chart {...options}/></Suspense>;
 }
 
 export default memo(LockChart);

@@ -14,6 +14,7 @@ OfflineExporting(Highcharts);
 function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks }){
   const options = useMemo(() => ({
     title: { text: 'added Time' },
+    chart: { height: 500 },
     series: [ // eslint-disable-next-line react/no-this-in-sfc
       { name: 'unlock date', tooltip: { pointFormatter(){return `unlock date: ${new Date(this.y).toLocaleString()}`;} }, id: 'date', data: unlockDate },
       { name: 'remaining days', id: 'rdate', data: remTime, yAxis: 1 },
