@@ -68,10 +68,10 @@ function LockHistory({ lockId, startTime, startRem, title }){
             <Tab icon={<ShowChart/>} iconPosition="start" label="Lock Chart" value="chart" disabled={inProgress || error || startTime === 0} />
           </TabList>
         </Box>
-        <TabPanel value="list" sx={{ height: 500, px: 0, pt: 2, pb: 0 }}>
+        <TabPanel value="list" sx={{ height: 516, px: 0, pt: 2, pb: 0 }}>
           <HistoryList history={data?.lockHistory.results}/>
         </TabPanel>
-        <TabPanel value="source" sx={{ maxHeight: 500, overflowY: 'auto', px: 0, pt: 2, pb: 0 }}>
+        <TabPanel value="source" sx={{ maxHeight: 516, overflowY: 'auto', px: 0, pt: 2, pb: 0 }}>
           { data ? <JsonView src={data.lockHistory.results} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={500}/> }
         </TabPanel>
         <TabPanel value="chart" sx={{ px: 0, pt: 2, pb: 0 }}>
