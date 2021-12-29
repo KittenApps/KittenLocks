@@ -8,8 +8,8 @@ const VerificationPicture = memo(({ img, setSelected }) => {
   const handleClick = useCallback(() => setSelected(img.i), [img, setSelected]);
   return (
     <ImageListItem style={{ minHeight: 48, cursor: 'pointer' }} onClick={handleClick}>
-      <img src={img.src} alt={img.alt}/>
-      <ImageListItemBar title={img.alt}/>
+      <img src={img.src} alt={img.alt} style={{ borderRadius: 8 }}/>
+      <ImageListItemBar title={img.alt} style={{ borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}/>
     </ImageListItem>
   );
 });
@@ -18,7 +18,7 @@ VerificationPicture.displayName = 'VerificationPicture';
 function VerificationPictureGallery({ history }){
   const [selected, setSelected] = useState(-1);
   const handleClose = useCallback(() => setSelected(-1), []);
-  const imgs = useMemo(() => history.map((img, i) => ({ src: img.image.url, downloadUrl: img.image.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i, key: img.imageKey })), [history]);
+  const imgs = useMemo(() => history.map((img, i) => ({ src: img.image.url, downloadUrl: img.image.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i })), [history]);
   const extendToolbar = useCallback(dc => (navigator.share ? [...dc, { key: 'share', render: <IosShare sx={{ fontSize: 16 }}/>, onClick: i => navigator.share({ url: i.src }) }] : dc), []);
 
   if (imgs.length === 0) return (
@@ -30,7 +30,7 @@ function VerificationPictureGallery({ history }){
   return (
     <>
       <Masonry columns={{ xs: 2, sm: 3, lg: 4 }} spacing={1}>
-        { imgs.map(img => <VerificationPicture key={img.key} img={img} setSelected={setSelected}/>)}
+        { imgs.map(img => <VerificationPicture key={img.src} img={img} setSelected={setSelected}/>)}
       </Masonry>
       <ReactViewer
         visible={selected >= 0}
