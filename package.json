@@ -68,7 +68,7 @@
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.2.1",
     "react-scroll": "^1.8.4",
-    "react-viewer": "KittenApps/react-viewer#master",
+    "react-viewer": "KittenApps/react-viewer#e04fdb508ee8f733ed318d416725fd153a6395b7",
     "react-virtuoso": "^2.3.4",
     "realm-web": "^1.5.1",
     "style-loader": "^3.3.1",
