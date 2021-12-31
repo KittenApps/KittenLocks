@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, LinearProgress, Skeleton, Tab, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Divider, LinearProgress, Skeleton, Tab, Typography } from '@mui/material';
 import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
-import { Code, ExpandMore, Refresh, ShowChart, ViewList } from '@mui/icons-material';
+import { Code, ExpandMore, Refresh, ShowChart, SmartToyTwoTone, ViewList } from '@mui/icons-material';
 import JsonView from '../components/JsonView';
 import LockChart from '../components/LockChart';
 import { useQuery } from '@apollo/client';
@@ -11,15 +11,19 @@ import { Virtuoso } from 'react-virtuoso';
 
 const HistoryList = memo(({ history }) => {
   const itemContent = useCallback((i, e) => (
-    <Accordion>
-      <AccordionSummary expandIcon={<ExpandMore/>}>
-        <Typography sx={{ flexGrow: 1 }}>{e.title}</Typography>
-        <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        WIP
-      </AccordionDetails>
-    </Accordion>
+    <>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMore/>}>
+          <Typography sx={{ flexGrow: 1 }}>{e.title}</Typography>
+          <Avatar alt={e.role === 'extension' ? e.extension : e.user.username} sx={{ width: 24, height: 24, mr: 1 }} src={e.role === 'extension' ? null : e.user.avatarUrl}><SmartToyTwoTone/></Avatar>
+          <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {JSON.stringify(e)}
+        </AccordionDetails>
+      </Accordion>
+      <Divider/>
+    </>
   ), []);
   if (!history) return <Skeleton variant="rectangular" width="100%" height={500}/>;
   return <Virtuoso data={history} itemContent={itemContent}/>;
