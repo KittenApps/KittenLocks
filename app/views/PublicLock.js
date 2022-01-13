@@ -17,7 +17,7 @@ const PLock = memo(({ lock }) => (
     { lock.extensions.find(e => e.slug === 'verification-picture') && (
       <ScrollElement name={`veri-${lock._id}`} style={{ paddingBottom: 8 }}>
         <Typography variant="h5" gutterBottom component="p">{lock.title} (verification pics):</Typography>
-        <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+        <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture').userData.history}/>
       </ScrollElement>
     )}
   </ScrollElement>

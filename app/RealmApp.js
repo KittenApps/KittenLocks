@@ -10,36 +10,44 @@ import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
 import AppIcon from '../assets/appicon.png';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
 const parseDate = { read: d => d && new Date(d) };
+const Lock = data => {
+  for (const e of data.extensions){
+    switch (e.slug){
+      case 'verification-picture':
+        e.__typename = 'VerificationExtension';
+        e.userData.__typename = 'VerificationPictureHistory';
+        break;
+      case 'penalty':
+        e.__typename = 'PenaltyExtension';
+        break;
+      case 'temporary-opening':
+        e.__typename = 'TemporaryOpeningExtension';
+        e.userData.__typename = 'TemporaryOpeningUserData';
+        break;
+      case 'tasks':
+        e.__typename = 'TasksExtension';
+        e.userData.__typename = 'TasksUserData';
+        break;
+      default:
+        e.__typename = 'Extension';
+    }
+  }
+  return data;
+};
 const restLink = new RestLink({
   uri: 'https://api.chaster.app',
   endpoints: { silizia: 'https://silizia.kittenlocks.de' },
   typePatcher: {
-    Lock(data){
-      for (const e of data.extensions){
-        switch (e.slug){
-          case 'verification-picture':
-            e.__typename = 'VerificationExtension';
-            e.userData.__typename = 'VerificationPictureHistory';
-            break;
-          case 'penalty':
-            e.__typename = 'PenaltyExtension';
-            break;
-          case 'temporary-opening':
-            e.__typename = 'TemporaryOpeningExtension';
-            e.userData.__typename = 'TemporaryOpeningUserData';
-            break;
-          case 'tasks':
-            e.__typename = 'TasksExtension';
-            e.userData.__typename = 'TasksUserData';
-            break;
-          default:
-            e.__typename = 'Extension';
-        }
+    Lock,
+    Wearers(data){
+      for (const l of data.locks){
+        l.__typename = 'Lock';
+        Lock(l); // eslint-disable-line new-cap
       }
       return data;
     }
@@ -86,6 +94,16 @@ const cache = new InMemoryCache({
               merged[offset + i] = result;
             }
             return { 'results@type({"name":"LockHistory"})': merged, count, hasMore, refresh: 0 };
+          }
+        },
+        wearers: {
+          keyArgs: ['input', ['status'], 'myWearers'],
+          merge(existing, incoming, { args: { input: { page, limit } } }){
+            const locks = existing ? [...existing.locks] : [];
+            for (const [i, element] of incoming.locks.entries()){
+              locks[page * limit + i] = element;
+            }
+            return { ...incoming, locks };
           }
         }
       }

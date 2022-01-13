@@ -41,7 +41,7 @@ const WLock = memo(({ lock, navigate }) => {
       { lock.extensions.find(e => e.slug === 'verification-picture') && (
         <ScrollElement name={`veri-${lock._id}`} style={{ paddingBottom: 8 }}>
           <Typography variant="h5" gutterBottom component="p">{lock.user.username}: {lock.title} (verification pics):</Typography>
-          <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture')?.userData.history}/>
+          <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture').userData?.history}/>
         </ScrollElement>
       )}
     </ScrollElement>
@@ -53,9 +53,15 @@ const MyWearers = memo(({ setSubNav }) => {
   const app = useRealmApp();
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
-  const handleStatusChange = useCallback(e => setStatus(e.target.value), []);
   const { enqueueSnackbar } = useSnackbar();
-  const { data, error } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, pathBuilder: ({ args }) => `/keyholder/wearers?status=${args.status}` }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  const [page, setPage] = useState(0);
+  const { data, error, fetchMore } = useQuery(GetMyWearers, { variables: { status, realmId: app.currentUser.id, page, limit: 50 }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  useEffect(() => {
+    if (data && data.wearers.pages - 1 > page){
+      fetchMore({ variables: { page: page + 1 } });
+      setPage(page + 1);
+    }
+  }, [data, fetchMore, page]);
   useEffect(() => {
     if (error){
       enqueueSnackbar(error.toString(), { variant: 'error' });
@@ -63,11 +69,13 @@ const MyWearers = memo(({ setSubNav }) => {
     }
   }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (data && data.locks.length > 0){
-      setSubNav({ public: null, locks: data.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data && data.wearers.locks.length > 0){
+      setSubNav({ public: null, locks: data.wearers.locks.map(j => ({ id: j._id, title: j.user.username, subtitle: j.title, hist: true, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
     }
     return () => setSubNav(null);
   }, [data, setSubNav]);
+
+  const handleStatusChange = useCallback(e => {setPage(0); setStatus(e.target.value);}, []);
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
@@ -83,8 +91,8 @@ const MyWearers = memo(({ setSubNav }) => {
           </Select>
         </FormControl>
       </Typography>
-      { data?.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
-      { data ? data.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
+      { data?.wearers.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
+      { data ? data.wearers.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>
   );
 });

@@ -24,7 +24,7 @@ function PublicLocks({ isDesktop }){
   const [selected, setSelected] = useState(urlUsername || '');
   const [options, setOptions] = useState(() => (app.currentUser ? [
     { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' },
-    { o: 'Keyholder scope required', t: 'Your Lockees', d: true },
+    { o: 'Keyholder scope required', t: 'Your current Wearers', d: true },
     { o: 'KittenLocks login required', t: 'other Kitte)nLocks users', d: true }
   ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]));
 
@@ -36,31 +36,37 @@ function PublicLocks({ isDesktop }){
     }
   }, [error, enqueueSnackbar]);
 
-  const [getAllWearers, { data: wdata, loading: wloading, error: werror }] = useLazyQuery(GetMyWearers, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  const [getAllWearers, { data: wdata, loading: wloading, error: werror, fetchMore }] = useLazyQuery(GetMyWearers, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (werror){
       enqueueSnackbar(werror.toString(), { variant: 'error' });
       console.error(werror);
     }
   }, [werror, enqueueSnackbar]);
-
+  const [page, setPage] = useState(0);
   useEffect(() => {
     if (app.currentUser){
       getAllKittenLocksUsers({ variables: { userId: new BSON.ObjectID(app.currentUser.customData._id) } });
       if (new Set(app.currentUser.customData.scopes).has('keyholder')){
-        getAllWearers({ variables: { realmId: app.currentUser.id, status: 'all', pathBuilder: () => '/keyholder/wearers' } });
+        getAllWearers({ variables: { realmId: app.currentUser.id, status: 'locked', page, limit: 50 } });
       }
     }
-  }, [app.currentUser, getAllWearers, getAllKittenLocksUsers]);
+  }, [app.currentUser, getAllWearers, getAllKittenLocksUsers, page]);
+  useEffect(() => {
+    if (wdata && wdata.wearers.pages - 1 > page){
+      fetchMore({ variables: { page: page + 1 } });
+      setPage(page + 1);
+    }
+  }, [wdata, fetchMore, page]);
 
   useEffect(() => {
     if (app.currentUser){
       const yourself = { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, t: 'Yourself' };
       if (!app.currentUser.customData.discordUsername.$undefined) yourself.h = app.currentUser.customData.discordUsername;
-      const wearers = wdata ? wdata.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t: 'Your Lockees' }))
+      const wearers = wdata ? wdata.wearers.locks.map(x => ({ o: x.user.username, a: x.user.avatarUrl, h: x.user.discordUsername, t: 'Your current Wearers' }))
                                          .filter((v, i, s) => s.map(x => x.o).indexOf(v.o) === i).sort((a, b) => a.o.localeCompare(b.o))
-                            : (new Set(app.currentUser.customData.scopes).has('keyholder') ? [{ o: 'loading your lockees ...', t: 'Your Lockees', d: true }]
-                                                                                           : [{ o: 'Keyholder scope required', t: 'Your Lockees', d: true }]);
+                            : (new Set(app.currentUser.customData.scopes).has('keyholder') ? [{ o: 'loading your current Wearers ...', t: 'Your current Wearers', d: true }]
+                                                                                           : [{ o: 'Keyholder scope required', t: 'Your current Wearers', d: true }]);
       const set = new Set(wearers.map(o => o.o)).add(yourself.o);
       const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
       const klusers = data ? data.users.filter(u => !set.has(u.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: fd(u), t: 'other KittenLocks users' }))
