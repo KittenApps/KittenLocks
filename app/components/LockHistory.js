@@ -68,18 +68,18 @@ function LockHistory({ lockId, startTime, startRem, title }){
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList variant="fullWidth" onChange={handleTabChange}>
             <Tab icon={<ViewList/>} iconPosition="start" label="Lock History List" value="list" />
-            <Tab icon={<Code/>} iconPosition="start" label="JSON API source" value="source" />
+            <Tab icon={<Code/>} iconPosition="start" label="JSON API source" value="source" disabled={!data}/>
             <Tab icon={<ShowChart/>} iconPosition="start" label="Lock Chart" value="chart" disabled={inProgress || error || startTime === 0} />
           </TabList>
         </Box>
         <TabPanel value="list" sx={{ height: 516, px: 0, pt: 2, pb: 0 }}>
-          <HistoryList history={data?.lockHistory.results}/>
+          { tab === 'list' && <HistoryList history={data?.lockHistory?.results}/> }
         </TabPanel>
         <TabPanel value="source" sx={{ maxHeight: 516, overflowY: 'auto', px: 0, pt: 2, pb: 0 }}>
-          { data ? <JsonView src={data.lockHistory.results} collapsed={0}/> : <Skeleton variant="rectangular" width="100%" height={500}/> }
+          { tab === 'source' && <JsonView src={data.lockHistory.results} collapsed={0}/> }
         </TabPanel>
         <TabPanel value="chart" sx={{ px: 0, pt: 2, pb: 0 }}>
-          <LockChart history={data.lockHistory.results} startTime={startTime} startRem={startRem}/>
+          { tab === 'chart' && <LockChart history={data.lockHistory.results} startTime={startTime} startRem={startRem}/> }
         </TabPanel>
       </TabContext>
     </>
