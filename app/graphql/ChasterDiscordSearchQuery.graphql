@@ -1,0 +1,7 @@
+# import "./ChasterUserFragment.graphql"
+
+query ChasterDiscordSearch($discordId: String!) {
+  searchChasterDiscord(discordId: $discordId) @rest(type: "ChasterUser", path: "/users/search/by-discord-id/{args.discordId}") {
+    ...ChasterUserFragment
+  }
+}

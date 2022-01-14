@@ -1,0 +1,7 @@
+# import "./ChasterUserFragment.graphql"
+
+query ChasterUsernameSearch($search: String!) {
+  searchChasterUsername(input: { search: $search }) @rest(type: "ChasterUser", path: "/users/search/by-username", method: "POST") {
+    ...ChasterUserFragment
+  }
+}

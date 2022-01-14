@@ -12,7 +12,10 @@ import { useLazyQuery } from '@apollo/client';
 import { Element as ScrollElement } from 'react-scroll';
 import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graphql';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
+import ChasterUsernameSearch from '../graphql/ChasterUsernameSearchQuery.graphql';
+import ChasterDiscordSearch from '../graphql/ChasterDiscordSearchQuery.graphql';
 import { useSnackbar } from 'notistack';
+import throttle from 'lodash.throttle';
 
 function PublicLocks({ isDesktop }){
   const app = useRealmApp();
@@ -25,7 +28,9 @@ function PublicLocks({ isDesktop }){
   const [options, setOptions] = useState(() => (app.currentUser ? [
     { o: app.currentUser.customData.username, a: app.currentUser.customData.avatarUrl, h: app.currentUser.customData.discordUsername, t: 'Yourself' },
     { o: 'Keyholder scope required', t: 'Your current Wearers', d: true },
-    { o: 'KittenLocks login required', t: 'other Kitte)nLocks users', d: true }
+    { o: 'KittenLocks login required', t: 'other KittenLocks users', d: true },
+    { o: 'type at least 2 characters to search on Chaster', t: 'Chaster search', d: true },
+    { o: 'enter a valid Discord snowflake for a Chaster user', t: 'Discord ID', d: true }
   ] : [{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]));
 
   const [getAllKittenLocksUsers, { data, loading, error }] = useLazyQuery(GetAllKittenLocksUsers, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
@@ -43,6 +48,23 @@ function PublicLocks({ isDesktop }){
       console.error(werror);
     }
   }, [werror, enqueueSnackbar]);
+
+  const [searchChaster, { data: cdata, previousData, loading: cloading, error: cerror }] = useLazyQuery(ChasterUsernameSearch, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  useEffect(() => {
+    if (cerror){
+      enqueueSnackbar(cerror.toString(), { variant: 'error' });
+      console.error(cerror);
+    }
+  }, [cerror, enqueueSnackbar]);
+
+  const [searchDiscord, { data: ddata, loading: dloading, error: derror }] = useLazyQuery(ChasterDiscordSearch, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  useEffect(() => {
+    if (derror){
+      enqueueSnackbar(derror.toString(), { variant: 'error' });
+      console.error(derror);
+    }
+  }, [derror, enqueueSnackbar]);
+
   const [page, setPage] = useState(0);
   useEffect(() => {
     if (app.currentUser){
@@ -71,20 +93,31 @@ function PublicLocks({ isDesktop }){
       const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
       const klusers = data ? data.users.filter(u => !set.has(u.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: fd(u), t: 'other KittenLocks users' }))
                                        .sort((a, b) => a.o.localeCompare(b.o)) : [{ o: 'loading other KittenLocks users ...', t: 'other KittenLocks users', d: true }];
-      setOptions([yourself, ...wearers, ...klusers]);
+      const set2 = new Set([...set, ...klusers.map(o => o.o)]);
+      const scu = cdata ? cdata.searchChasterUsername : previousData?.searchChasterUsername;
+      const search = scu && scu.length > 0 ? scu.filter(x => !set2.has(x.username)).map(x => ({ o: x.username, a: x.avatarUrl, t: 'Chaster search' }))
+                                           : [{ o: 'type at least 2 characters to search on Chaster', t: 'Chaster search', d: true }];
+      const discord = ddata && ddata.searchChasterDiscord ? { o: ddata.searchChasterDiscord.username, a: ddata.searchChasterDiscord.avatarUrl,
+                                                              h: ddata.searchChasterDiscord.discordUsername, s: ddata.searchChasterDiscord.discordId, t: 'Discord ID' }
+                                                          : { o: 'enter a valid Discord snowflake for a Chaster user', t: 'Discord ID', d: true };
+      setOptions([yourself, ...wearers, ...klusers, ...search, discord]);
     } else {
       setOptions([{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
     }
-  }, [app.currentUser, data, wdata]);
-
-  const onChangeUsername = useCallback((e, n) => setUsername(n), []);
+  }, [app.currentUser, data, wdata, cdata, previousData, ddata]);
+  const throttleSearchChaster = useMemo(() => throttle(n => searchChaster({ variables: { search: n } }), 1000, { leading: false, trailing: true }), [searchChaster]);
+  const onChangeUsername = useCallback((e, n) => {
+    setUsername(n);
+    if (app.currentUser && n.length >= 2) throttleSearchChaster(n);
+    if (app.currentUser && /^\d{17,19}$/u.test(n)) searchDiscord({ variables: { discordId: n } });
+  }, [app.currentUser, searchDiscord, throttleSearchChaster]);
   const handleUsernameSearch = useCallback((e, n) => {
     if (n){
       setSelected(n.o || n.trim());
       navigate(`/locks/${n.o || n.trim()}`);
     }
   }, [navigate]);
-  const filterOptions = useMemo(() => createFilterOptions({ stringify: o => (o.d ? '' : `${o.o} ${o.h}`), trim: true }), []);
+  const filterOptions = useMemo(() => createFilterOptions({ stringify: o => (o.d ? '' : `${o.o} ${o.h} ${o.s}`), trim: true }), []);
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback((e, r) => (isDesktop || r !== 'blur' || username.trim() === '' || username.trim() === selected) && setOpen(false), [isDesktop, selected, username]);
   const groupBy = useCallback(o => o.t, []);
@@ -96,10 +129,10 @@ function PublicLocks({ isDesktop }){
       label="Username"
       InputProps={{
         ...params.InputProps,
-        endAdornment: <>{loading || wloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
+        endAdornment: <>{loading || wloading || cloading || dloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
       }}
     />
-  ), [loading, wloading]);
+  ), [loading, wloading, cloading, dloading]);
   const renderOption = useCallback((props, op, { inputValue }) => {
     const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
     const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
@@ -134,6 +167,8 @@ function PublicLocks({ isDesktop }){
           openOnFocus
           forcePopupIcon
           selectOnFocus
+          loading={!cloading && cdata && cdata.searchChasterUsername.length === 0}
+          loadingText="No Chaster user found! Enter the beginning of an existing username or a valid Discord ID."
           open={open}
           onOpen={handleOpen}
           onClose={handleClose}
