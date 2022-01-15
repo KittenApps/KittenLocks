@@ -1,7 +1,7 @@
 import { Fragment, forwardRef, memo, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Collapse, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SwipeableDrawer, Typography } from '@mui/material';
-import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, ExpandLess, ExpandMore,
+import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, ExpandLess, ExpandMore, FavoriteTwoTone as HeartIcon,
          HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon, Lock as LockIcon, Restore, Search } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
@@ -100,11 +100,12 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
         <ListItemButton key={2} component={NLink} to="/wearers">  <ListItemIcon><KeyIcon/></ListItemIcon>    <ListItemText primary="My Wearers Locks"/></ListItemButton>
         <ListItemButton key={3} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
         <Divider key={-2}/>
-        <ListItemButton key={4} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
-        <ListItemButton disabled key={5} component={NLink} to="/"><ListItemIcon><AddLockIcon/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
-        <ListItemButton key={6} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
+        <ListItemButton key={4} component={NLink} to="/event">    <ListItemIcon><HeartIcon/></ListItemIcon>  <ListItemText primary="Chastity Month"/></ListItemButton>
+        <ListItemButton key={5} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
+        <ListItemButton disabled key={6} component={NLink} to="/"><ListItemIcon><AddLockIcon/></ListItemIcon><ListItemText primary="Voting Game"/></ListItemButton>
+        <ListItemButton key={7} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
         <Divider key={-3}/>
-        <ListItemButton key={7} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
+        <ListItemButton key={8} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
       </List>
       { subNav && (
         <List disablePadding>

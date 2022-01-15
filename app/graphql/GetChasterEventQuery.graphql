@@ -1,0 +1,8 @@
+query GetChasterEvent($date: String!, $realmId: String!) {
+  chasterEvent(input: { date: $date }, realmId: $realmId) @rest(type: "ChasterEvent", path: "/community-event/details", method: "POST") {
+    categories
+    actions
+    start
+    end
+  }
+}

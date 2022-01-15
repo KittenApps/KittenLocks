@@ -15,6 +15,7 @@ const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLo
 const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
 const PublicLock = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLock'));
+const ChasterEvent = lazy(() => import(/* webpackChunkName: "chaster_event" */ './views/ChasterEvent'));
 const PublicCharts = lazy(() => import(/* webpackChunkName: "public_charts" */ './views/PublicCharts'));
 const LockTransfer = lazy(() => import(/* webpackChunkName: "lock_transfer" */ './views/LockTransfer'));
 
@@ -142,6 +143,7 @@ function App(){
                 <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
                   <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense>}/>
                 </Route>
+                <Route path="event/*" element={<Suspense fallback={<p>loading...</p>}><ChasterEvent onMissingScopes={onMissingScopes}/></Suspense>}/>
                 <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
                 <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer onMissingScopes={onMissingScopes}/></Suspense>}/>
                 <Route path="discord/*" element={<Discord isDesktop={isDesktop}/>}/>
