@@ -1,6 +1,6 @@
-import { memo, useCallback, useEffect, useMemo } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Paper, Skeleton, Typography } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import { memo, useCallback, useEffect, useMemo, useState} from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Paper, LinearProgress, Skeleton, ToggleButton, Typography } from '@mui/material';
+import { Code, CodeOff, ExpandMore, Refresh } from '@mui/icons-material';
 import RequiredScopes from '../components/RequiredScopes';
 import JsonView from '../components/JsonView';
 import { useRealmApp } from '../RealmApp';
@@ -9,6 +9,7 @@ import GetChasterEvent from '../graphql/GetChasterEventQuery.graphql';
 import { useSnackbar } from 'notistack';
 
 const EventDay = memo(({ day, app, expanded }) => {
+  const [viewSource, setViewSource] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const date = day.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }); // eslint-disable-line no-undefined
   const { data, error, refetch } = useQuery(GetChasterEvent, { variables: { date: day.toISOString(), realmId: app.currentUser.id },
@@ -19,14 +20,54 @@ const EventDay = memo(({ day, app, expanded }) => {
       console.error(error);
     }
   }, [error, enqueueSnackbar]);
-  const handleRefresh = useCallback(e => {refetch(); e.stopPropagation();}, [refetch]);
+  const handleRefresh = useCallback(() => refetch(), [refetch]);
+  const handleViewSource = useCallback(() => setViewSource(!viewSource), [viewSource]);
   return (
     <Accordion defaultExpanded={expanded}>
       <AccordionSummary expandIcon={<ExpandMore/>}>
-        <Typography>{date}<Button onClick={handleRefresh}>reload</Button></Typography>
+        <Typography>{date}</Typography>
       </AccordionSummary>
       <AccordionDetails sx={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}>
-        {data ? <JsonView src={data.chasterEvent} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={150}/>}
+        <Button variant="outlined" startIcon={<Refresh/>} onClick={handleRefresh}>refresh</Button>
+        <ToggleButton size="small" selected={viewSource} onChange={handleViewSource}>
+          {viewSource ? <><CodeOff sx={{ mr: 1 }}/>Hide Source</> : <><Code sx={{ mr: 1 }}/>View Source</> }
+        </ToggleButton>
+        {data ? (viewSource ? <JsonView src={data.chasterEvent} collapsed={2}/> : (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>Extensions:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={(data.chasterEvent.actions.verification_picture + data.chasterEvent.actions.complete_task + data.chasterEvent.actions.wheel_of_fortune + data.chasterEvent.actions.dice) * 5 / 3}/></Box>
+              <Box sx={{ width: 86 }}>
+                {data.chasterEvent.actions.verification_picture + data.chasterEvent.actions.complete_task + data.chasterEvent.actions.wheel_of_fortune + data.chasterEvent.actions.dice}/60
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>Votes:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={data.chasterEvent.actions.vote}/></Box>
+              <Box sx={{ width: 86 }}>{data.chasterEvent.actions.vote}/100</Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>Receive votes:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={data.chasterEvent.actions.receive_vote / 2}/></Box>
+              <Box sx={{ width: 86 }}>{data.chasterEvent.actions.receive_vote}/200</Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>User tasks votes:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={data.chasterEvent.actions.vote_task * 2}/></Box>
+              <Box sx={{ width: 86 }}>{data.chasterEvent.actions.vote_task}/50</Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>Peer verifications:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={data.chasterEvent.actions.verify_picture / 2}/></Box>
+              <Box sx={{ width: 86 }}>{data.chasterEvent.actions.verify_picture}/200</Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ width: 182, textAlign: 'right' }}><b>Discord Events:</b></Box>
+              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant={`${data.chasterEvent.actions.discord_event > 0 ? 'in' : ''}determinate`} value={0}/></Box>
+              <Box sx={{ width: 86 }}>+{data.chasterEvent.actions.discord_event}</Box>
+            </Box>
+          </>
+        )) : <Skeleton variant="rectangular" width="100%" height={150}/>}
       </AccordionDetails>
     </Accordion>
   );
