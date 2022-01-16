@@ -84,6 +84,7 @@ fragment LockFragment on Lock {
   isTestLock # Whether the lock is a test lock and counts in the user stats
   offerToken # The offer token
   hideTimeLogs # True if the time information should be hidden from the history
+  trusted # Whether the keyholder is trusted
 }
 
 fragment VerificationPictureHistoryFragment on VerificationPictureHistory {

@@ -2,6 +2,7 @@ fragment ChasterUserFragment on ChasterUser {
   _id # The user id
   username # The username
   isPremium # Whether the user has a Premium subscription
+  features # Enabled features
   description # The profile description
   location # The location
   gender # The gender
