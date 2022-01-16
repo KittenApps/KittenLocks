@@ -80,13 +80,13 @@
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.6.0",
-    "eslint": "^8.6.0",
+    "eslint": "^8.7.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-sonarjs": "^0.11.0",
-    "eslint-plugin-unicorn": "^40.0.0",
+    "eslint-plugin-unicorn": "^40.1.0",
     "webpack-dev-server": "^4.7.3"
   }
 }
