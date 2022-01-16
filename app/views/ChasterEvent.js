@@ -53,7 +53,7 @@ ChasterEvent.displayName = 'ChasterEvent';
 
 function PermissionWrapper({ onMissingScopes }){
   return (
-    <RequiredScopes rScopes={['profile']} onMissingScopes={onMissingScopes} component="event">
+    <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="event">
       <ChasterEvent/>
     </RequiredScopes>
   );

@@ -1,19 +1,19 @@
 /* eslint-disable unicorn/filename-case, camelcase */
 /* eslint-env node */
-import { URL, fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unresolved
+import { fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unresolved
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin'; // eslint-disable-line import/default
 import CopyPlugin from 'copy-webpack-plugin'; // eslint-disable-line import/default
 import { GenerateSW } from 'workbox-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
 const config = {
   mode: process.env.NODE_ENV || 'development',
-  context: fileURLToPath(new URL('./', import.meta.url)),
+  context: fileURLToPath(new URL('.', import.meta.url)),
   entry: { index: './app/index.js' },
   output: {
-    path: fileURLToPath(new URL('./public', import.meta.url)),
+    path: fileURLToPath(new URL('public', import.meta.url)),
     filename: 'static/js/[name].js',
     clean: true,
     assetModuleFilename: 'static/images/[name][ext]'
@@ -24,7 +24,7 @@ const config = {
       {
         test: /\.jsx?$/ui,
         exclude: /node_modules/u,
-        include: fileURLToPath(new URL('./app', import.meta.url)),
+        include: fileURLToPath(new URL('app', import.meta.url)),
         use: {
           loader: 'babel-loader',
           options: {
