@@ -79,9 +79,11 @@ const MyWearers = memo(({ setSubNav }) => {
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <Typography variant="h4" gutterBottom component="div">
-        My Wearers Locks:
-        <FormControl sx={{ float: 'right' }}>
+      <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h4" gutterBottom component="div">
+          My Wearers Locks:
+        </Typography>
+        <FormControl sx={{ minWidth: 112 }}>
           <InputLabel id="filter-label">Filter</InputLabel>
           <Select labelId="filter-label" label="Filter" value={status} onChange={handleStatusChange}>
             <MenuItem value="locked">locked</MenuItem>
@@ -90,7 +92,7 @@ const MyWearers = memo(({ setSubNav }) => {
             <MenuItem value="archived">archived</MenuItem>
           </Select>
         </FormControl>
-      </Typography>
+      </Stack>
       { data?.wearers.locks.length === 0 && <Alert severity="warning">Looks like you don't have any wearers yet :(</Alert> }
       { data ? data.wearers.locks.map(l => <WLock key={l._id} lock={l} navigate={navigate}/>) : <Skeleton variant="rectangular" width="100%" height={300} /> }
     </Paper>

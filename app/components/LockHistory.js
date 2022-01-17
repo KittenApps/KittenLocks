@@ -66,7 +66,7 @@ function LockHistory({ lockId, startTime, startRem, title }){
       { inProgress && data && <LinearProgress variant="buffer" value={data.lockHistory.results.length / data.lockHistory.count * 100} valueBuffer={(data.lockHistory.results.length + 100) / data.lockHistory.count * 100}/> }
       <TabContext value={tab}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList variant="fullWidth" onChange={handleTabChange}>
+          <TabList variant="fullWidth" onChange={handleTabChange} sx={{ '& .MuiTabs-scroller': { width: 0 } }}>
             <Tab icon={<ViewList/>} iconPosition="start" label="Lock History List" value="list" />
             <Tab icon={<Code/>} iconPosition="start" label="JSON API source" value="source" disabled={!data}/>
             <Tab icon={<ShowChart/>} iconPosition="start" label="Lock Chart" value="chart" disabled={inProgress || error || startTime === 0} />
