@@ -129,7 +129,7 @@ function App(){
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
-        <Box sx={{ display: 'flex' }}>
+        <Box display="flex">
           <CssBaseline/>
           { openLogin && <Login showLogin={showLogin} rScopes={logScopes} onMissingScopes={onMissingScopes} onClose={handleLoginModalClose}/>}
           <AppHeader isDesktop={isDesktop} open={open} setOpen={setOpen} showLogin={showLogin}/>
@@ -146,7 +146,7 @@ function App(){
                 <Route path="event/*" element={<Suspense fallback={<p>loading...</p>}><ChasterEvent onMissingScopes={onMissingScopes}/></Suspense>}/>
                 <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
                 <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer onMissingScopes={onMissingScopes}/></Suspense>}/>
-                <Route path="discord/*" element={<Discord isDesktop={isDesktop}/>}/>
+                <Route path="discord/*" element={<Discord open={open}/>}/>
                 <Route path="*" element={<Home/>} />
               </Routes>
             </ErrorBoundary>

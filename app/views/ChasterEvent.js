@@ -34,35 +34,35 @@ const EventDay = memo(({ day, app, expanded }) => {
         </ToggleButton>
         {data ? (viewSource ? <JsonView src={data.chasterEvent} collapsed={2}/> : (
           <>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>Extensions:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" value={(data.chasterEvent.actions.verification_picture + data.chasterEvent.actions.complete_task + data.chasterEvent.actions.wheel_of_fortune + data.chasterEvent.actions.dice) * 5 / 3}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">{data.chasterEvent.categories.extensions}/60</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>Extensions:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" value={(data.chasterEvent.actions.verification_picture + data.chasterEvent.actions.complete_task + data.chasterEvent.actions.wheel_of_fortune + data.chasterEvent.actions.dice) * 5 / 3}/></Box>
+              <Box minWidth={50}><Typography variant="caption">{data.chasterEvent.categories.extensions}/60</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>Votes:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote === 100 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">{data.chasterEvent.actions.vote}/100</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>Votes:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote === 100 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote}/></Box>
+              <Box minWidth={50}><Typography variant="caption">{data.chasterEvent.actions.vote}/100</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>Receive votes:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" color={data.chasterEvent.actions.receive_vote === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.receive_vote / 2}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">{data.chasterEvent.actions.receive_vote}/200</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>Receive votes:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.receive_vote === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.receive_vote / 2}/></Box>
+              <Box minWidth={50}><Typography variant="caption">{data.chasterEvent.actions.receive_vote}/200</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>User tasks votes:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote_task === 50 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote_task * 2}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">{data.chasterEvent.actions.vote_task}/50</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>User tasks votes:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote_task === 50 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote_task * 2}/></Box>
+              <Box minWidth={50}><Typography variant="caption">{data.chasterEvent.actions.vote_task}/50</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>Peer verifications:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant="determinate" color={data.chasterEvent.actions.verify_picture === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.verify_picture / 2}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">{data.chasterEvent.actions.verify_picture}/200</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>Peer verifications:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.verify_picture === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.verify_picture / 2}/></Box>
+              <Box minWidth={50}><Typography variant="caption">{data.chasterEvent.actions.verify_picture}/200</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ minWidth: 135, textAlign: 'right' }}><b>Discord Events:</b></Box>
-              <Box sx={{ width: '100%', mx: 1 }}><LinearProgress variant={`${data.chasterEvent.actions.discord_event > 0 ? 'in' : ''}determinate`} color={data.chasterEvent.actions.discord_event > 0 ? 'success' : 'primary'} value={0}/></Box>
-              <Box sx={{ minWidth: 50 }}><Typography variant="caption">+{data.chasterEvent.actions.discord_event}</Typography></Box>
+            <Box display="flex" alignItems="center">
+              <Box minWidth={135} textAlign="right"><b>Discord Events:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant={`${data.chasterEvent.actions.discord_event > 0 ? 'in' : ''}determinate`} color={data.chasterEvent.actions.discord_event > 0 ? 'success' : 'primary'} value={0}/></Box>
+              <Box minWidth={50}><Typography variant="caption">+{data.chasterEvent.actions.discord_event}</Typography></Box>
             </Box>
           </>
         )) : <Skeleton variant="rectangular" width="100%" height={150}/>}

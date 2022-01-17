@@ -174,7 +174,7 @@ const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-compl
               { sharedLock.requirePassword && <TextField label="password" value={password} onChange={handleChangePassword} variant="outlined" /> }
             </FormControl>
             { sharedLock._id && <JsonView src={sharedLock} collapsed/>}
-            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+            <Stack direction="row" spacing={2} mt={2}>
               <Button variant="outlined" onClick={handelBack}>Back</Button>
               <LoadingButton loading={mloading} loadingPosition="end" endIcon={<CompareArrows/>} onClick={handleTransferLock} disabled={mloading || !isLockOkay || !sharedLock._id || sharedLock.user._id === data.locks[0].user._id || (sharedLock.requirePassword && !password)} sx={{ marginTop: 2 }} variant="contained" fullWidth>Transfer Lock</LoadingButton>
             </Stack>

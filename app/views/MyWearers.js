@@ -79,10 +79,8 @@ const MyWearers = memo(({ setSubNav }) => {
 
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h4" gutterBottom component="div">
-          My Wearers Locks:
-        </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4" gutterBottom component="div">My Wearers Locks:</Typography>
         <FormControl sx={{ minWidth: 112 }}>
           <InputLabel id="filter-label">Filter</InputLabel>
           <Select labelId="filter-label" label="Filter" value={status} onChange={handleStatusChange}>

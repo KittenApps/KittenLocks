@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Divider, LinearProgress, Skeleton, Tab, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Divider, LinearProgress, Skeleton, Stack, Tab, Typography } from '@mui/material';
 import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
 import { Code, ExpandMore, Refresh, ShowChart, SmartToyTwoTone, ViewList } from '@mui/icons-material';
 import JsonView from '../components/JsonView';
@@ -59,13 +59,13 @@ function LockHistory({ lockId, startTime, startRem, title }){
 
   return (
     <>
-      <Typography variant="h5" gutterBottom component="p">
-        {title}
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
+        <Typography variant="h5">{title}</Typography>
         <LoadingButton loading={inProgress} loadingPosition="end" endIcon={<Refresh/>} onClick={handleRefresh} disabled={inProgress} variant="outlined" sx={{ float: 'right' }}>Refresh</LoadingButton>
-      </Typography>
+      </Stack>
       { inProgress && data && <LinearProgress variant="buffer" value={data.lockHistory.results.length / data.lockHistory.count * 100} valueBuffer={(data.lockHistory.results.length + 100) / data.lockHistory.count * 100}/> }
       <TabContext value={tab}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box borderBottom={1} borderColor="divider">
           <TabList variant="fullWidth" onChange={handleTabChange} sx={{ '& .MuiTabs-scroller': { width: 0 } }}>
             <Tab icon={<ViewList/>} iconPosition="start" label="Lock History List" value="list" />
             <Tab icon={<Code/>} iconPosition="start" label="JSON API source" value="source" disabled={!data}/>
