@@ -20,7 +20,11 @@ function Home(){
             <li key="1">KittenLocks.de is now a PWA and will be updated with bigger version updates from now on</li>
             <li key="2">use <Link href="https://beta.kittenlocks.de" target="_blank" rel="noreferrer">beta.KittenLocks.de</Link> to follow the latest development version (no PWA mode)</li>
             <li key="3">My Wearers Locks</li>
-            <li key="4">[WIP] Lock Charts (visualize your unlock date over time)</li>
+            <li key="4">Chaster Event page currently featuring Chastity Month</li>
+            <li key="5">improved Verification Picture Gallery</li>
+            <li key="6">many bug fixes and optimizations (I'm very precise here 😹)</li>
+            <li key="7">[WIP] Lock Charts (visualize your unlock date over time)</li>
+            <li key="8">[WIP] new Lock History (search and filter through your locks history)</li>
           </ul>
           <h3>Changelog v0.1:</h3>
           <ul>
