@@ -114,7 +114,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
       <DialogContent dividers>
         { component && (
           <Alert severity="info" sx={{ mb: 2 }}>
-            <Stack direction="row" justifyContent="space-between"><AlertTitle>{app.currentUser ? 'Missing Chaster scopes' : 'Chaster Login required'}</AlertTitle><ScopeBadges scopes={reqScopes}/></Stack>
+            <Stack direction="row" justifyContent="space-between"><AlertTitle>{app.currentUser ? 'Missing Chaster scopes' : 'Chaster Login required'}</AlertTitle><ScopeBadges scopes={reqScopes} r/></Stack>
             You need {app.currentUser ? 'to grant these additional Chaster' : 'a Chaster Login with the following'} scopes to use <b>{componentMap[component]}</b>:
             <ul style={{ margin: '7px 0' }}>
               { misScopes.map(s => <li key={s}>{scopeMap[s]}</li>)}
@@ -137,7 +137,9 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
             </FormGroup>
           </AccordionDetails>
         </Accordion>
-        <FormHelperText sx={{ mt: 2 }}>By clicking <b>{app.currentUser ? 'Grant' : 'Login'} with Chaster</b>, you'll be directed to the <b>Chaster OAuth form</b> to {app.currentUser ? 'grant' : 'login'} the <b>KittenLocks</b> webapp {app.currentUser ? 'access to' : 'with'} your <b>Chaster</b> account with the selected <b>scopes</b>.</FormHelperText>
+        <FormHelperText sx={{ mt: 2 }}>
+          By clicking <b>{app.currentUser ? 'Grant' : 'Login'} with Chaster</b>, you'll be directed to the <b>Chaster OAuth form</b> to {app.currentUser ? 'grant' : 'login'} the <b>KittenLocks</b> webapp {app.currentUser ? 'access to' : 'with'} your <b>Chaster</b> account with the selected <b>scopes</b>.
+        </FormHelperText>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={handleLogin}>{app.currentUser ? 'Grant' : 'Login'} with Chaster...</Button>
