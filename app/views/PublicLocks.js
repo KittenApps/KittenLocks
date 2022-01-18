@@ -141,7 +141,7 @@ function PublicLocks({ isDesktop }){
         { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a} sx={{ width: 24, height: 24, mr: 2 }}/> }
         {parts1.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)}
         { op.h && (
-          <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
+          <Typography variant="caption" color="text.secondary" ml={1}>
             ({parts2.map((p, i) => <span key={i} style={{ ...(p.highlight && { fontWeight: 900, color: '#6d7dd1' }) }}>{p.text}</span>)})
           </Typography>
         )}

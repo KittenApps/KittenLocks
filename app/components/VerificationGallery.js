@@ -22,7 +22,7 @@ function VerificationPictureGallery({ history }){
   const extendToolbar = useCallback(dc => (navigator.share ? [...dc, { key: 'share', render: <IosShare sx={{ fontSize: 16 }}/>, onClick: i => navigator.share({ url: i.src }) }] : dc), []);
 
   if (imgs.length === 0) return (
-    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+    <Typography variant="caption" color="text.secondary">
       It looks like this lock doesn't have any verification pictures yet :(
     </Typography>
   );

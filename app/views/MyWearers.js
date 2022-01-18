@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from 'react';
-import { Alert, Avatar, CardHeader, FormControl, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
+import { Alert, Avatar, CardHeader, FormControl, Grid, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { useRealmApp } from '../RealmApp';
@@ -16,18 +16,22 @@ const WLock = memo(({ lock, navigate }) => {
   return (
     <ScrollElement name={lock._id}>
       <ScrollElement name={`info-${lock._id}`} style={{ paddingBottom: 8 }}>
-        <Stack direction="row" alignItems="center">
-          <CardHeader
-            sx={{ cursor: 'pointer' }}
-            avatar={<Avatar src={lock.user.avatarUrl}/>}
-            onClick={handleUsernameClick}
-            title={lock.user.username}
-            titleTypographyProps={{ fontSize: 16 }}
-            subheader={<Link>Public Lock Profile</Link>}
-            subheaderTypographyProps={{ fontSize: 10 }}
-          />
-          <Typography variant="h5" gutterBottom component="div">{lock.title} (info):</Typography>
-        </Stack>
+        <Grid container alignItems="center" justifyContent="center">
+          <Grid item xs="auto">
+            <CardHeader
+              sx={{ cursor: 'pointer' }}
+              avatar={<Avatar src={lock.user.avatarUrl}/>}
+              onClick={handleUsernameClick}
+              title={lock.user.username}
+              titleTypographyProps={{ fontSize: 16 }}
+              subheader={<Link>Public Lock Profile</Link>}
+              subheaderTypographyProps={{ fontSize: 10 }}
+            />
+          </Grid>
+          <Grid item xs={12} sm>
+            <Typography variant="h5" gutterBottom component="div" textAlign="center">{lock.title} (info):</Typography>
+          </Grid>
+        </Grid>
         <JsonView src={lock} collapsed={1}/>
       </ScrollElement>
       <ScrollElement name={`hist-${lock._id}`} style={{ paddingBottom: 8 }}>

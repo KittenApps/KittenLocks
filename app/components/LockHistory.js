@@ -14,7 +14,7 @@ const HistoryList = memo(({ history }) => {
     <>
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMore/>}>
-          <Typography sx={{ flexGrow: 1 }}>{e.title}</Typography>
+          <Typography flexGrow={1}>{e.title}</Typography>
           <Avatar alt={e.role === 'extension' ? e.extension : e.user.username} sx={{ width: 24, height: 24, mr: 1 }} src={e.role === 'extension' ? null : e.user.avatarUrl}><SmartToyTwoTone/></Avatar>
           <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
         </AccordionSummary>

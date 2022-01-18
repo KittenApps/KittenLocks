@@ -62,10 +62,10 @@ const EventDay = memo(({ day, app, expanded }) => {
             <Box display="flex" alignItems="center">
               <Box minWidth={135} textAlign="right"><b>Discord Events:</b></Box>
               <Box width="100%" mx={1}><LinearProgress variant={`${data.chasterEvent.actions.discord_event > 0 ? 'in' : ''}determinate`} color={data.chasterEvent.actions.discord_event > 0 ? 'success' : 'primary'} value={0}/></Box>
-              <Box minWidth={50}><Typography variant="caption">+{data.chasterEvent.actions.discord_event}</Typography></Box>
+              <Box minWidth={50}><Typography variant="caption">+ {data.chasterEvent.actions.discord_event}</Typography></Box>
             </Box>
           </>
-        )) : <Skeleton variant="rectangular" width="100%" height={150}/>}
+        )) : <Skeleton variant="rectangular" width="100%" height={144}/>}
       </AccordionDetails>
     </Accordion>
   );

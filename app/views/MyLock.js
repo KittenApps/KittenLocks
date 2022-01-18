@@ -61,7 +61,7 @@ const MyLock = memo(({ setSubNav }) => {
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4" gutterBottom component="p" sx={{ flexGrow: 1 }}>{app.currentUser.customData.username}'s Locks:</Typography>
+        <Typography variant="h4" gutterBottom component="p" flexGrow={1}>{app.currentUser.customData.username}'s Locks:</Typography>
         <FormControlLabel checked={showArchived} onClick={handleShowArchived} control={<Switch color="primary" />} label="show archived locks" labelPlacement="start"/>
       </Stack>
       { locks?.length === 0 && <Alert severity="warning">It looks like you aren't in any active locks currently :(</Alert> }

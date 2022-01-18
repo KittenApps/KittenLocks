@@ -112,7 +112,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={handleDrawerOpen} sx={{ mr: { xs: 0, sm: 2 }, ...(open && { display: 'none' }) }}><MenuIcon/></IconButton>
           <Avatar src={AppIcon} sx={{ width: 32, height: 32, display: { xs: 'none', sm: 'block' } }}/>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
+          <Typography variant="h6" component="div" flexGrow={1} ml={1}>
             KittenLocks
           </Typography>
           { app.currentUser
