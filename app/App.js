@@ -146,7 +146,7 @@ function App(){
                 <Route path="event/*" element={<Suspense fallback={<p>loading...</p>}><ChasterEvent onMissingScopes={onMissingScopes}/></Suspense>}/>
                 <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
                 <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer onMissingScopes={onMissingScopes}/></Suspense>}/>
-                <Route path="discord/*" element={<Discord open={open}/>}/>
+                <Route path="discord/*" element={<Discord open={open} username={app.currentUser?.customData?.username}/>}/>
                 <Route path="*" element={<Home/>} />
               </Routes>
             </ErrorBoundary>
