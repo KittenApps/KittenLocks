@@ -8,7 +8,7 @@
     "build:dev": "NODE_ENV=development webpack",
     "build:prod": "NODE_ENV=production webpack",
     "serve": "NODE_ENV=production webpack && npx http-server -c-1 --proxy=http://127.0.0.1:8080?",
-    "stats": "NODE_ENV=production webpack --profile --json > stats.json && npx webpack-bundle-analyzer stats.json public",
+    "stats": "NODE_ENV=production webpack --profile --json > schema/stats.json && npx webpack-bundle-analyzer schema/stats.json public",
     "lint": "eslint . --ignore-path=.gitignore",
     "api": "cd schema && curl https://api.chaster.app/api-json > api.json && openapi-generator-cli generate -i api.json -g graphql-schema --global-property skipFormModel=false"
   },
@@ -71,7 +71,7 @@
     "react-router-dom": "^6.2.1",
     "react-scroll": "^1.8.4",
     "react-viewer": "KittenApps/react-viewer#master",
-    "react-virtuoso": "^2.4.0",
+    "react-virtuoso": "^2.4.1",
     "realm-web": "^1.5.1",
     "style-loader": "^3.3.1",
     "webpack": "^5.66.0",
