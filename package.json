@@ -36,8 +36,8 @@
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
     "@apollo/client": "^3.5.7",
-    "@babel/core": "^7.16.7",
-    "@babel/preset-env": "^7.16.8",
+    "@babel/core": "^7.16.10",
+    "@babel/preset-env": "^7.16.10",
     "@babel/preset-react": "^7.16.7",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
@@ -79,7 +79,7 @@
     "workbox-webpack-plugin": "^6.4.2"
   },
   "devDependencies": {
-    "@graphql-eslint/eslint-plugin": "^3.6.0",
+    "@graphql-eslint/eslint-plugin": "^3.7.0",
     "eslint": "^8.7.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
