@@ -110,7 +110,7 @@ const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-compl
   const handleTransferLock = useCallback(() => transferLock({ variables: { lockID: oldLockID, sharedLockID: sharedLock._id, password } }), [oldLockID, password, sharedLock._id, transferLock]);
   useEffect(() => {
     if (mdata && mdata.transferLock){
-      enqueueSnackbar('Success: Lock sucessfully transfered!', { variant: 'success' });
+      enqueueSnackbar('Success: Lock successfully transferred!', { variant: 'success' });
       setActiveStep(0);
       setLockOkay(false);
       setSharedLock({});
