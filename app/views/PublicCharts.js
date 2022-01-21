@@ -1,25 +1,7 @@
-import { Suspense, lazy, memo, useCallback, useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
-import { ExpandMore, UploadFileTwoTone } from '@mui/icons-material';
-import LockChart from '../components/LockChart';
-import { useQuery } from '@apollo/client';
-import GetSiliziaDemo from '../graphql/GetSiliziaDemoQuery.graphql';
-import { useSnackbar } from 'notistack';
+import { Suspense, lazy, memo, useCallback, useState } from 'react';
+import { Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
+import { UploadFileTwoTone } from '@mui/icons-material';
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/Chart'));
-
-const SampleChart = memo(() => {
-  const { enqueueSnackbar } = useSnackbar();
-  const { data, error } = useQuery(GetSiliziaDemo, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
-  useEffect(() => {
-    if (error){
-      enqueueSnackbar(error.toString(), { variant: 'error' });
-      console.error(error);
-    }
-  }, [error, enqueueSnackbar]);
-  if (!data) return <Skeleton variant="rectangular" width="100%" height={300}/>;
-  return <LockChart history={data.siliziaHistory} startTime={Date.parse('2021-07-12T22:52:58.000Z')} startRem={86400000}/>;
-});
-SampleChart.displayName = 'SampleChart';
 
 function PublicCharts(){
   const [options, setOptions] = useState(null);
@@ -36,10 +18,6 @@ function PublicCharts(){
       <p>
         { options && <Suspense fallback={<Skeleton variant="rectangular" width="100%" height={300}/>}><Chart {...options}/></Suspense> }
       </p>
-      <Accordion TransitionProps={{ mountOnEnter: true }}>
-        <AccordionSummary expandIcon={<ExpandMore/>}><b>Load example Lock Chart from Silizia</b></AccordionSummary>
-        <AccordionDetails><SampleChart/></AccordionDetails>
-      </Accordion>
     </Paper>
   );
 }
