@@ -93,7 +93,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
       if (navigator.serviceWorker) navigator.serviceWorker.removeEventListener('message', onMessage);
     } else register({
       onUpdate: reg => setWaitingServiceWorker(reg.waiting),
-      onSuccess: () => enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' })
+      onSuccess(){enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' });}
     }).then(() => navigator.serviceWorker.addEventListener('message', onMessage));
   }, [enqueueSnackbar, noOffline]);
 
