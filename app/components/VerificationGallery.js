@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { ImageListItem, ImageListItemBar, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { IosShare } from '@mui/icons-material';
-import ReactViewer from 'react-viewer'; // eslint-disable-line import/no-unresolved
+import ReactViewer from '@silizia/react-viewer';
 
 const VerificationPicture = memo(({ img, setSelected }) => {
   const handleClick = useCallback(() => setSelected(img.i), [img, setSelected]);
