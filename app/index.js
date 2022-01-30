@@ -5,10 +5,10 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { Integrations as TracingIntegrations } from '@sentry/tracing';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/latin-300.css';
+import '@fontsource/roboto/latin-400.css';
+import '@fontsource/roboto/latin-500.css';
+import '@fontsource/roboto/latin-700.css';
 
 function errorFallback({ error, componentStack, resetError }){
   return (

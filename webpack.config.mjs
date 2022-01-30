@@ -4,19 +4,21 @@ import { fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unres
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin'; // eslint-disable-line import/default
-import CopyPlugin from 'copy-webpack-plugin'; // eslint-disable-line import/default
 import { GenerateSW } from 'workbox-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
 const config = {
   mode: process.env.NODE_ENV || 'development',
   context: fileURLToPath(new URL('.', import.meta.url)),
-  entry: { index: './app/index.js' },
+  entry: {
+    index: './app/index.js',
+    sw_push: './assets/push-worker.js'
+  },
   output: {
     path: fileURLToPath(new URL('public', import.meta.url)),
     filename: 'static/js/[name].js',
     clean: true,
-    assetModuleFilename: 'static/images/[name][ext]'
+    assetModuleFilename(p){return /\.woff2?$/u.test(p.filename) ? 'static/fonts/[name][ext]' : 'static/images/[name][ext]';}
   },
   resolve: { extensions: ['.js'], fallback: { 'crypto': false } },
   module: {
@@ -103,7 +105,6 @@ const config = {
         </body>
       </html>
   ` }),
-    new CopyPlugin({ patterns: [{ from: 'assets/push-worker.js', to: '.' }] }),
     ...(process.env.NETLIFY ? [
       new SentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: `${process.env.BRANCH === 'beta' ? 'beta-' : ''}kittenlocks`,
@@ -112,7 +113,7 @@ const config = {
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
-  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: ['push-worker.js', /^static\/images\/(?:apple-touch-|android-chrome-|mstile-).*/ui], ignoreURLParametersMatching: [/.*/u], importScripts: ['./push-worker.js'] })] : [])
+  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: [/^static\/images\/(?:apple-touch-|android-chrome-|mstile-|yandex-|browserconfig).*/ui], ignoreURLParametersMatching: [/.*/u], importScriptsViaChunks: ['SW'], swDest: 'static/js/sw.js' })] : [])
   ],
   optimization: {
     splitChunks: {
