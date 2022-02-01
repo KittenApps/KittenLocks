@@ -69,11 +69,11 @@ const config = {
         appleStartup: { background: '#272533' }
       },
       shortcuts: [
-        { name: 'My Lock Profile', url: '/lock' },
-        { name: 'My Wearers Locks', url: '/wearers' },
-        { name: 'Public Lock Profiles', url: '/locks' },
-        { name: 'Public Lock Charts', url: '/charts' },
-        { name: 'Lock Transfer', url: '/trans' }
+        { name: 'My Lock Profile', url: '/lock', icon: './assets/shortcut1.png' },
+        { name: 'My Wearers Locks', url: '/wearers', icon: './assets/shortcut2.png' },
+        { name: 'Public Lock Profiles', url: '/locks', icon: './assets/shortcut3.png' },
+        { name: 'Chastity Month Event', url: '/event', icon: './assets/shortcut4.png' },
+        { name: 'Lock Transfer', url: '/trans', icon: './assets/shortcut5.png' }
       ]
     } }),
     new HtmlWebpackPlugin({ title: 'KittenLocks', publicPath: '/', meta: {
@@ -113,7 +113,7 @@ const config = {
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
-  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: [/^static\/images\/(?:apple-touch-|android-chrome-|mstile-|yandex-|browserconfig).*/ui], ignoreURLParametersMatching: [/.*/u], importScriptsViaChunks: ['SW'], swDest: 'static/js/sw.js' })] : [])
+  ...(process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' ? [new GenerateSW({ clientsClaim: true, skipWaiting: false, navigateFallback: 'index.html', exclude: [/^static\/images\/(?:apple-touch-|android-chrome-|mstile-|yandex-|browserconfig|shortcut).*/ui], ignoreURLParametersMatching: [/.*/u], importScriptsViaChunks: ['SW'], swDest: 'static/js/sw.js' })] : [])
   ],
   optimization: {
     splitChunks: {

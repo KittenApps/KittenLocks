@@ -48,7 +48,7 @@
     "@sentry/react": "^6.17.3",
     "@sentry/tracing": "^6.17.3",
     "@sentry/webpack-plugin": "^1.18.4",
-    "@silizia/favicons": "^7.0.0",
+    "@silizia/favicons": "^7.1.2",
     "@silizia/favicons-webpack-plugin": "^5.1.0",
     "@silizia/react-viewer": "^4.0.0",
     "apollo-link-rest": "^0.9.0-rc.1",
@@ -59,7 +59,7 @@
     "babel-plugin-import-graphql": "^2.8.1",
     "css-loader": "^6.5.1",
     "graphql": "^15.8.0",
-    "highcharts": "^9.3.2",
+    "highcharts": "^9.3.3",
     "highcharts-react-official": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
     "localforage": "^1.10.0",
@@ -78,7 +78,7 @@
     "workbox-webpack-plugin": "^6.4.2"
   },
   "devDependencies": {
-    "@graphql-eslint/eslint-plugin": "^3.7.0",
+    "@graphql-eslint/eslint-plugin": "^3.8.0",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
