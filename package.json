@@ -45,8 +45,8 @@
     "@mui/icons-material": "^5.3.1",
     "@mui/lab": "^5.0.0-alpha.67",
     "@mui/material": "^5.4.0",
-    "@sentry/react": "^6.17.3",
-    "@sentry/tracing": "^6.17.3",
+    "@sentry/react": "^6.17.4",
+    "@sentry/tracing": "^6.17.4",
     "@sentry/webpack-plugin": "^1.18.4",
     "@silizia/favicons": "^7.1.2",
     "@silizia/favicons-webpack-plugin": "^5.1.0",
@@ -57,7 +57,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-direct-import": "^1.0.0",
     "babel-plugin-import-graphql": "^2.8.1",
-    "css-loader": "^6.5.1",
+    "css-loader": "^6.6.0",
     "graphql": "^15.8.0",
     "highcharts": "^9.3.3",
     "highcharts-react-official": "^3.1.0",
@@ -70,7 +70,7 @@
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.2.1",
     "react-scroll": "^1.8.4",
-    "react-virtuoso": "^2.5.1",
+    "react-virtuoso": "^2.5.2",
     "realm-web": "^1.6.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.68.0",
@@ -86,6 +86,6 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-sonarjs": "^0.11.0",
     "eslint-plugin-unicorn": "^40.1.0",
-    "webpack-dev-server": "^4.7.3"
+    "webpack-dev-server": "^4.7.4"
   }
 }
