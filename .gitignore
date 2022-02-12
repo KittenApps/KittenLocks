@@ -1,6 +1,7 @@
 .netlify
 .vscode
 .DS_Store
+test.py
 node_modules
 public
 schema
