@@ -22,6 +22,6 @@ exports.handler = async event => { // eslint-disable-line require-await
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 4, data: { content: 'SuperKittenBot pokes back!' } })
+    body: JSON.stringify({ type: 5 })
   };
 };
