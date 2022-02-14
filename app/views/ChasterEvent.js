@@ -185,7 +185,7 @@ const ChasterEvent = memo(() => {
   const accordion = useMemo(() => {
     const a = [];
     const start = 1642147200000; // 2022-01-14T08:00:00.000Z
-    const now = Math.min(Date.now(), 1644998399999); // 2022-02-15T07:59:59.999Z
+    const now = Math.min(Date.now(), 1644911999999); // 2022-02-15T07:59:59.999Z
     for (let i = now; i > start; i -= 86400000) a.push(<EventDay expanded={i === now} day={new Date(i)} app={app} key={i}/>);
     return a;
   }, [app]);
