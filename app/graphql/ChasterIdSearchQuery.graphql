@@ -1,0 +1,7 @@
+# import "./ChasterUserFragment.graphql"
+
+query ChasterIdSearch($chasterId: String!) {
+  searchChasterId(chasterId: $chasterId) @noauth @rest(type: "ChasterUser", path: "/users/profile/by-id/{args.chasterId}") {
+    ...ChasterUserFragment
+  }
+}

@@ -14,8 +14,11 @@ import GetAllKittenLocksUsers from '../graphql/GetAllKittenLocksUsersQuery.graph
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import ChasterUsernameSearch from '../graphql/ChasterUsernameSearchQuery.graphql';
 import ChasterDiscordSearch from '../graphql/ChasterDiscordSearchQuery.graphql';
+import ChasterIdSearch from '../graphql/ChasterIdSearchQuery.graphql';
 import { useSnackbar } from 'notistack';
 import throttle from 'lodash.throttle';
+
+const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
 
 function PublicLocks({ isDesktop }){
   const app = useRealmApp();
@@ -65,6 +68,14 @@ function PublicLocks({ isDesktop }){
     }
   }, [derror, enqueueSnackbar]);
 
+  const [searchChasterId, { data: cidata, loading: ciloading, error: cierror }] = useLazyQuery(ChasterIdSearch, { fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  useEffect(() => {
+    if (cierror){
+      enqueueSnackbar(cierror.toString(), { variant: 'error' });
+      console.error(cierror);
+    }
+  }, [cierror, enqueueSnackbar]);
+
   const [page, setPage] = useState(0);
   useEffect(() => {
     if (app.currentUser){
@@ -90,27 +101,37 @@ function PublicLocks({ isDesktop }){
                             : (new Set(app.currentUser.customData.scopes).has('keyholder') ? [{ o: 'loading your current Wearers ...', t: 'Your current Wearers', d: true }]
                                                                                            : [{ o: 'Keyholder scope required', t: 'Your current Wearers', d: true }]);
       const set = new Set(wearers.map(o => o.o)).add(yourself.o);
-      const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
       const klusers = data ? data.users.filter(u => !set.has(u.username)).map(u => ({ o: u.username, a: u.avatarUrl, h: fd(u), t: 'other KittenLocks users' }))
                                        .sort((a, b) => a.o.localeCompare(b.o)) : [{ o: 'loading other KittenLocks users ...', t: 'other KittenLocks users', d: true }];
       const set2 = new Set([...set, ...klusers.map(o => o.o)]);
       const scu = cdata ? cdata.searchChasterUsername : previousData?.searchChasterUsername;
       const search = scu && scu.length > 0 ? scu.filter(x => !set2.has(x.username)).map(x => ({ o: x.username, a: x.avatarUrl, t: 'Chaster search' }))
                                            : [{ o: 'type at least 2 characters to search on Chaster', t: 'Chaster search', d: true }];
-      const discord = ddata && ddata.searchChasterDiscord ? { o: ddata.searchChasterDiscord.username, a: ddata.searchChasterDiscord.avatarUrl,
-                                                              h: ddata.searchChasterDiscord.discordUsername, s: ddata.searchChasterDiscord.discordId, t: 'Discord ID' }
+      const discord = ddata && ddata.searchChasterDiscord ? { o: ddata.searchChasterDiscord.username, a: ddata.searchChasterDiscord.avatarUrl, t: 'Discord ID',
+                                                              h: ddata.searchChasterDiscord.discordUsername, s: ddata.searchChasterDiscord.discordId }
                                                           : { o: 'enter a valid Discord snowflake for a Chaster user', t: 'Discord ID', d: true };
-      setOptions([yourself, ...wearers, ...klusers, ...search, discord]);
+      const chasterId = cidata && cidata.searchChasterId ? { o: cidata.searchChasterId.username, a: cidata.searchChasterId.avatarUrl, t: 'Chaster ID',
+                                                             h: cidata.searchChasterId.discordUsername, s: cidata.searchChasterId._id }
+                                                         : { o: 'enter a valid ChasterId for a Chaster user', t: 'Chaster ID', d: true };
+      setOptions([yourself, ...wearers, ...klusers, ...search, discord, chasterId]);
     } else {
-      setOptions([{ o: 'Login into KittenLocks to get usernames autocompleted', t: 'Hint', d: true }]);
+      const chasterId = cidata && cidata.searchChasterId ? { o: cidata.searchChasterId.username, a: cidata.searchChasterId.avatarUrl, t: 'Chaster ID',
+                                                             h: cidata.searchChasterId.discordUsername, s: cidata.searchChasterId._id }
+                                                         : { o: 'enter a valid ChasterId for a Chaster user', t: 'Chaster ID', d: true };
+      setOptions([
+        { o: 'Login into KittenLocks to get usernames autocompleted and more', t: 'Hint', d: true },
+        { o: 'enter the complete username for a Chaster user', t: 'Chaster Username', d: true },
+        chasterId
+      ]);
     }
-  }, [app.currentUser, data, wdata, cdata, previousData, ddata]);
+  }, [app.currentUser, data, wdata, cdata, previousData, ddata, cidata]);
   const throttleSearchChaster = useMemo(() => throttle(n => searchChaster({ variables: { search: n } }), 1000, { leading: false, trailing: true }), [searchChaster]);
   const onChangeUsername = useCallback((e, n) => {
     setUsername(n);
     if (app.currentUser && n.length >= 2) throttleSearchChaster(n);
+    if (/^[a-f\d]{24}$/ui.test(n)) searchChasterId({ variables: { chasterId: n } });
     if (app.currentUser && /^\d{17,19}$/u.test(n)) searchDiscord({ variables: { discordId: n } });
-  }, [app.currentUser, searchDiscord, throttleSearchChaster]);
+  }, [app.currentUser, searchChasterId, searchDiscord, throttleSearchChaster]);
   const handleUsernameSearch = useCallback((e, n) => {
     if (n){
       setSelected(n.o || n.trim());
@@ -129,10 +150,10 @@ function PublicLocks({ isDesktop }){
       label="Username"
       InputProps={{
         ...params.InputProps,
-        endAdornment: <>{loading || wloading || cloading || dloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
+        endAdornment: <>{loading || wloading || cloading || dloading || ciloading ? <CircularProgress color="inherit" size={20}/> : null}{params.InputProps.endAdornment}</>
       }}
     />
-  ), [loading, wloading, cloading, dloading]);
+  ), [loading, wloading, cloading, dloading, ciloading]);
   const renderOption = useCallback((props, op, { inputValue }) => {
     const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
     const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
