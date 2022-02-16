@@ -63,7 +63,7 @@ const config = {
       theme_color: '#272533',
       start_url: '/',
       scope: '/',
-      manifestMaskable: true,
+      manifestMaskable: './assets/maskable_icon.png',
       icons: {
         appleIcon: { background: '#272533' },
         appleStartup: { background: '#272533' }
