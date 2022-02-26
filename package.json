@@ -45,9 +45,9 @@
     "@mui/icons-material": "^5.4.2",
     "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.3",
-    "@sentry/react": "^6.17.9",
-    "@sentry/tracing": "^6.17.9",
-    "@sentry/webpack-plugin": "^1.18.7",
+    "@sentry/react": "^6.18.0",
+    "@sentry/tracing": "^6.18.0",
+    "@sentry/webpack-plugin": "^1.18.8",
     "@silizia/favicons-webpack-plugin": "^5.2.1",
     "@silizia/react-viewer": "^4.0.0",
     "apollo-link-rest": "^0.9.0-rc.1",
@@ -58,7 +58,7 @@
     "babel-plugin-import-graphql": "^2.8.1",
     "css-loader": "^6.6.0",
     "favicons": "^7.0.0-beta.3",
-    "graphql": "^15.8.0",
+    "graphql": "^16.3.0",
     "highcharts": "^9.3.3",
     "highcharts-react-official": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
@@ -77,17 +77,20 @@
     "tweetnacl": "^1.0.3",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
-    "workbox-webpack-plugin": "^6.4.2"
+    "workbox-webpack-plugin": "^6.5.0"
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.8.0",
-    "eslint": "^8.9.0",
+    "eslint": "^8.10.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react": "^7.29.2",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-sonarjs": "^0.12.0",
     "eslint-plugin-unicorn": "^41.0.0",
     "webpack-dev-server": "^4.7.4"
+  },
+  "overrides": {
+    "graphql": "^16.3.0"
   }
 }

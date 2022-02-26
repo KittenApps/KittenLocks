@@ -156,7 +156,7 @@ function PublicLocks({ isDesktop }){
   ), [loading, wloading, cloading, dloading, ciloading]);
   const renderOption = useCallback((props, op, { inputValue }) => {
     const parts1 = parse(op.o, match(op.o, inputValue, { insideWords: true }));
-    const parts2 = parse(op.h, match(op.h, inputValue, { insideWords: true }));
+    const parts2 = op.h ? parse(op.h, match(op.h, inputValue, { insideWords: true })) : null;
     return (
       <Box component="li" {...props}>
         { op.d ? <Warn sx={{ mr: 2 }}/> : <Avatar alt={op.o} src={op.a} sx={{ width: 24, height: 24, mr: 2 }}/> }
