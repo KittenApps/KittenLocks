@@ -8,7 +8,7 @@ import { RetryLink } from '@apollo/client/link/retry';
 import * as Sentry from '@sentry/react';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
-import AppIcon from '../assets/appicon.png';
+import AppIcon from '../assets/appicon.webp';
 
 const VERSION = '0.1.2';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
@@ -123,7 +123,8 @@ const cache = new InMemoryCache({
     VerificationExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
     TemporaryOpeningUserData: { fields: { openedAt: parseDate } },
     TasksUserData: { fields: { voteEndsAt: parseDate, voteStartedAt: parseDate } },
-    VerificationPictureHistory: { fields: { requestedAt: parseDate } }
+    VerificationPictureHistory: { fields: { requestedAt: parseDate } },
+    VerificationPicture: { fields: { submittedAt: parseDate } }
   }
 });
 

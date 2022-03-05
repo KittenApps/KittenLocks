@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowDropDown, Bookmark, BookmarkBorder, DeleteForeverTwoTone, Login, Logout, ManageAccounts, Menu as MenuIcon, MoreVert, Settings } from '@mui/icons-material';
 import { useRealmApp } from '../RealmApp';
 import ScopeBadges from './ScopeBadges';
-import AppIcon from '../../assets/appicon.png';
+import AppIcon from '../../assets/appicon.webp';
 import { useSnackbar } from 'notistack';
 import { register, unregister } from '../SwUtils';
 

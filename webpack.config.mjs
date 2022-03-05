@@ -40,7 +40,7 @@ const config = {
         use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.png/ui,
+        test: /\.webp/ui,
         type: 'asset/resource'
       }
     ]
@@ -82,7 +82,7 @@ const config = {
       OGtitle: { property: 'og:title', content: 'KittenLocks' },
       OGtype: { property: 'og:type', content: 'website' },
       OGurl: { property: 'og:url', content: 'https://www.kittenlocks.de/' },
-      OGimage: { property: 'og:image', content: 'https://www.kittenlocks.de/static/images/appicon.png' },
+      OGimage: { property: 'og:image', content: 'https://www.kittenlocks.de/static/images/appicon.webp' },
       OGdescription: { property: 'og:description', content: 'KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.' }
     } }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `

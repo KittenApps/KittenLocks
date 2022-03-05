@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Avatar, Grid, Link, Paper, Typography } from '@mui/material';
-import AppIcon from '../../assets/appicon.png';
+import AppIcon from '../../assets/appicon.webp';
 
 function Home(){
   return (
