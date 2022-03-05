@@ -52,30 +52,30 @@ const SubNavElement = memo(({ nav, handleListClick, subNavSelected, setSubNavSel
         onSetActive={handleSubNavActive}
         dense
         disablePadding
-        secondaryAction={<IconButton onClick={handleSubNavExpand} edge="end">{subNavSelected === nav.id ? <ExpandLess/> : <ExpandMore/>}</IconButton>}
+        secondaryAction={nav.hist ? <IconButton onClick={handleSubNavExpand} edge="end">{subNavSelected === nav.id ? <ExpandLess/> : <ExpandMore/>}</IconButton> : null}
       >
         <ListItemButton><ListItemIcon><LockClockIcon/></ListItemIcon><ListItemText primary={nav.title} secondary={nav.subtitle}/></ListItemButton>
       </ListItem>
-      <Collapse in={subNavSelected === nav.id} timeout="auto">
-        <List component="div" disablePadding>
-          <ListItemButton key={`info-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${nav.id}`} dense sx={{ pl: 4 }}>
-            <ListItemIcon><InfoTwoTone/></ListItemIcon>
-            <ListItemText primary="Lock Information"/>
-          </ListItemButton>
-          { nav.hist && (
+      { nav.hist && (
+        <Collapse in={subNavSelected === nav.id} timeout="auto">
+          <List component="div" disablePadding>
+            <ListItemButton key={`info-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`info-${nav.id}`} dense sx={{ pl: 4 }}>
+              <ListItemIcon><InfoTwoTone/></ListItemIcon>
+              <ListItemText primary="Lock Information"/>
+            </ListItemButton>
             <ListItemButton key={`hist-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`hist-${nav.id}`} dense sx={{ pl: 4 }}>
               <ListItemIcon><Restore/></ListItemIcon>
               <ListItemText primary="Lock History"/>
             </ListItemButton>
-          )}
-          { nav.veri && (
-            <ListItemButton key={`veri-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${nav.id}`} dense sx={{ pl: 4 }}>
-              <ListItemIcon><ImageTwoTone/></ListItemIcon>
-              <ListItemText primary="Verifications"/>
-            </ListItemButton>
-          )}
-        </List>
-      </Collapse>
+            { nav.veri && (
+              <ListItemButton key={`veri-${nav.id}`} onClick={handleListClick} component={SLink} hashSpy to={`veri-${nav.id}`} dense sx={{ pl: 4 }}>
+                <ListItemIcon><ImageTwoTone/></ListItemIcon>
+                <ListItemText primary="Verifications"/>
+              </ListItemButton>
+            )}
+          </List>
+        </Collapse>
+      )}
     </>
   );
 });

@@ -38,7 +38,10 @@ fragment LockFragment on Lock {
     updatedAt # Updated at
     ...on VerificationExtension {
       userData {
-        ...VerificationPictureHistoryFragment
+        history
+        currentVerificationCode # The current verification code
+        verificationCodeRequired # True if the verification code is required in the image
+        requestedAt # The request date
       }
     }
     ...on PenaltyExtension {
@@ -52,13 +55,15 @@ fragment LockFragment on Lock {
       }
     }
     ...on TasksExtension {
-      currentTask
-      currentTaskVote
-      points
-      status
-      userTasks
-      voteEndsAt
-      voteStartedAt
+      userData {
+        currentTask
+        currentTaskVote
+        points
+        status
+        userTasks
+        voteEndsAt
+        voteStartedAt
+      }
     }
   }
   combination # The combination
@@ -85,28 +90,4 @@ fragment LockFragment on Lock {
   offerToken # The offer token
   hideTimeLogs # True if the time information should be hidden from the history
   trusted # Whether the keyholder is trusted
-}
-
-fragment VerificationPictureHistoryFragment on VerificationPictureHistory {
-  history @type(name: "VerificationPictureHistoryEntry") {
-    ...VerificationPictureHistoryEntryFragment
-  }
-  currentVerificationCode # The current verification code
-  verificationCodeRequired # True if the verification code is required in the image
-  requestedAt # The request date
-}
-
-fragment VerificationPictureHistoryEntryFragment on VerificationPictureHistoryEntry {
-  verificationCode # The verification code
-  peerVerificationId # The peer verification id
-  imageKey @export(as: "imageKey") # The peer verification image key
-  submittedAt # Submitted at
-  votes # Votes if the peer verification is enabled
-  image @rest(path: "/files/{exportVariables.imageKey}", type: "VerificationPictureImage") {
-    ...VerificationPictureImageFragment
-  }
-}
-
-fragment VerificationPictureImageFragment on VerificationPictureImage {
-  url
 }

@@ -10,7 +10,7 @@ import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
 import AppIcon from '../assets/appicon.png';
 
-const VERSION = '0.1.1';
+const VERSION = '0.1.2';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
 const RealmAppContext = createContext();
 const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
@@ -123,8 +123,7 @@ const cache = new InMemoryCache({
     VerificationExtension: { fields: { createdAt: parseDate, updatedAt: parseDate, nextActionDate: parseDate } },
     TemporaryOpeningUserData: { fields: { openedAt: parseDate } },
     TasksUserData: { fields: { voteEndsAt: parseDate, voteStartedAt: parseDate } },
-    VerificationPictureHistory: { fields: { requestedAt: parseDate } },
-    VerificationPictureHistoryEntry: { fields: { submittedAt: parseDate } }
+    VerificationPictureHistory: { fields: { requestedAt: parseDate } }
   }
 });
 

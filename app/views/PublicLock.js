@@ -1,7 +1,6 @@
 import { memo, useEffect, useMemo } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useQuery } from '@apollo/client';
@@ -10,16 +9,8 @@ import { useSnackbar } from 'notistack';
 
 const PLock = memo(({ lock }) => (
   <ScrollElement name={lock._id}>
-    <ScrollElement name={`info-${lock._id}`} style={{ paddingBottom: 8 }}>
-      <Typography variant="h5" gutterBottom component="p">{lock.title} (info):</Typography>
-      <JsonView src={lock} collapsed={1}/>
-    </ScrollElement>
-    { lock.extensions.find(e => e.slug === 'verification-picture') && (
-      <ScrollElement name={`veri-${lock._id}`} style={{ paddingBottom: 8 }}>
-        <Typography variant="h5" gutterBottom component="p">{lock.title} (verification pics):</Typography>
-        <VerificationPictureGallery history={lock.extensions.find(e => e.slug === 'verification-picture').userData.history}/>
-      </ScrollElement>
-    )}
+    <Typography variant="h5" gutterBottom component="p">{lock.title} (info):</Typography>
+    <JsonView src={lock} collapsed={1}/>
   </ScrollElement>
 ));
 PLock.displayName = 'PLock';
@@ -33,7 +24,7 @@ const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
     }
   }, [error, enqueueSnackbar]);
   useEffect(() => {
-    if (data) setSubNav({ public: username, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: false, veri: j.extensions.find(e => e.slug === 'verification-picture') })) });
+    if (data) setSubNav({ public: username, locks: data.locks.map(j => ({ id: j._id, title: j.title, hist: false })) });
     return () => setSubNav(null);
   }, [data, setSubNav, username]);
 

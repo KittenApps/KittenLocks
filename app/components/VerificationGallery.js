@@ -15,8 +15,9 @@ const VerificationPicture = memo(({ img, setSelected }) => {
 });
 VerificationPicture.displayName = 'VerificationPicture';
 
-function VerificationPictureGallery({ history }){
-  const [selected, setSelected] = useState(-1);
+function VerificationPictureGallery({ lockId }){
+  return null;
+ /*const [selected, setSelected] = useState(-1);
   const handleClose = useCallback(() => setSelected(-1), []);
   const imgs = useMemo(() => history.map((img, i) => ({ src: img.image.url, downloadUrl: img.image.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i })), [history]);
   const extendToolbar = useCallback(dc => (navigator.share ? [...dc, { key: 'share', render: <IosShare sx={{ fontSize: 16 }}/>, onClick: i => navigator.share({ url: i.src }) }] : dc), []);
@@ -47,7 +48,7 @@ function VerificationPictureGallery({ history }){
         customToolbar={extendToolbar}
       />
     </>
-  );
+  );*/
 }
 
 export default memo(VerificationPictureGallery);
