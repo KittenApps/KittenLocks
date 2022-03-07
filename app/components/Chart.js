@@ -1,15 +1,9 @@
 import { memo, useMemo } from 'react';
-import Highcharts from 'highcharts/highstock';
-import Exporting from 'highcharts/modules/exporting';
-import OfflineExporting from 'highcharts/modules/offline-exporting';
-import HighContrastDarkTheme from 'highcharts/themes/high-contrast-dark';
+import Highcharts from 'highcharts/es-modules/masters/highstock.src';
+import 'highcharts/es-modules/masters/modules/exporting.src';
+import 'highcharts/es-modules/masters/modules/offline-exporting.src';
+import 'highcharts/es-modules/masters/themes/high-contrast-dark.src';
 import HighchartsReact from 'highcharts-react-official';
-// eslint-disable-next-line new-cap
-HighContrastDarkTheme(Highcharts);
-// eslint-disable-next-line new-cap
-Exporting(Highcharts);
-// eslint-disable-next-line new-cap
-OfflineExporting(Highcharts);
 
 function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock, hygiene, verification, games, tasks }){
   const options = useMemo(() => ({
