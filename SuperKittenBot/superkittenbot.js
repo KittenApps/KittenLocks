@@ -1,7 +1,7 @@
-/* eslint-disable unicorn/prefer-module, unicorn/filename-case, camelcase */
+/* eslint-disable unicorn/filename-case, camelcase */
 /* eslint-env node */
-const { sign } = require('tweetnacl');
-const fetch = require('node-fetch');
+import { sign } from 'tweetnacl';
+import fetch from 'node-fetch';
 
 function formatTime(t){
   if (t > 60 * 60 * 24) return `${Math.floor(t / (60 * 60 * 24))}d ${Math.floor(t / (60 * 60)) % 24}h ago`;
@@ -76,7 +76,7 @@ async function handleChaster(json){
   };
 }
 
-exports.handler = async({ body, headers }) => { // eslint-disable-line require-await
+export async function handler({ body, headers }){ // eslint-disable-line require-await
   const isVerified = sign.detached.verify(Buffer.from(headers['x-signature-timestamp'] + body),
                                           Buffer.from(headers['x-signature-ed25519'], 'hex'),
                                           Buffer.from(process.env.DISCORD_BOT_PUBLIC_KEY, 'hex'));
@@ -99,4 +99,4 @@ exports.handler = async({ body, headers }) => { // eslint-disable-line require-a
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 5 })
   };
-};
+}
