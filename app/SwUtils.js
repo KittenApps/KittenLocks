@@ -43,6 +43,7 @@ export function unregister(){
     clearInterval(nIntervId);
     return navigator.serviceWorker.ready.then(reg => reg.unregister()).catch(error => console.error(error.message));
   }
+  return Promise.reject(new Error('missing serviceWorker support'));
 }
 
 export function register(config){

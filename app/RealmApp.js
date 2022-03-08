@@ -168,7 +168,7 @@ export function RealmAppProvider({ children }){
     const user = await app.logIn(credentials);
     setLastAuth(Date.now());
     setCurrentUser(immutableCurrentUser(user));
-    Sentry.setUser({ username: app.currentUser.customData.username });
+    Sentry.setUser({ username: user.customData.username });
   }, [app]);
 
   const logOut = useCallback(async() => {

@@ -87,14 +87,16 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
   }, [enqueueSnackbar, updatePromptAction, waitingServiceWorker]);
 
   useEffect(() => {
-    const onMessage = event => event.data && event.data.type === 'CLIENT_RELOAD' && window.location.reload();
-    if (noOffline || process.env.BRANCH === 'beta' || process.env.NODE_ENV !== 'production'){
-      unregister();
-      if (navigator.serviceWorker) navigator.serviceWorker.removeEventListener('message', onMessage);
-    } else register({
-      onUpdate: reg => setWaitingServiceWorker(reg.waiting),
-      onSuccess(){enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' });}
-    }).then(() => navigator.serviceWorker.addEventListener('message', onMessage));
+    if ('serviceWorker' in navigator){
+      const onMessage = event => event.data && event.data.type === 'CLIENT_RELOAD' && window.location.reload();
+      if (noOffline || process.env.BRANCH === 'beta' || process.env.NODE_ENV !== 'production'){
+        unregister();
+        if (navigator.serviceWorker) navigator.serviceWorker.removeEventListener('message', onMessage);
+      } else register({
+        onUpdate(reg){setWaitingServiceWorker(reg.waiting);},
+        onSuccess(){enqueueSnackbar('ServiceWorker successfully registered! KittenLocks is now available offline for you too.', { variant: 'success' });}
+      }).then(() => navigator.serviceWorker.addEventListener('message', onMessage));
+    }
   }, [enqueueSnackbar, noOffline]);
 
   const handleToggleOffline = useCallback(() => {
@@ -148,7 +150,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
             <ListSubheader sx={{ textAlign: 'center', lineHeight: '32px' }}>Advanced Settings:</ListSubheader>
             { process.env.BRANCH !== 'beta' && process.env.NODE_ENV === 'production' && (
               <MenuItem dense onClick={handleToggleOffline}>
-                <ListItemIcon><Checkbox sx={{ p: 0 }} checked={!noOffline} icon={<BookmarkBorder/>} checkedIcon={<Bookmark/>}/></ListItemIcon>
+                <ListItemIcon><Checkbox sx={{ p: 0 }} disabled={!('serviceWorker' in navigator)} checked={!noOffline} icon={<BookmarkBorder/>} checkedIcon={<Bookmark/>}/></ListItemIcon>
                 {noOffline ? 'enable offline PWA' : 'remove PWA cache'}
               </MenuItem>
             )}
