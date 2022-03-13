@@ -1,5 +1,7 @@
 import { memo } from 'react';
-import { Avatar, Grid, Link, Paper, Typography } from '@mui/material';
+import { Avatar, Button, Grid, Link, Paper, Typography } from '@mui/material';
+import { FavoriteTwoTone } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom';
 import AppIcon from '../../assets/appicon.webp';
 
 function Home(){
@@ -10,6 +12,7 @@ function Home(){
           <h2>Welcome to KittenLocks!</h2>
           <p>A pawtastic WebApp to enchance your Chaster experience, <Link href="https://github.com/KittenApps/KittenLocks" target="_blank" rel="noreferrer">built with</Link> ❤ <Link href="https://chaster.app/user/Silizia" target="_blank" rel="noopener">by Silizia ~ Stella</Link>.</p>
           <Avatar src={AppIcon} sx={{ width: 300, height: 300, m: 'auto' }} />
+          <Button variant="contained" startIcon={<FavoriteTwoTone />} component={NavLink} to="/support" fullWidth>Support KittenLocks development</Button>
           <Typography variant="caption" color="text.secondary">illustration PNG Designed By 588ku from <Link href="https://pngtree.com" target="_blank" rel="noreferrer">Pngtree.com</Link></Typography>
         </Paper>
       </Grid>

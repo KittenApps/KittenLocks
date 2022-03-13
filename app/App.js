@@ -11,6 +11,7 @@ import AppDrawer from './components/AppDrawer';
 import Login from './components/LoginModal';
 import Home from './views/Home';
 import Discord from './views/Discord';
+import Support from './views/Support';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
@@ -147,6 +148,7 @@ function App(){
                 <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
                 <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer onMissingScopes={onMissingScopes}/></Suspense>}/>
                 <Route path="discord/*" element={<Discord open={open} username={app.currentUser?.customData?.username}/>}/>
+                <Route path="support/*" element={<Support/>}/>
                 <Route path="*" element={<Home/>} />
               </Routes>
             </ErrorBoundary>
