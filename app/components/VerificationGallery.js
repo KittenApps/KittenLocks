@@ -29,7 +29,7 @@ function VerificationPictureGallery({ lockId }){
       console.error(error);
     }
   }, [error, enqueueSnackbar]);
-  const imgs = useMemo(() => data?.verificationPictures.map((img, i) => ({ src: img.image.url, downloadUrl: img.image.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i })), [data]);
+  const imgs = useMemo(() => data?.verificationPictures.map((img, i) => ({ src: img.image?.url, downloadUrl: img.image?.url, alt: `${img.submittedAt.toLocaleString()} (${img.verificationCode}) #${i + 1}`, i })), [data]);
   const extendToolbar = useCallback(dc => (navigator.share ? [...dc, { key: 'share', render: <IosShare sx={{ fontSize: 16 }}/>, onClick: i => navigator.share({ url: i.src }) }] : dc), []);
 
   if (loading || error) return <Typography variant="caption" color="text.secondary">loading ...</Typography>;

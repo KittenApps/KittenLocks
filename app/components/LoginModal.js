@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/consistent-destructuring */
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Credentials } from 'realm-web';
 import { useRealmApp } from '../RealmApp';
