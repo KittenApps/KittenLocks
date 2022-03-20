@@ -164,16 +164,16 @@ export function RealmAppProvider({ children }){
   const [currentUser, setCurrentUser] = useState(app.currentUser ? immutableCurrentUser(app.currentUser) : null);
   const [lastAuth, setLastAuth] = useState(0);
 
+  useEffect(() => Sentry.setUser(currentUser?.customData?.username), [currentUser]);
+
   const logIn = useCallback(async credentials => {
     const user = await app.logIn(credentials);
     setLastAuth(Date.now());
     setCurrentUser(immutableCurrentUser(user));
-    Sentry.setUser({ username: user.customData.username });
   }, [app]);
 
   const logOut = useCallback(async() => {
     await app.currentUser?.logOut();
-    Sentry.setUser(null);
     setCurrentUser(app.currentUser); // other logged in user or null
     setLastAuth(0);
   }, [app.currentUser]);
