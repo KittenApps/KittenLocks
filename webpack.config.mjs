@@ -31,7 +31,7 @@ const config = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env', ['@babel/preset-react', { 'runtime': 'automatic' }]],
-            plugins: ['import-graphql', ['direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab', '@mui/system'] }]]
+            plugins: ['import-graphql', ['direct-import', { modules: ['@mui/material', '@mui/icons-material', '@mui/lab'] }]]
           }
         }
       },
