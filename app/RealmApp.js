@@ -164,7 +164,9 @@ export function RealmAppProvider({ children }){
   const [currentUser, setCurrentUser] = useState(app.currentUser ? immutableCurrentUser(app.currentUser) : null);
   const [lastAuth, setLastAuth] = useState(0);
 
-  useEffect(() => Sentry.setUser(currentUser?.customData?.username), [currentUser]);
+  useEffect(() => {
+    Sentry.setUser(currentUser?.customData?.username);
+  }, [currentUser]);
 
   const logIn = useCallback(async credentials => {
     const user = await app.logIn(credentials);
@@ -179,7 +181,9 @@ export function RealmAppProvider({ children }){
   }, [app.currentUser]);
 
   const [cacheReady, setCacheReady] = useState(false);
-  useEffect(() => localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION)))).then(() => setCacheReady(true)), []);
+  useEffect(() => {
+    localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION)))).then(() => setCacheReady(true));
+  }, []);
 
   if (!cacheReady){
     return (

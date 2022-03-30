@@ -66,8 +66,8 @@
     "lodash.throttle": "^4.1.1",
     "node-fetch": "^3.2.3",
     "notistack": "^2.0.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.2.2",
     "react-scroll": "^1.8.6",
@@ -91,6 +91,8 @@
     "webpack-dev-server": "^4.7.4"
   },
   "overrides": {
-    "graphql": "^16.3.0"
+    "graphql": "^16.3.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

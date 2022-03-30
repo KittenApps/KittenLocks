@@ -120,10 +120,14 @@ function App(){
   useEffect(() => {
     if (installPrompt) notistackRef.current.enqueueSnackbar('Add KittenLocks to your HomeScreen?', { variant: 'info', action: installPromptAction });
   }, [installPrompt, installPromptAction]);
-  useEffect(() => window.addEventListener('beforeinstallprompt', e => {
+  const handleInstallPrompt = useCallback(e => {
     e.preventDefault();
     setInstallPrompt(e);
-  }), [installPromptAction]);
+  }, []);
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+    return window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+  }, [handleInstallPrompt]);
 
   const [subNav, setSubNav] = useState(null);
 

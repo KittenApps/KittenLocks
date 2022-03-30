@@ -1,5 +1,5 @@
 import { StrictMode } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { RealmAppProvider } from './RealmApp.js';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
@@ -41,7 +41,7 @@ div.id = 'container';
 document.body.style.backgroundColor = '#272533';
 document.body.append(div);
 
-render(
+createRoot(div).render(
   <StrictMode>
     <Sentry.ErrorBoundary fallback={errorFallback} showDialog>
       <BrowserRouter>
@@ -50,5 +50,5 @@ render(
         </RealmAppProvider>
       </BrowserRouter>
     </Sentry.ErrorBoundary>
-  </StrictMode>, div
+  </StrictMode>
 );

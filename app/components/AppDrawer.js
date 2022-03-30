@@ -106,7 +106,7 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
         <ListItemButton key={7} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
         <Divider key={-3}/>
         <ListItemButton key={8} component={NLink} to="/discord">  <ListItemIcon><ChatIcon/></ListItemIcon>   <ListItemText primary="Discord Community"/></ListItemButton>
-        <ListItemButton key={8} component={NLink} to="/support">  <ListItemIcon><HeartIcon/></ListItemIcon>   <ListItemText primary="Support KittenLocks"/></ListItemButton>
+        <ListItemButton key={9} component={NLink} to="/support">  <ListItemIcon><HeartIcon/></ListItemIcon>   <ListItemText primary="Support KittenLocks"/></ListItemButton>
       </List>
       { subNav && (
         <List disablePadding>
