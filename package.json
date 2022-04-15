@@ -35,7 +35,7 @@
   ],
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
-    "@apollo/client": "^3.6.0-beta.12",
+    "@apollo/client": "^3.6.0-beta.13",
     "@babel/core": "^7.17.9",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
@@ -57,7 +57,7 @@
     "babel-plugin-direct-import": "^1.0.0",
     "babel-plugin-import-graphql": "^2.8.1",
     "css-loader": "^6.7.1",
-    "favicons": "^7.0.0-beta.3",
+    "favicons": "^7.0.0-beta.4",
     "graphql": "^16.3.0",
     "graphql-anywhere": "^4.2.7",
     "highcharts": "^10.0.0",
@@ -73,7 +73,7 @@
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.3.0",
     "react-scroll": "^1.8.7",
-    "react-virtuoso": "^2.9.0",
+    "react-virtuoso": "^2.9.1",
     "realm-web": "^1.7.0",
     "recharts": "^2.1.9",
     "style-loader": "^3.3.1",
@@ -97,6 +97,6 @@
     "graphql": "^16.3.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@apollo/client": "^3.6.0-beta.12"
+    "@apollo/client": "^3.6.0-beta.13"
   }
 }
