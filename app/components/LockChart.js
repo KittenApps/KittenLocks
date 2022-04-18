@@ -42,7 +42,6 @@ function LockChart({ history, startTime, startRem }){
     for (let i = history.length - 1; i >= 0; i--){
       const d = history[i];
       const x = d.createdAt.getTime();
-      if (d.updatedAt.getTime() !== d.createdAt.getTime()) console.warn(d);
       switch (d.type){
         case 'locked':
           lock.push({ x, title: 'L⬆', text: 'You started a new lock! 🥳' });

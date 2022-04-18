@@ -25,6 +25,7 @@ fragment ProfileFragment on Profile {
   sharedLocks @type(name: "SharedLock") {
     ...SharedLockFragment
   }
+  chastikeyStats
 }
 
 fragment AchievementFragment on Achievement {
