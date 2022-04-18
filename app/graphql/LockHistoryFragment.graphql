@@ -8,12 +8,10 @@ fragment LockHistoryFragment on LockHistory {
   icon
   lock
   payload
-  prefix
   role
   title
   type
   user @type(name: "ChasterUser") {
     ...ChasterUserFragment
   }
-  updatedAt
 }
