@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import ReactJson from 'react-json-view';
+import ReactJson from '@silizia/react-json-view';
 
 function JsonView({ src, collapsed }){
   return (
