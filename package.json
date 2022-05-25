@@ -35,9 +35,9 @@
   ],
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
-    "@apollo/client": "^3.6.4",
-    "@babel/core": "^7.18.0",
-    "@babel/preset-env": "^7.18.0",
+    "@apollo/client": "^3.6.5",
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
