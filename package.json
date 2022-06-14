@@ -65,7 +65,7 @@
     "html-webpack-plugin": "^5.5.0",
     "localforage": "^1.10.0",
     "lodash.throttle": "^4.1.1",
-    "node-fetch": "^3.2.6",
+    "node-fetch": "^2.6.7",
     "notistack": "^2.0.5",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
