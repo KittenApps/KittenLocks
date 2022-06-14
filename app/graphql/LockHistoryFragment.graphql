@@ -11,6 +11,7 @@ fragment LockHistoryFragment on LockHistory {
   role
   title
   type
+  prefix
   user @type(name: "ChasterUser") {
     ...ChasterUserFragment
   }

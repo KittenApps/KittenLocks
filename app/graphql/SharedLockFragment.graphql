@@ -11,7 +11,7 @@ fragment SharedLockFragment on SharedLock {
   unsplashPhoto @type(name: "UnsplashPhoto") { # The Unsplash photo
     ...UnsplashPhotoFragment
   }
-  extensions # Extension configurations ############################
+  extensions # Extension configurations
   createdAt # Created at
   updatedAt # Updated at
   deletedAt # Deleted at
