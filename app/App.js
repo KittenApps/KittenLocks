@@ -1,10 +1,10 @@
-import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
 import { Alert, AlertTitle, Box, Button, CssBaseline, IconButton, Stack, TextField, Toolbar, useMediaQuery } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { Route, Routes, useSearchParams } from 'react-router-dom';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { ErrorBoundary } from '@sentry/react';
+import { ErrorBoundary, withSentryReactRouterV6Routing } from '@sentry/react';
 import { useRealmApp } from './RealmApp';
 import AppHeader from './components/AppHeader';
 import AppDrawer from './components/AppDrawer';
@@ -130,6 +130,7 @@ function App(){
   }, [handleInstallPrompt]);
 
   const [subNav, setSubNav] = useState(null);
+  const SentryRoutes = useMemo(() => withSentryReactRouterV6Routing(Routes), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -142,7 +143,7 @@ function App(){
           <Main open={open} isDesktop={isDesktop}>
             <Toolbar/>
             <ErrorBoundary fallback={ErrorFallback} showDialog>
-              <Routes>
+              <SentryRoutes>
                 <Route path="lock/*" element={<Suspense fallback={<p>loading...</p>}><MyLock onMissingScopes={onMissingScopes} setSubNav={setSubNav}/></Suspense>}/>
                 <Route path="wearers/*" element={<Suspense fallback={<p>loading...</p>}><MyWearer onMissingScopes={onMissingScopes} setSubNav={setSubNav}/></Suspense>}/>
                 <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
@@ -154,7 +155,7 @@ function App(){
                 <Route path="discord/*" element={<Discord open={open} username={app.currentUser?.customData?.username}/>}/>
                 <Route path="support/*" element={<Support/>}/>
                 <Route path="*" element={<Home/>} />
-              </Routes>
+              </SentryRoutes>
             </ErrorBoundary>
           </Main>
         </Box>

@@ -1,10 +1,10 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RealmAppProvider } from './RealmApp.js';
 import App from './App';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
-import { Integrations as TracingIntegrations } from '@sentry/tracing';
+import { BrowserTracing } from '@sentry/tracing';
 import '@fontsource/roboto/latin-300.css';
 import '@fontsource/roboto/latin-400.css';
 import '@fontsource/roboto/latin-500.css';
@@ -32,7 +32,11 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', {
 if (process.env.CI) Sentry.init({
   dsn: process.env.SENTRY,
   release: `kittenlocks@${process.env.VERSION}+${process.env.COMMIT_REF}`,
-  integrations: [new TracingIntegrations.BrowserTracing()],
+  integrations: [
+    new BrowserTracing({
+     routingInstrumentation: Sentry.reactRouterV6Instrumentation(useEffect, useLocation, useNavigationType, createRoutesFromChildren, matchRoutes)
+    })
+  ],
   tracesSampleRate: 1,
   ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded', 'ResizeObserver loop completed with undelivered notifications.']
 });
