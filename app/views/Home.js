@@ -28,6 +28,7 @@ function Home(){
             <li key="6">many bug fixes and optimizations (I'm very precise here 😹)</li>
             <li key="7">[WIP] Lock Charts (visualize your unlock date over time)</li>
             <li key="8">[WIP] new Lock History (search and filter through your locks history)</li>
+            <li key="9">Fix for Chaster API changes</li>
           </ul>
           <h3>Changelog v0.1:</h3>
           <ul>
