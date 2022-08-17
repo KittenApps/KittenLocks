@@ -7,15 +7,15 @@ function Support(){
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
         <Paper elevation={6} sx={{ textAlign: 'center', p: 2, backgroundColor: '#1b192a' }}>
-          <p>Silizia 30 year old trans woman and computer scientist</p>
-          <p>developing KittenLocks as a hobby in my free time</p>
+          <p>Hey, I'm Silizia (~Stella) a 30 year old trans woman and computer scientist.</p>
+          <p>I'm developing KittenLocks as a hobby proect in my free time.</p>
           <Avatar src={Kitten} sx={{ width: 300, height: 300, m: 'auto' }} />
           <Link href="https://ko-fi.com/silizia" target="_blank" rel="noreferrer">Support KittenLocks on Ko-Fi...</Link>
-          <p>Home of public API views and future Chaster extensions (games...)</p>
-          <p>support server costs + development effort</p>
-          <p>other projects:</p>
+          <p>It would be very helpful to cover the server costs and to sponsor the further development.</p>
+          <p>Kittenlocks will offer you Chaster public API tools and future extensions (games...)</p>
+          <p>Feel free to take a look at my other projects too:</p>
           <p><Link href="https://kittensafe.netlify.app" target="_blank" rel="noreferrer">KittenSafe</Link> (delayed file access with focus on privacy (no data stored on the backend))</p>
-          <p><Link href="https://purrer.netlify.com/" target="_blank" rel="noreferrer">Purrer</Link></p>
+          <p><Link href="https://purrer.netlify.com/" target="_blank" rel="noreferrer">Purrer</Link> (send WebPush Notifications to other users)</p>
           <p>get a specia <b>Supporter</b> role on <Link href="https://discord.com/invite/cQhHH2sP3C" target="_blank" rel="noreferrer">our KittenLocks Discord server</Link> if you link your ko-fi</p>
         </Paper>
       </Grid>

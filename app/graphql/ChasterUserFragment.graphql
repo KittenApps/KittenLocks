@@ -20,4 +20,6 @@ fragment ChasterUserFragment on ChasterUser {
   discordUsername # The Discord username
   isDisabled # Whether the user is disabled
   isSuspended # Whether the user is suspended by the Chaster team
+  joinedAt # Joined date (year and month, YYYY-MM)
+  isNewMember # Whether the user is a new member
 }
