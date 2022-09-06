@@ -10,7 +10,7 @@
     "serve": "NODE_ENV=production webpack && npx http-server -c-1 --proxy=http://127.0.0.1:8080?",
     "stats": "NODE_ENV=production webpack --profile --json > schema/stats.json && npx webpack-bundle-analyzer schema/stats.json public",
     "lint": "eslint . --ignore-path=.gitignore",
-    "api": "cd schema && curl https://api.chaster.app/api-json > api.json && openapi-generator-cli generate -i api.json -g graphql-schema --global-property skipFormModel=false"
+    "api": "cd schema && curl https://api.chaster.app/api-json > api.json && npx openapi-generator-cli generate -i api.json -g graphql-schema --global-property skipFormModel=false"
   },
   "engines": {
     "node": ">=12"
@@ -36,17 +36,17 @@
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
     "@apollo/client": "^3.6.9",
-    "@babel/core": "^7.18.13",
-    "@babel/preset-env": "^7.18.10",
+    "@babel/core": "^7.19.0",
+    "@babel/preset-env": "^7.19.0",
     "@babel/preset-react": "^7.18.6",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.3",
-    "@mui/lab": "^5.0.0-alpha.97",
-    "@mui/material": "^5.10.3",
-    "@sentry/react": "^7.11.1",
-    "@sentry/tracing": "^7.11.1",
+    "@mui/lab": "^5.0.0-alpha.98",
+    "@mui/material": "^5.10.4",
+    "@sentry/react": "^7.12.1",
+    "@sentry/tracing": "^7.12.1",
     "@sentry/webpack-plugin": "^1.19.0",
     "@silizia/favicons-webpack-plugin": "^5.2.1",
     "@silizia/react-json-view": "^2.0.0",
@@ -84,7 +84,7 @@
     "eslint": "^8.23.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-react": "^7.31.1",
+    "eslint-plugin-react": "^7.31.7",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.15.0",
     "eslint-plugin-unicorn": "^43.0.2",
