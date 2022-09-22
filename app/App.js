@@ -4,7 +4,6 @@ import { Alert, AlertTitle, Button, IconButton, Stack, TextField, useMediaQuery 
 import { Close } from '@mui/icons-material';
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { useRealmApp } from './RealmApp';
 import Home from './views/Home';
 import Discord from './views/Discord';
 import Support from './views/Support';
@@ -43,7 +42,6 @@ function ErrorFallback({ error, componentStack, resetError }){
 }
 
 function App(){
-  const app = useRealmApp();
   const notistackRef = useRef(null);
 
   const theme = createTheme({
@@ -97,7 +95,7 @@ function App(){
         <Route path="event/*" element={<Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense>}/>
         <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
         <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>}/>
-        <Route path="discord/*" element={<Discord open={open} username={app.currentUser?.customData?.username}/>}/>
+        <Route path="discord/*" element={<Discord open={open}/>}/>
         <Route path="support/*" element={<Support/>}/>
         <Route path="*" element={<Home/>} />
       </Route>

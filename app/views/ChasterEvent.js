@@ -14,7 +14,7 @@ Progress.displayName = 'Progress';
 
 const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonarjs/cognitive-complexity, complexity
   const [viewSource, setViewSource] = useState(false);
-  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const { enqueueSnackbar } = useSnackbar();
   const date = useMemo(() => day.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Los_Angeles' }), [day]); // eslint-disable-line no-undefined
   const dateLong = useMemo(() => day.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Los_Angeles', year: 'numeric' }), [day]); // eslint-disable-line no-undefined

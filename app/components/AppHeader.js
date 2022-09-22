@@ -60,7 +60,7 @@ UpdateAction.displayName = 'UpdateAction';
 function AppHeader({ isDesktop, setOpen, showLogin, open }){
   const app = useRealmApp();
   const { enqueueSnackbar } = useSnackbar();
-  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const navigate = useNavigate();
   const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen]);
 

@@ -35,7 +35,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const exScopes = useMemo(() => app.currentUser?.customData?.scopes || savScopes || [], [app.currentUser?.customData?.scopes, savScopes]);
   const reqScopes = useMemo(() => ['profile', ...(rScopes || [])], [rScopes]);
   const misScopes = useMemo(() => reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s)), [app.currentUser?.customData?.scopes, reqScopes]);
-  const fullScreen = useMediaQuery(theme => theme.breakpoints.down('md'));
+  const fullScreen = useMediaQuery(theme => theme.breakpoints.down('md'), { noSsr: true });
   const navigate = useNavigate();
   const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
