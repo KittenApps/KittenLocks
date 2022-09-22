@@ -102,9 +102,9 @@ const MyWearers = memo(({ setSubNav }) => {
 });
 MyWearers.displayName = 'MyWearers';
 
-function PermissionWrapper({ setSubNav, onMissingScopes }){
+function PermissionWrapper({ setSubNav }){
   return (
-    <RequiredScopes rScopes={['keyholder']} onMissingScopes={onMissingScopes} component="wearer">
+    <RequiredScopes rScopes={['keyholder']} component="wearer">
       <MyWearers setSubNav={setSubNav}/>
     </RequiredScopes>
   );

@@ -198,9 +198,9 @@ const ChasterEvent = memo(() => {
 });
 ChasterEvent.displayName = 'ChasterEvent';
 
-function PermissionWrapper({ onMissingScopes }){
+function PermissionWrapper(){
   return (
-    <RequiredScopes rScopes={[]} onMissingScopes={onMissingScopes} component="event">
+    <RequiredScopes rScopes={[]} component="event">
       <ChasterEvent/>
     </RequiredScopes>
   );

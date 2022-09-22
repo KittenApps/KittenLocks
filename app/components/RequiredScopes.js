@@ -1,9 +1,11 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useRealmApp } from '../RealmApp';
 import { Paper, Skeleton } from '@mui/material';
+import { useOutletContext } from 'react-router-dom';
 import LoginModal from './LoginModal';
 
-function RequiredScopes({ rScopes, onMissingScopes, component, children }){
+function RequiredScopes({ rScopes, component, children }){
+  const onMissingScopes = useOutletContext();
   const app = useRealmApp();
   const scopes = useMemo(() => app.currentUser?.customData?.scopes, [app.currentUser?.customData?.scopes]);
   const [openLogin, showLogin] = useState(null);

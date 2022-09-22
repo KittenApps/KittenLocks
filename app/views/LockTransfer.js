@@ -186,9 +186,9 @@ const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-compl
 });
 LockTransfer.displayName = 'LockTransfer';
 
-function PermissionWrapper({ onMissingScopes }){
+function PermissionWrapper(){
   return (
-    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="trans">
+    <RequiredScopes rScopes={['locks']} component="trans">
       <LockTransfer/>
     </RequiredScopes>
   );

@@ -9,7 +9,7 @@ import { Link as ScrollLink } from 'react-scroll';
 const drawerWidth = 250;
 
 const NLink = forwardRef(({ ...props }, ref) => {
-  const NLinkClassName = useCallback(({ isActive }) => [props.className, isActive ? 'Mui-selected' : null].filter(Boolean).join(' '), [props.className]);
+  const NLinkClassName = useCallback(({ isActive, isPending }) => [props.className, isActive ? 'Mui-selected' : null, isPending ? 'Mui-disabled' : null].filter(Boolean).join(' '), [props.className]);
   return <NavLink ref={ref} {...props} className={NLinkClassName}/>;
 });
 NLink.displayName = 'NLink';

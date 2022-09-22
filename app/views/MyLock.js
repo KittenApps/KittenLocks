@@ -71,9 +71,9 @@ const MyLock = memo(({ setSubNav }) => {
 });
 MyLock.displayName = 'MyLock';
 
-function PermissionWrapper({ setSubNav, onMissingScopes }){
+function PermissionWrapper({ setSubNav }){
   return (
-    <RequiredScopes rScopes={['locks']} onMissingScopes={onMissingScopes} component="lock">
+    <RequiredScopes rScopes={['locks']} component="lock">
       <MyLock setSubNav={setSubNav}/>
     </RequiredScopes>
   );

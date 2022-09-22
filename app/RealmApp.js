@@ -8,7 +8,7 @@ import { RetryLink } from '@apollo/client/link/retry';
 import * as Sentry from '@sentry/react';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
-import AppIcon from '../assets/appicon.webp';
+import LoadingPage from './components/LoadingPage';
 
 const VERSION = '0.1.2';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
@@ -185,15 +185,7 @@ export function RealmAppProvider({ children }){
     localForage.getItem('version').then(v => (v === VERSION ? persistor.restore() : persistor.purge().then(() => localForage.setItem('version', VERSION)))).then(() => setCacheReady(true));
   }, []);
 
-  if (!cacheReady){
-    return (
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', color: 'white', fontFamily: 'Roboto, Helvetica, Arial, sans-serif' }}>
-        <h1>KittenLocks</h1>
-        <img src={AppIcon} alt="KittenLocks icon" style={{ maxWidth: '100%', maxHeight: '70%' }}/>
-        <h4>loading...</h4>
-      </div>
-    );
-  }
+  if (!cacheReady) return <LoadingPage/>;
 
   const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
     if (body.includes('@noauth')) return; // unauthenticated Chaster API

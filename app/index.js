@@ -2,7 +2,7 @@ import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RealmAppProvider } from './RealmApp.js';
 import App from './App';
-import { BrowserRouter, createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
+import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import '@fontsource/roboto/latin-300.css';
@@ -48,11 +48,9 @@ document.body.append(div);
 createRoot(div).render(
   <StrictMode>
     <Sentry.ErrorBoundary fallback={errorFallback} showDialog>
-      <BrowserRouter>
-        <RealmAppProvider>
-          <App/>
-        </RealmAppProvider>
-      </BrowserRouter>
+      <RealmAppProvider>
+        <App/>
+      </RealmAppProvider>
     </Sentry.ErrorBoundary>
   </StrictMode>
 );
