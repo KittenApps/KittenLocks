@@ -1,8 +1,8 @@
 import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Alert, AlertTitle, Button, IconButton, Stack, TextField, useMediaQuery } from '@mui/material';
+import { Button, IconButton, Stack, useMediaQuery } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Home from './views/Home';
 import Discord from './views/Discord';
@@ -29,17 +29,6 @@ const InstallAction = memo(({ index, installPrompt }) => {
   );
 });
 InstallAction.displayName = 'installAction';
-
-function ErrorFallback({ error, componentStack, resetError }){
-  return (
-    <Alert severity="error" sx={{ '& .MuiAlert-message': { width: '100%' } }}>
-      <AlertTitle>Oops, something went wrong! :(</AlertTitle>
-      <p><b>Please give the following information to a hard working tech kitten.</b></p>
-      <TextField multiline fullWidth label="Error message" InputProps={{ readOnly: true }} value={`\`\`\`\n${error.toString()}${componentStack}\n\`\`\``}/>
-      <Button variant="contained" onClick={resetError} fullWidth sx={{ mt: 1 }}>Try to reset invalid user input state and go back ...</Button>
-    </Alert>
-  );
-}
 
 function App(){
   const notistackRef = useRef(null);
@@ -84,23 +73,27 @@ function App(){
   }, [handleInstallPrompt]);
 
   const [subNav, setSubNav] = useState(null);
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="*" element={<RootTemplate isDesktop={isDesktop} subNav={subNav} ErrorFallback={ErrorFallback}/>} errorElement={<ErrorFallback/>}>
-        <Route path="lock/*" element={<Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense>}/>
-        <Route path="wearers/*" element={<Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense>}/>
-        <Route path="locks" element={<Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>}>
-          <Route path=":username/*" element={<Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense>}/>
-        </Route>
-        <Route path="event/*" element={<Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense>}/>
-        <Route path="charts/*" element={<Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense>}/>
-        <Route path="trans/*" element={<Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense>}/>
-        <Route path="discord/*" element={<Discord open={open}/>}/>
-        <Route path="support/*" element={<Support/>}/>
-        <Route path="*" element={<Home/>} />
-      </Route>
-    )
-  );
+  const router = createBrowserRouter([
+    {
+      path: '/*',
+      element: <RootTemplate isDesktop={isDesktop} subNav={subNav}/>,
+      children: [
+        { path: 'lock/*', element: <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense> },
+        { path: 'wearers/*', element: <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense> },
+        {
+          path: 'locks',
+          element: <Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>,
+          children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense> }]
+        },
+        { path: 'event/*', element: <Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense> }, // move suspense outside routerProvider
+        { path: 'charts/*', element: <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense> },
+        { path: 'trans/*', element: <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense> },
+        { path: 'discord/*', element: <Discord open={open}/> },
+        { path: 'support/*', element: <Support/> },
+        { path: '*', element: <Home/> }
+      ]
+    }
+  ]);
 
   return (
     <ThemeProvider theme={theme}>

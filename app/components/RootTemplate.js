@@ -1,7 +1,7 @@
 import { memo, useCallback, useState } from 'react';
 import { ErrorBoundary } from '@sentry/react';
 import { styled } from '@mui/material/styles';
-import { Box, CssBaseline, Toolbar } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CssBaseline, TextField, Toolbar } from '@mui/material';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useRealmApp } from '../RealmApp';
 import AppHeader from './AppHeader';
@@ -30,7 +30,18 @@ const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isD
   })
 }));
 
-function RootTemplate({ isDesktop, subNav, ErrorFallback }){
+function ErrorFallback({ error, componentStack, resetError }){
+  return (
+    <Alert severity="error" sx={{ '& .MuiAlert-message': { width: '100%' } }}>
+      <AlertTitle>Oops, something went wrong! :(</AlertTitle>
+      <p><b>Please give the following information to a hard working tech kitten.</b></p>
+      <TextField multiline fullWidth label="Error message" InputProps={{ readOnly: true }} value={`\`\`\`\n${error.toString()}${componentStack}\n\`\`\``}/>
+      <Button variant="contained" onClick={resetError} fullWidth sx={{ mt: 1 }}>Try to reset invalid user input state and go back ...</Button>
+    </Alert>
+  );
+}
+
+function RootTemplate({ isDesktop, subNav }){
   const app = useRealmApp();
   const [open, setOpen] = useState(isDesktop);
 
