@@ -1,8 +1,9 @@
 import { Fragment, forwardRef, memo, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Collapse, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SwipeableDrawer, Typography } from '@mui/material';
-import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, EmojiEventsTwoTone, ExpandLess, ExpandMore, FavoriteTwoTone as HeartIcon,
-         HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon, Lock as LockIcon, Restore, Search } from '@mui/icons-material';
+import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, EmojiEventsTwoTone,
+         ExpandLess, ExpandMore, FavoriteTwoTone as HeartIcon, HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon,
+         LockClockTwoTone as LockClockIcon, Lock as LockIcon, Restore, Search } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
 
@@ -36,7 +37,11 @@ const ResponsiveDrawer = memo(({ isDesktop, open, handleDrawerOpen, handleDrawer
       {children}
     </Drawer>
   );
-  return <SwipeableDrawer elevation={2} sx={{ zIndex: t => t.zIndex.drawer, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>{children}</SwipeableDrawer>;
+  return (
+    <SwipeableDrawer elevation={2} sx={{ zIndex: t => t.zIndex.drawer, '& .MuiDrawer-paper': { maxWidth: '85%' } }} anchor="left" open={open} onClose={handleDrawerClose} onOpen={handleDrawerOpen}>
+      {children}
+    </SwipeableDrawer>
+  );
 });
 ResponsiveDrawer.displayName = 'ResponsiveDrawer';
 
@@ -124,7 +129,9 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
         </List>
       )}
       <div style={{ flexGrow: 1 }}/>
-      <Typography variant="caption" color="text.secondary" textAlign="center" mb={1}>KittenLocks v{process.env.VERSION} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)</Typography>
+      <Typography variant="caption" color="text.secondary" textAlign="center" mb={1}>
+        KittenLocks v{process.env.VERSION} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)
+      </Typography>
     </ResponsiveDrawer>
   );
 }

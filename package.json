@@ -80,7 +80,7 @@
     "workbox-webpack-plugin": "^6.5.4"
   },
   "devDependencies": {
-    "@graphql-eslint/eslint-plugin": "^3.10.7",
+    "@graphql-eslint/eslint-plugin": "3.10.7",
     "eslint": "^8.24.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
