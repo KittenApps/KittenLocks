@@ -37,13 +37,13 @@ PLocks.displayName = 'PLocks';
 function PublicLocks({ setSubNav }){
   const { username } = useParams();
   const { enqueueSnackbar } = useSnackbar();
-
-  const { data: profileData, error: profileError } = useQuery(GetPublicProfile, { variables: { username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  // ToDo: react-router data loader
+  const { data, error } = useQuery(GetPublicProfile, { variables: { username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
-    if (profileError) enqueueSnackbar(profileError.toString(), { variant: 'error' });
-  }, [profileError, enqueueSnackbar]);
+    if (error) enqueueSnackbar(error.toString(), { variant: 'error' });
+  }, [error, enqueueSnackbar]);
 
-  const notFound = useMemo(() => profileData?.profile === null, [profileData]);
+  const notFound = useMemo(() => data?.profile === null, [data]);
 
   if (notFound) return (
     <Alert severity="error" sx={{ mt: 2 }}>
@@ -55,12 +55,12 @@ function PublicLocks({ setSubNav }){
   return (
     <>
       <ScrollElement name="profile" style={{ paddingBottom: 8 }}>
-        <Typography variant="h4" gutterBottom component="p">Public profile of {profileData?.profile?.user.username || username}</Typography>
-        { profileData ? <JsonView src={profileData.profile} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300}/> }
+        <Typography variant="h4" gutterBottom component="p">Public profile of {data?.profile?.user.username || username}</Typography>
+        { data ? <JsonView src={data.profile} collapsed={2}/> : <Skeleton variant="rectangular" width="100%" height={300}/> }
       </ScrollElement>
-      <Typography variant="h4" gutterBottom component="p">Public locks of {profileData?.profile?.user.username || username}</Typography>
-      { profileData ? <PLocks userId={profileData.profile.user._id} enqueueSnackbar={enqueueSnackbar} setSubNav={setSubNav} username={profileData.profile.user.username || username}/>
-                    : <Skeleton variant="rectangular" width="100%" height={300}/> }
+      <Typography variant="h4" gutterBottom component="p">Public locks of {data?.profile?.user.username || username}</Typography>
+      { data ? <PLocks userId={data.profile.user._id} enqueueSnackbar={enqueueSnackbar} setSubNav={setSubNav} username={data.profile.user.username || username}/>
+             : <Skeleton variant="rectangular" width="100%" height={300}/> }
     </>
   );
 }

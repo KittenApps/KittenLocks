@@ -16,8 +16,9 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
   const [viewSource, setViewSource] = useState(false);
   const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const { enqueueSnackbar } = useSnackbar();
-  const date = useMemo(() => day.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Los_Angeles' }), [day]); // eslint-disable-line no-undefined
-  const dateLong = useMemo(() => day.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Los_Angeles', year: 'numeric' }), [day]); // eslint-disable-line no-undefined
+  const date = useMemo(() => day.toLocaleDateString(void 0, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Los_Angeles' }), [day]);
+  const dateLong = useMemo(() => day.toLocaleDateString(void 0, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Los_Angeles', year: 'numeric' }), [day]);
+  // ToDo: react-router data loader
   const { data, error, refetch } = useQuery(GetChasterEvent, { variables: { date: day.toISOString(), realmId: app.currentUser.id },
                                                                fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
@@ -184,8 +185,8 @@ const ChasterEvent = memo(() => {
   const app = useRealmApp();
   const accordion = useMemo(() => {
     const a = [];
-    const start = 1642147200000; // 2022-01-14T08:00:00.000Z
-    const now = Math.min(Date.now(), 1644911999999); // 2022-02-15T07:59:59.999Z
+    const start = 1664611200000; // 2022-10-01T08:00:00.000Z
+    const now = Math.min(Date.now(), 1667289599999); // 2022-11-01T07:59:59.999Z
     for (let i = now; i > start; i -= 86400000) a.push(<EventDay expanded={i === now} day={new Date(i)} app={app} key={i}/>);
     return a;
   }, [app]);

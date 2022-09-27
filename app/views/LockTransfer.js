@@ -62,7 +62,7 @@ const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-compl
 
   const [oldLockID, setOldLockID] = useState('');
   const [isLockOkay, setLockOkay] = useState(false);
-
+  // ToDo: react-router data loader
   const { data, error, refetch } = useQuery(GetMyLocks, { variables: { status: 'active', realmId: app.currentUser.id }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (data) setOldLockID(data.locks[0]?._id || '');
