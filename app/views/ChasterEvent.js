@@ -82,17 +82,13 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
                     <li>Received votes points: {data.chasterEvent.categories.receive_votes}/200</li>
                     <li>Vote for user tasks points: {data.chasterEvent.categories.task_votes}/50</li>
                     <li>Peer verification points: {data.chasterEvent.categories.peer_verifications}/200</li>
-                    <li>Discord Events bonus points: + {data.chasterEvent.categories.discord_events}</li>
                   </ul>
                 }
                 arrow
                 placement="bottom-end"
                 componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
               >
-                <Stack direction="row" width={90}>
-                  <Typography variant="caption" color={total === 610 ? 'lightgreen' : 'white'} width={52}>{total}/610</Typography>
-                  <Typography variant="caption" color={data.chasterEvent.categories.discord_events > 0 ? 'lightgreen' : 'white'} width={38}>+ {data.chasterEvent.categories.discord_events}</Typography>
-                </Stack>
+                <Typography variant="caption" color={total === 610 ? 'lightgreen' : 'white'} width={52}>{total}/610</Typography>
               </Tooltip>
             </>
           ) }
@@ -168,11 +164,6 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
               <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.verify_picture === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.verify_picture / 2}/></Box>
               <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.verify_picture === 200 ? 'lightgreen' : 'white'}>{data.chasterEvent.actions.verify_picture}/200</Typography></Box>
             </Box>
-            <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>Discord Events:</b></Box>
-              <Box width="100%" mx={1}><LinearProgress variant={`${data.chasterEvent.actions.discord_event > 0 ? 'in' : ''}determinate`} color={data.chasterEvent.actions.discord_event > 0 ? 'success' : 'primary'} value={0}/></Box>
-              <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.discord_event > 0 ? 'lightgreen' : 'white'}>+ {data.chasterEvent.actions.discord_event}</Typography></Box>
-            </Box>
           </>
         )) : <Skeleton variant="rectangular" width="100%" height={144}/>}
       </AccordionDetails>
@@ -192,7 +183,7 @@ const ChasterEvent = memo(() => {
   }, [app]);
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <Typography variant="h4" gutterBottom component="p">Your Chastity Month Event Progress 💖:</Typography>
+      <Typography variant="h4" gutterBottom component="p">Your Locktober 2022 Event Progress 🎃:</Typography>
       {accordion}
     </Paper>
   );
