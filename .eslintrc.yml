@@ -371,6 +371,9 @@ rules:
   unicorn/numeric-separators-style:
     - error
     - onlyIfContainsSeparator: true
+  unicorn/switch-case-braces:
+    - error
+    - avoid
   sonarjs/no-duplicate-string: 
     - error
     - 7
