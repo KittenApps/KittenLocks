@@ -1,9 +1,9 @@
 /* eslint-disable unicorn/filename-case, camelcase */
 /* eslint-env node */
-import { fileURLToPath } from 'node:url'; // eslint-disable-line import/no-unresolved
+import { fileURLToPath } from 'node:url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import FaviconsWebpackPlugin from '@silizia/favicons-webpack-plugin'; // eslint-disable-line import/default
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import { GenerateSW } from 'workbox-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
 
