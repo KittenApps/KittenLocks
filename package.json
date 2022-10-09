@@ -48,8 +48,8 @@
     "@sentry/react": "^7.14.2",
     "@sentry/tracing": "^7.14.2",
     "@sentry/webpack-plugin": "^1.19.0",
-    "@silizia/react-json-view": "^2.0.0",
     "@silizia/react-viewer": "^4.2.0",
+    "@textea/json-viewer": "^2.9.0",
     "apollo-link-rest": "^0.9.0-rc.1",
     "apollo3-cache-persist": "^0.14.1",
     "autosuggest-highlight": "^3.3.4",
@@ -81,13 +81,13 @@
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.11.2",
-    "eslint": "^8.24.0",
+    "eslint": "^8.25.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.15.0",
-    "eslint-plugin-unicorn": "^44.0.1",
+    "eslint-plugin-unicorn": "^44.0.2",
     "webpack-dev-server": "^4.11.1"
   },
   "overrides": {
