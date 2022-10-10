@@ -3,7 +3,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
-import { BSON } from 'realm-web';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { Outlet, useMatch, useNavigate } from 'react-router-dom';
@@ -79,7 +78,7 @@ function PublicLocks({ isDesktop }){
   const [page, setPage] = useState(0);
   useEffect(() => {
     if (app.currentUser){
-      getAllKittenLocksUsers({ variables: { userId: new BSON.ObjectID(app.currentUser.customData._id) } });
+      getAllKittenLocksUsers();
       if (new Set(app.currentUser.customData.scopes).has('keyholder')){
         getAllWearers({ variables: { realmId: app.currentUser.id, status: 'locked', page, limit: 50 } });
       }

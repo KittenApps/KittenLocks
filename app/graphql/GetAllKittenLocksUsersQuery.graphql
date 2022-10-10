@@ -1,5 +1,5 @@
-query GetAllKittenLocksUsers($userId: ObjectId!) {
-  users(query: {_id_ne: $userId}, limit: 1000, sortBy: USERNAME_ASC) {
+query GetAllKittenLocksUsers {
+  users(limit: 1000, sortBy: USERNAME_ASC) {
     _id
     username
     avatarUrl
