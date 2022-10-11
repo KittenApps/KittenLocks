@@ -37,7 +37,7 @@ PLocks.displayName = 'PLocks';
 function PublicLocks({ setSubNav }){
   const { username } = useParams();
   const { enqueueSnackbar } = useSnackbar();
-  // ToDo: react-router data loader
+
   const { data, error } = useQuery(GetPublicProfile, { variables: { username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
     if (error) enqueueSnackbar(error.toString(), { variant: 'error' });

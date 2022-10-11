@@ -18,7 +18,6 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
   const { enqueueSnackbar } = useSnackbar();
   const date = useMemo(() => day.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Los_Angeles' }), [day]);
   const dateLong = useMemo(() => day.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Los_Angeles', year: 'numeric' }), [day]);
-  // ToDo: react-router data loader
   const { data, error, refetch } = useQuery(GetChasterEvent, { variables: { date: day.toISOString(), realmId: app.currentUser.id },
                                                                fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {
