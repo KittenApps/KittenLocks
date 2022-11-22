@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Button, IconButton, Stack, useMediaQuery } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { wrapCreateBrowserRouter } from '@sentry/react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Home from './views/Home';
 import Discord from './views/Discord';
@@ -73,7 +74,7 @@ function App(){
   }, [handleInstallPrompt]);
 
   const [subNav, setSubNav] = useState(null);
-  const router = createBrowserRouter([
+  const router = wrapCreateBrowserRouter(createBrowserRouter)([
     {
       path: '/*',
       element: <RootTemplate isDesktop={isDesktop} subNav={subNav}/>,

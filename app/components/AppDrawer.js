@@ -1,9 +1,8 @@
 import { Fragment, forwardRef, memo, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Collapse, Divider, Drawer, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SwipeableDrawer, Typography } from '@mui/material';
-import { AccountBox, EnhancedEncryptionTwoTone as AddLockIcon, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, EmojiEventsTwoTone,
-         ExpandLess, ExpandMore, FavoriteTwoTone as HeartIcon, HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon,
-         LockClockTwoTone as LockClockIcon, Lock as LockIcon, Restore, Search } from '@mui/icons-material';
+import { AccountBox, ShowChart as ChartIcon, ChatTwoTone as ChatIcon, ChevronLeft, CompareArrows as CompareIcon, EmojiEventsTwoTone, ExpandLess, ExpandMore, FavoriteTwoTone as HeartIcon,
+         HomeTwoTone as HomeIcon, ImageTwoTone, InfoTwoTone, Key as KeyIcon, LockTwoTone as Lock2Icon, LockClockTwoTone as LockClockIcon, Lock as LockIcon, Restore, Search } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
 
