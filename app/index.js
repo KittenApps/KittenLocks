@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { RealmAppProvider } from './RealmApp.js';
 import App from './App';
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
+import { ErrorBoundary as SentryErrorBoundary, init as initSentry, reactRouterV6Instrumentation } from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import '@fontsource/roboto/latin-300.css';
 import '@fontsource/roboto/latin-400.css';
@@ -29,12 +29,12 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', {
   }
 });
 
-if (process.env.CI) Sentry.init({
+if (process.env.CI) initSentry({
   dsn: process.env.SENTRY,
   release: `kittenlocks@${process.env.VERSION}+${process.env.COMMIT_REF}`,
   integrations: [
     new BrowserTracing({
-     routingInstrumentation: Sentry.reactRouterV6Instrumentation(useEffect, useLocation, useNavigationType, createRoutesFromChildren, matchRoutes)
+     routingInstrumentation: reactRouterV6Instrumentation(useEffect, useLocation, useNavigationType, createRoutesFromChildren, matchRoutes)
     })
   ],
   tracesSampleRate: 1,
@@ -47,10 +47,10 @@ document.body.append(div);
 
 createRoot(div).render(
   <StrictMode>
-    <Sentry.ErrorBoundary fallback={errorFallback} showDialog>
+    <SentryErrorBoundary fallback={errorFallback} showDialog>
       <RealmAppProvider>
         <App/>
       </RealmAppProvider>
-    </Sentry.ErrorBoundary>
+    </SentryErrorBoundary>
   </StrictMode>
 );

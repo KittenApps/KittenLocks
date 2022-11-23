@@ -5,7 +5,7 @@ import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@ap
 import { RestLink } from 'apollo-link-rest';
 import { setContext } from '@apollo/client/link/context';
 import { RetryLink } from '@apollo/client/link/retry';
-import * as Sentry from '@sentry/react';
+import { setUser as setSentryUser } from '@sentry/react';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localForage from 'localforage';
 import LoadingPage from './components/LoadingPage';
@@ -165,7 +165,7 @@ export function RealmAppProvider({ children }){
   const [lastAuth, setLastAuth] = useState(0);
 
   useEffect(() => {
-    Sentry.setUser(currentUser?.customData?.username);
+    setSentryUser({ username: currentUser?.customData?.username, id: currentUser?.customData?._id });
   }, [currentUser]);
 
   const logIn = useCallback(async credentials => {
