@@ -2,14 +2,14 @@ import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from '
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Button, IconButton, Stack, useMediaQuery } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import Home from './views/Home';
 import Discord from './views/Discord';
 import Support from './views/Support';
 import LoadingPage from './components/LoadingPage';
-import RootTemplate from './components/RootTemplate';
+import Layout from './components/Layout';
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
@@ -76,9 +76,10 @@ function App(){
   const [subNav, setSubNav] = useState(null);
   const router = wrapCreateBrowserRouter(createBrowserRouter)([
     {
-      path: '/*',
-      element: <RootTemplate isDesktop={isDesktop} subNav={subNav}/>,
+      path: '/',
+      element: <Layout isDesktop={isDesktop} subNav={subNav}/>,
       children: [
+        { index: true, element: <Home/> },
         { path: 'lock/*', element: <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense> },
         { path: 'wearers/*', element: <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense> },
         {
@@ -86,12 +87,12 @@ function App(){
           element: <Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>,
           children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense> }]
         },
-        { path: 'event/*', element: <Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense> }, // move suspense outside routerProvider
+        { path: 'event/*', element: <Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense> },
         { path: 'charts/*', element: <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense> },
         { path: 'trans/*', element: <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense> },
         { path: 'discord/*', element: <Discord open={open}/> },
         { path: 'support/*', element: <Support/> },
-        { path: '*', element: <Home/> }
+        { path: '*', loader: () => redirect('/') }
       ]
     }
   ]);
