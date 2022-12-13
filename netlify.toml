@@ -2,9 +2,6 @@
     publish = "public"
     command = "npm run build"
 
-[functions]
-  directory = "SuperKittenBot"
-
 [[redirects]]
     from = "https://kittenlocks.netlify.app/*"
     to = "https://www.kittenlocks.de/:splat"
