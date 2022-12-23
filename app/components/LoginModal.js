@@ -9,7 +9,7 @@ import { Close, ExpandMore } from '@mui/icons-material';
 import ScopeBadges from './ScopeBadges';
 
 const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
-const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
+const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)' };
 
 const ScopeSwitch = memo(({ s, scopes, setScopes, reqScopes, val, mb, text, i }) => {
   const handleChange = useCallback(e => {
@@ -37,7 +37,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const misScopes = useMemo(() => reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s)), [app.currentUser?.customData?.scopes, reqScopes]);
   const fullScreen = useMediaQuery(theme => theme.breakpoints.down('md'), { noSsr: true });
   const navigate = useNavigate();
-  const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
+  const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
       if (new Set(reqScopes).has(s)) return 3;
       return component ? 2 : 3;
@@ -48,7 +48,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
 
   const [scopes, setScopes] = useState(new Set([...exScopes, ...reqScopes]));
 
-  const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
+  const [advanced, setAdvanced] = useState(scopes.has('shared_locks'));
   const handleAdvancedChange = useCallback(() => setAdvanced(!advanced), [advanced]);
 
   const missingScopesAction = useCallback(grantedScopes => {
@@ -68,10 +68,11 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
 
   const handleLogin = useCallback(() => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
-    const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
+    const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks']);
     const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.has(x)).join('%20');
     const redUrl = `${window.location.origin}/static/html/oauthcb/`;
     const rUrl = encodeURIComponent(redUrl);
+    console.log(`https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-072783&redirect_uri=${rUrl}&response_type=code&scope=${sc}&state=${state}`);
     window.open(
       `https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-072783&redirect_uri=${rUrl}&response_type=code&scope=${sc}&state=${state}`,
       'Chaster Login',
@@ -132,7 +133,6 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
           <AccordionDetails>
             <FormGroup>
               <ScopeSwitch s="shared_locks" i={3} mb={1} text="and manage your Chaster shared locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
-              <ScopeSwitch s="messaging" i={4} mb={0} text="your Chaster messaging" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
             </FormGroup>
           </AccordionDetails>
         </Accordion>

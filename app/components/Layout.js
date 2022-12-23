@@ -9,7 +9,7 @@ import AppDrawer from './AppDrawer';
 import Login from './LoginModal';
 
 const drawerWidth = 250;
-const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks', 'messaging']);
+const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks']);
 
 const Main = styled('main', { shouldForwardProp: p => p !== 'open' && p !== 'isDesktop' })(({ theme, open, isDesktop }) => ({
   flexGrow: 1,
