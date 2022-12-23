@@ -30,9 +30,9 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', {
   }
 });
 
-if (process.env.CI) initSentry({
-  dsn: process.env.SENTRY,
-  release: `kittenlocks@${process.env.VERSION}+${process.env.COMMIT_REF}`,
+if (import.meta.env.VITE_CI) initSentry({
+  dsn: import.meta.env.VITE_ENV.SENTRY,
+  release: `kittenlocks@${VITE_ENV.VERSION}+${import.meta.env.VITE_COMMIT_REF}`,
   integrations: [
     new BrowserTracing({
      routingInstrumentation: reactRouterV6Instrumentation(useEffect, useLocation, useNavigationType, createRoutesFromChildren, matchRoutes)
@@ -42,12 +42,7 @@ if (process.env.CI) initSentry({
   ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded', 'ResizeObserver loop completed with undelivered notifications.']
 });
 
-const div = document.createElement('div');
-div.id = 'container';
-document.body.style.backgroundColor = '#272533';
-document.body.append(div);
-
-createRoot(div).render(
+createRoot(document.querySelector('#root')).render(
   <StrictMode>
     <SentryErrorBoundary fallback={errorFallback} showDialog>
       <RealmAppProvider>
