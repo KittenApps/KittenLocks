@@ -128,7 +128,7 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
       )}
       <div style={{ flexGrow: 1 }}/>
       <Typography variant="caption" color="text.secondary" textAlign="center" mb={1}>
-        KittenLocks v{process.env.VERSION} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${process.env.COMMIT_REF}`} target="_blank" rel="noreferrer">{process.env.COMMIT_REF.slice(0, 7)}</Link>)
+        KittenLocks v{VITE_ENV.VERSION} (<Link href={`https://github.com/KittenApps/KittenLocks/commit/${import.meta.env.VITE_COMMIT_REF}`} target="_blank" rel="noreferrer">{import.meta.env.VITE_COMMIT_REF.slice(0, 7)}</Link>)
       </Typography>
     </ResponsiveDrawer>
   );

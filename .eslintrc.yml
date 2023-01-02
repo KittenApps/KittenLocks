@@ -19,7 +19,7 @@ env:
   browser: true
   es2021: true
 globals:
-  process: readonly
+  VITE_ENV: readonly
 parserOptions:
   ecmaFeatures:
     jsx: true

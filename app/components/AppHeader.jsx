@@ -89,7 +89,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
   useEffect(() => {
     if ('serviceWorker' in navigator){
       const onMessage = event => event.data && event.data.type === 'CLIENT_RELOAD' && window.location.reload();
-      if (noOffline || process.env.BRANCH === 'beta' || process.env.NODE_ENV !== 'production'){
+      if (noOffline || import.meta.env.VITE_BRANCH === 'beta' || import.meta.env.DEV){
         unregister();
         if (navigator.serviceWorker) navigator.serviceWorker.removeEventListener('message', onMessage);
       } else register({
@@ -148,7 +148,7 @@ function AppHeader({ isDesktop, setOpen, showLogin, open }){
             { app.currentUser && <MenuItem onClick={handleProfileMenuLogout}><ListItemIcon><Logout/></ListItemIcon>Log out</MenuItem> }
             <Divider style={{ marginBottom: 0 }}/>
             <ListSubheader sx={{ textAlign: 'center', lineHeight: '32px' }}>Advanced Settings:</ListSubheader>
-            { process.env.BRANCH !== 'beta' && process.env.NODE_ENV === 'production' && (
+            { import.meta.env.VITE_BRANCH !== 'beta' && import.meta.env.PROD && (
               <MenuItem dense onClick={handleToggleOffline}>
                 <ListItemIcon><Checkbox sx={{ p: 0 }} disabled={!('serviceWorker' in navigator)} checked={!noOffline} icon={<BookmarkBorder/>} checkedIcon={<Bookmark/>}/></ListItemIcon>
                 {noOffline ? 'enable offline PWA' : 'remove PWA cache'}

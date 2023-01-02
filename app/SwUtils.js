@@ -47,7 +47,7 @@ export function unregister(){
 }
 
 export function register(config){
-  if (process.env.NODE_ENV === 'production' && process.env.BRANCH !== 'beta' && 'serviceWorker' in navigator){
+  if (import.meta.env.PROD && import.meta.env.VITE_BRANCH !== 'beta' && 'serviceWorker' in navigator){
     const swUrl = '/service-worker.js';
     return window.location.hostname === 'localhost' ? checkValidServiceWorker(swUrl, config) : registerValidSW(swUrl, config);
   }
