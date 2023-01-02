@@ -1,6 +1,7 @@
+/* eslint-disable unicorn/filename-case */
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { RealmAppProvider } from './RealmApp.js';
+import { RealmAppProvider } from './RealmApp';
 import App from './App';
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
 import { ErrorBoundary as SentryErrorBoundary, init as initSentry, reactRouterV6Instrumentation } from '@sentry/react';
@@ -40,6 +41,7 @@ if (process.env.CI) initSentry({
   tracesSampleRate: 1,
   ignoreErrors: ['AbortError', 'ResizeObserver loop limit exceeded', 'ResizeObserver loop completed with undelivered notifications.']
 });
+
 const div = document.createElement('div');
 div.id = 'container';
 document.body.style.backgroundColor = '#272533';

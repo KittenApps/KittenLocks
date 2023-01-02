@@ -11,7 +11,7 @@ const config = {
   mode: process.env.NODE_ENV || 'development',
   context: fileURLToPath(new URL('.', import.meta.url)),
   entry: {
-    index: './app/index.js',
+    index: './app/index.jsx',
     sw_push: './assets/push-worker.js'
   },
   output: {
@@ -27,6 +27,9 @@ const config = {
         test: /\.jsx?$/ui,
         exclude: /node_modules/u,
         include: fileURLToPath(new URL('app', import.meta.url)),
+        resolve: {
+          extensions: ['.js', '.jsx']
+        },
         use: {
           loader: 'babel-loader',
           options: {

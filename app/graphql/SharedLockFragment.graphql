@@ -1,4 +1,4 @@
-# import "./ChasterUserFragment.graphql"
+#import "./ChasterUserFragment.graphql"
 
 fragment SharedLockFragment on SharedLock {
   _id # The shared lock id

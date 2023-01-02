@@ -28,6 +28,9 @@ parserOptions:
 settings:
   react:
     version: detect
+  import/extensions:
+    - .js
+    - .jsx
 overrides:
   - files: 
     - '*.graphql'
@@ -281,7 +284,10 @@ rules:
     - warn
     - ignoreDeclarationSort: true
   sort-vars: error
-  spaced-comment: error
+  spaced-comment: 
+    - error
+    - always
+    - markers: ["import"]
   strict: error
   switch-colon-spacing: error
   symbol-description: error

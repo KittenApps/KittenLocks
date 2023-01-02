@@ -1,4 +1,4 @@
-# import "./LockFragment.graphql"
+#import "./LockFragment.graphql"
 
 query GetMyWearers($status: String, $realmId: String, $limit: Int, $page: Int) {
   wearers(input: { status: $status, page: $page, limit: $limit }, myWearers: $realmId) @rest(type: "Wearers", path: "/keyholder/locks/search", method: "POST") {
