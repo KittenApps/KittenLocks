@@ -72,7 +72,6 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
     const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.has(x)).join('%20');
     const redUrl = `${window.location.origin}/static/html/oauthcb/`;
     const rUrl = encodeURIComponent(redUrl);
-    console.log(`https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-072783&redirect_uri=${rUrl}&response_type=code&scope=${sc}&state=${state}`);
     window.open(
       `https://sso.chaster.app/auth/realms/app/protocol/openid-connect/auth?client_id=kittenlocks-072783&redirect_uri=${rUrl}&response_type=code&scope=${sc}&state=${state}`,
       'Chaster Login',
