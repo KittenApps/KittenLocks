@@ -62,8 +62,12 @@ overrides:
       '@graphql-eslint/value-literals-of-correct-type': off
       '@graphql-eslint/variables-are-input-types': off
       '@graphql-eslint/variables-in-allowed-position': off
+      '@graphql-eslint/no-one-place-fragments': off
       '@graphql-eslint/no-deprecated': off
       '@graphql-eslint/alphabetize': off
+      '@graphql-eslint/lone-executable-definition':
+        - error
+        - ignore: [ 'fragment' ]
       '@graphql-eslint/match-document-filename':
         - error
         - fragment:

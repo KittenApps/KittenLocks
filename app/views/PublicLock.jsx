@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import { useQuery } from '@apollo/client';
-import { GetPublicLocks, GetPublicProfile } from '../graphql/GetPublicLocksQuery.graphql';
+import GetPublicLocks from '../graphql/GetPublicLocksQuery.graphql';
+import GetPublicProfile from '../graphql/GetPublicProfileQuery.graphql';
 import { useSnackbar } from 'notistack';
 
 const PLock = memo(({ lock }) => (

@@ -1,0 +1,35 @@
+#import "./ChasterUserFragment.graphql"
+#import "./SharedLockFragment.graphql"
+
+query GetPublicProfile($username: String!) {
+  profile(username: $username) @noauth @rest(type: "Profile", path: "/users/profile/{args.username}/details"){
+    ...ProfileFragment
+  }
+}
+
+fragment ProfileFragment on Profile {
+  user @type(name: "ChasterUser") {
+    ...ChasterUserFragment
+  }
+  stats
+  achievements @type(name: "Achievement") {
+    ...AchievementFragment
+  }
+  sharedLocks @type(name: "SharedLock") {
+    ...SharedLockFragment
+  }
+  chastikeyStats
+}
+
+fragment AchievementFragment on Achievement {
+  slug
+  granted
+  progress
+  total
+  grantedAt
+  name
+  description
+  category
+  progressEnabled
+  hideIfNotGranted
+}
