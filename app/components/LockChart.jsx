@@ -1,5 +1,6 @@
 import { Suspense, lazy, memo, useEffect, useState } from 'react';
 import { Skeleton } from '@mui/material';
+
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ './Chart'));
 
 function LockChart({ history, startTime, startRem }){

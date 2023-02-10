@@ -1,6 +1,7 @@
 import { Suspense, lazy, memo, useCallback, useState } from 'react';
 import { Alert, Button, Paper, Skeleton, Typography } from '@mui/material';
 import { UploadFileTwoTone } from '@mui/icons-material';
+
 const Chart = lazy(() => import(/* webpackChunkName: "lock_chart" */ '../components/Chart'));
 
 function PublicCharts(){

@@ -10,6 +10,7 @@ import Discord from './views/Discord';
 import Support from './views/Support';
 import LoadingPage from './components/LoadingPage';
 import Layout from './components/Layout';
+
 const MyLock = lazy(() => import(/* webpackChunkName: "my_lock" */ './views/MyLock'));
 const MyWearer = lazy(() => import(/* webpackChunkName: "my_wearer" */ './views/MyWearers'));
 const PublicLocks = lazy(() => import(/* webpackChunkName: "public_locks" */ './views/PublicLocks'));
