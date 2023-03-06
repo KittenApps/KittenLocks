@@ -43,10 +43,10 @@
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.11.11",
-    "@mui/lab": "^5.0.0-alpha.121",
-    "@mui/material": "^5.11.11",
-    "@sentry/react": "^7.39.0",
-    "@sentry/tracing": "^7.39.0",
+    "@mui/lab": "^5.0.0-alpha.122",
+    "@mui/material": "^5.11.12",
+    "@sentry/react": "^7.41.0",
+    "@sentry/tracing": "^7.41.0",
     "@sentry/webpack-plugin": "^1.20.0",
     "@silizia/react-viewer": "^4.2.1",
     "@textea/json-viewer": "^2.14.0",
@@ -61,7 +61,7 @@
     "favicons-webpack-plugin": "^6.0.0",
     "graphql": "^16.6.0",
     "highcharts": "^10.3.3",
-    "highcharts-react-official": "^3.1.0",
+    "highcharts-react-official": "^3.2.0",
     "html-webpack-plugin": "^5.5.0",
     "localforage": "^1.10.0",
     "lodash.throttle": "^4.1.1",
@@ -86,7 +86,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.18.0",
-    "eslint-plugin-unicorn": "^45.0.2",
+    "eslint-plugin-unicorn": "^46.0.0",
     "webpack-dev-server": "^4.11.1"
   }
 }
