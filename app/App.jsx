@@ -78,15 +78,15 @@ function App(){
   const router = wrapCreateBrowserRouter(createBrowserRouter)([
     {
       path: '/',
-      element: <Layout isDesktop={isDesktop} subNav={subNav}/>,
+      element: <Layout subNav={subNav}/>,
       children: [
         { index: true, element: <Home/> },
         { path: 'lock/*', element: <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense> },
         { path: 'wearers/*', element: <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense> },
         {
           path: 'locks',
-          element: <Suspense fallback={<p>loading...</p>}><PublicLocks isDesktop={isDesktop}/></Suspense>,
-          children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav} isDesktop={isDesktop}/></Suspense> }]
+          element: <Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>,
+          children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav}/></Suspense> }]
         },
         { path: 'event/*', element: <Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense> },
         { path: 'charts/*', element: <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense> },

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography } from '@mui/material';
+import { Autocomplete, Avatar, Box, CircularProgress, Paper, TextField, Typography, useMediaQuery } from '@mui/material';
 import { createFilterOptions } from '@mui/material/Autocomplete';
 import { useRealmApp } from '../RealmApp';
 import parse from 'autosuggest-highlight/parse';
@@ -19,8 +19,9 @@ import throttle from 'lodash.throttle';
 
 const fd = u => (u.discordUsername === '{}' ? '' : u.discordUsername);
 
-function PublicLocks({ isDesktop }){
+function PublicLocks(){
   const app = useRealmApp();
+  const isDesktop = useMediaQuery(theme => theme.breakpoints.up('md'), { noSsr: true });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const urlUsername = useMatch('locks/:username/*')?.params.username;
