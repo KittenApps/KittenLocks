@@ -5,6 +5,7 @@ import { Close } from '@mui/icons-material';
 import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { SnackbarProvider, useSnackbar } from 'notistack';
+import { SubNavContext } from './SubNavContext';
 import Home from './views/Home';
 import Discord from './views/Discord';
 import Support from './views/Support';
@@ -78,20 +79,20 @@ function App(){
   const router = wrapCreateBrowserRouter(createBrowserRouter)([
     {
       path: '/',
-      element: <Layout subNav={subNav}/>,
+      element: <Layout/>,
       children: [
         { index: true, element: <Home/> },
-        { path: 'lock/*', element: <Suspense fallback={<p>loading...</p>}><MyLock setSubNav={setSubNav}/></Suspense> },
-        { path: 'wearers/*', element: <Suspense fallback={<p>loading...</p>}><MyWearer setSubNav={setSubNav}/></Suspense> },
+        { path: 'lock/*', element: <Suspense fallback={<p>loading...</p>}><MyLock/></Suspense> },
+        { path: 'wearers/*', element: <Suspense fallback={<p>loading...</p>}><MyWearer/></Suspense> },
         {
           path: 'locks',
           element: <Suspense fallback={<p>loading...</p>}><PublicLocks/></Suspense>,
-          children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock setSubNav={setSubNav}/></Suspense> }]
+          children: [{ path: ':username/*', element: <Suspense fallback={<p>loading...</p>}><PublicLock/></Suspense> }]
         },
         { path: 'event/*', element: <Suspense fallback={<p>loading...</p>}><ChasterEvent/></Suspense> },
         { path: 'charts/*', element: <Suspense fallback={<p>loading...</p>}><PublicCharts/></Suspense> },
         { path: 'trans/*', element: <Suspense fallback={<p>loading...</p>} ><LockTransfer/></Suspense> },
-        { path: 'discord/*', element: <Discord open={open}/> },
+        { path: 'discord/*', element: <Discord/> },
         { path: 'support/*', element: <Support/> },
         { path: '*', loader: () => redirect('/') }
       ]
@@ -101,7 +102,9 @@ function App(){
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
-        <RouterProvider router={router} fallbackElement={<LoadingPage/>}/>
+        <SubNavContext.Provider value={{ subNav, setSubNav }}>
+          <RouterProvider router={router} fallbackElement={<LoadingPage/>}/>
+        </SubNavContext.Provider>
       </SnackbarProvider>
     </ThemeProvider>
   );

@@ -1,9 +1,10 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useContext, useState } from 'react';
 import { ErrorBoundary } from '@sentry/react';
 import { styled } from '@mui/material/styles';
 import { Alert, AlertTitle, Box, Button, CssBaseline, TextField, Toolbar, useMediaQuery } from '@mui/material';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useRealmApp } from '../RealmApp';
+import { SubNavContext } from '../SubNavContext';
 import AppHeader from './AppHeader';
 import AppDrawer from './AppDrawer';
 import Login from './LoginModal';
@@ -41,8 +42,9 @@ function ErrorFallback({ error, componentStack, resetError }){
   );
 }
 
-function RootTemplate({ subNav }){
+function RootTemplate(){
   const app = useRealmApp();
+  const { subNav } = useContext(SubNavContext);
   const isDesktop = useMediaQuery(theme => theme.breakpoints.up('md'), { noSsr: true });
   const [open, setOpen] = useState(isDesktop);
 

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useContext, useEffect, useState } from 'react';
 import { Alert, Avatar, CardHeader, FormControl, Grid, InputLabel, Link, MenuItem, Paper, Select, Skeleton, Stack, Typography } from '@mui/material';
 import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client';
 import RequiredScopes from '../components/RequiredScopes';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
+import { SubNavContext } from '../SubNavContext';
 
 const WLock = memo(({ lock, navigate }) => {
   const handleUsernameClick = useCallback(() => navigate(`/locks/${lock.user.username}`), [lock.user.username, navigate]);
@@ -53,8 +54,9 @@ const WLock = memo(({ lock, navigate }) => {
 });
 WLock.displayName = 'WLock';
 
-const MyWearers = memo(({ setSubNav }) => {
+const MyWearers = memo(() => {
   const app = useRealmApp();
+  const { setSubNav } = useContext(SubNavContext);
   const navigate = useNavigate();
   const [status, setStatus] = useState('locked');
   const { enqueueSnackbar } = useSnackbar();
@@ -102,10 +104,10 @@ const MyWearers = memo(({ setSubNav }) => {
 });
 MyWearers.displayName = 'MyWearers';
 
-function PermissionWrapper({ setSubNav }){
+function PermissionWrapper(){
   return (
     <RequiredScopes rScopes={['keyholder']} component="wearer">
-      <MyWearers setSubNav={setSubNav}/>
+      <MyWearers/>
     </RequiredScopes>
   );
 }

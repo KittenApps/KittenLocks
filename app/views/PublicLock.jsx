@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useContext, useEffect, useMemo } from 'react';
 import { Alert, AlertTitle, Skeleton, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import JsonView from '../components/JsonView';
@@ -7,6 +7,7 @@ import { useQuery } from '@apollo/client';
 import GetPublicLocks from '../graphql/GetPublicLocksQuery.graphql';
 import GetPublicProfile from '../graphql/GetPublicProfileQuery.graphql';
 import { useSnackbar } from 'notistack';
+import { SubNavContext } from '../SubNavContext';
 
 const PLock = memo(({ lock }) => (
   <ScrollElement name={lock._id}>
@@ -35,9 +36,10 @@ const PLocks = memo(({ userId, enqueueSnackbar, setSubNav, username }) => {
 });
 PLocks.displayName = 'PLocks';
 
-function PublicLocks({ setSubNav }){
+function PublicLocks(){
   const { username } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const { setSubNav } = useContext(SubNavContext);
 
   const { data, error } = useQuery(GetPublicProfile, { variables: { username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
   useEffect(() => {

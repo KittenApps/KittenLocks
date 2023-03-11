@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, FormControlLabel, Paper, Skeleton, Stack, Switch, Typography } from '@mui/material';
 import { useRealmApp } from '../RealmApp';
 import VerificationPictureGallery from '../components/VerificationGallery';
@@ -9,6 +9,7 @@ import RequiredScopes from '../components/RequiredScopes';
 import { useQuery } from '@apollo/client';
 import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
+import { SubNavContext } from '../SubNavContext';
 
 const MLock = memo(({ lock }) => (
   <ScrollElement name={lock._id}>
@@ -39,8 +40,9 @@ const lockSort = (a, b) => {
   return a.startDate < b.startDate ? 1 : -1;
 };
 
-const MyLock = memo(({ setSubNav }) => {
+const MyLock = memo(() => {
   const app = useRealmApp();
+  const { setSubNav } = useContext(SubNavContext);
   const [showArchived, setShowArchived] = useState(false);
   const handleShowArchived = useCallback(e => setShowArchived(e.target.checked), []);
 
@@ -71,10 +73,10 @@ const MyLock = memo(({ setSubNav }) => {
 });
 MyLock.displayName = 'MyLock';
 
-function PermissionWrapper({ setSubNav }){
+function PermissionWrapper(){
   return (
     <RequiredScopes rScopes={['locks']} component="lock">
-      <MyLock setSubNav={setSubNav}/>
+      <MyLock/>
     </RequiredScopes>
   );
 }
