@@ -68,4 +68,4 @@ function PublicLocks(){
   );
 }
 
-export default memo(PublicLocks);
+export const Component = memo(PublicLocks);

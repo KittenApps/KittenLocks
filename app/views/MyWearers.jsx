@@ -7,7 +7,6 @@ import { Element as ScrollElement } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
 import LockHistory from '../components/LockHistory';
 import { useQuery } from '@apollo/client';
-import RequiredScopes from '../components/RequiredScopes';
 import GetMyWearers from '../graphql/GetMyWearersQuery.graphql';
 import { useSnackbar } from 'notistack';
 import { SubNavContext } from '../SubNavContext';
@@ -104,12 +103,4 @@ const MyWearers = memo(() => {
 });
 MyWearers.displayName = 'MyWearers';
 
-function PermissionWrapper(){
-  return (
-    <RequiredScopes rScopes={['keyholder']} component="wearer">
-      <MyWearers/>
-    </RequiredScopes>
-  );
-}
-
-export default memo(PermissionWrapper);
+export const Component = MyWearers;

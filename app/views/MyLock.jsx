@@ -5,7 +5,6 @@ import VerificationPictureGallery from '../components/VerificationGallery';
 import JsonView from '../components/JsonView';
 import { Element as ScrollElement } from 'react-scroll';
 import LockHistory from '../components/LockHistory';
-import RequiredScopes from '../components/RequiredScopes';
 import { useQuery } from '@apollo/client';
 import GetMyLocks from '../graphql/GetMyLocksQuery.graphql';
 import { useSnackbar } from 'notistack';
@@ -73,12 +72,4 @@ const MyLock = memo(() => {
 });
 MyLock.displayName = 'MyLock';
 
-function PermissionWrapper(){
-  return (
-    <RequiredScopes rScopes={['locks']} component="lock">
-      <MyLock/>
-    </RequiredScopes>
-  );
-}
-
-export default memo(PermissionWrapper);
+export const Component = MyLock;

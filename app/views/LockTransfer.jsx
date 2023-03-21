@@ -5,7 +5,6 @@ import { Alert, AlertTitle, Button, FormControl, IconButton, InputAdornment, Inp
          Select, Skeleton, Stack, Step, StepContent, StepLabel, Stepper, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { CompareArrows, Search } from '@mui/icons-material';
-import RequiredScopes from '../components/RequiredScopes';
 import { useSnackbar } from 'notistack';
 import JsonView from '../components/JsonView';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
@@ -186,12 +185,4 @@ const LockTransfer = memo(() => { // eslint-disable-line sonarjs/cognitive-compl
 });
 LockTransfer.displayName = 'LockTransfer';
 
-function PermissionWrapper(){
-  return (
-    <RequiredScopes rScopes={['locks']} component="trans">
-      <LockTransfer/>
-    </RequiredScopes>
-  );
-}
-
-export default memo(PermissionWrapper);
+export const Component = LockTransfer;

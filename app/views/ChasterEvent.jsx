@@ -2,7 +2,6 @@ import { forwardRef, memo, useCallback, useEffect, useMemo, useState } from 'rea
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Grid, LinearProgress,
          Paper, Skeleton, Stack, ToggleButton, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { Code, CodeOff, ExpandMore, Refresh } from '@mui/icons-material';
-import RequiredScopes from '../components/RequiredScopes';
 import JsonView from '../components/JsonView';
 import { useRealmApp } from '../RealmApp';
 import { useQuery } from '@apollo/client';
@@ -189,12 +188,4 @@ const ChasterEvent = memo(() => {
 });
 ChasterEvent.displayName = 'ChasterEvent';
 
-function PermissionWrapper(){
-  return (
-    <RequiredScopes rScopes={[]} component="event">
-      <ChasterEvent/>
-    </RequiredScopes>
-  );
-}
-
-export default memo(PermissionWrapper);
+export const Component = ChasterEvent;

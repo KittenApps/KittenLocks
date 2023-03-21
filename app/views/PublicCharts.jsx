@@ -23,4 +23,4 @@ function PublicCharts(){
   );
 }
 
-export default memo(PublicCharts);
+export const Component = memo(PublicCharts);
