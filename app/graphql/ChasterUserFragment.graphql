@@ -22,4 +22,5 @@ fragment ChasterUserFragment on ChasterUser {
   isSuspended # Whether the user is suspended by the Chaster team
   joinedAt # Joined date (year and month, YYYY-MM)
   isNewMember # Whether the user is a new member
+  isSuspendedOrDisabled # Whether the user is suspended or disabled
 }
