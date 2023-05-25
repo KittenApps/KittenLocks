@@ -1,11 +1,11 @@
-/* eslint-disable unicorn/filename-case, camelcase */
+/* eslint-disable unicorn/filename-case, camelcase, import/no-nodejs-modules */
 /* eslint-env node */
 import { fileURLToPath } from 'node:url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import { GenerateSW } from 'workbox-webpack-plugin';
-import SentryWebpackPlugin from '@sentry/webpack-plugin';
+import { sentryWebpackPlugin } from '@sentry/webpack-plugin';
 
 const config = {
   mode: process.env.NODE_ENV || 'development',
@@ -109,10 +109,10 @@ const config = {
       </html>
   ` }),
     ...(process.env.NETLIFY ? [
-      new SentryWebpackPlugin({
+      sentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN, org: 'stella-xy', project: `${process.env.BRANCH === 'beta' ? 'beta-' : ''}kittenlocks`,
         release: `kittenlocks@${process.env.npm_package_version}${process.env.BRANCH === 'beta' ? '-beta' : ''}+${process.env.COMMIT_REF}`,
-        include: './public',
+        sourcemaps: { assets: './**', ignore: ['./node_modules/**'] },
         setCommits: { repo: 'KittenApps/KittenLocks', commit: process.env.COMMIT_REF, previousCommit: process.env.CACHED_COMMIT_REF }
       })
     ] : []),
