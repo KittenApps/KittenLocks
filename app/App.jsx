@@ -103,7 +103,11 @@ function App(){
     <ThemeProvider theme={theme}>
       <SnackbarProvider ref={notistackRef} autoHideDuration={15000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} dense={!isDesktop} action={notistackClose}>
         <SubNavContext.Provider value={{ subNav, setSubNav }}>
-          <RouterProvider router={router} future={{ v7_startTransition: true }} fallbackElement={<LoadingPage/>}/>
+          <RouterProvider
+            router={router}
+            future={{ v7_startTransition: true }} // eslint-disable-line camelcase
+            fallbackElement={<LoadingPage/>}
+          />
         </SubNavContext.Provider>
       </SnackbarProvider>
     </ThemeProvider>
