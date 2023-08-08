@@ -381,7 +381,7 @@ rules:
     - avoid
   sonarjs/no-duplicate-string: 
     - error
-    - 7
+    - threshold: 7
   sonarjs/no-nested-template-literals: off
   sonarjs/cognitive-complexity:
     - error
