@@ -190,6 +190,7 @@ export function RealmAppProvider({ children }){
   const authTokenLink = setContext(({ query: { loc: { source: { body } } } }, { headers }) => {
     if (body.includes('@noauth')) return; // unauthenticated Chaster API
     if (!currentUser?.customData) throw new Error('Login required!');
+    if (!app.currentUser.refreshAccessToken) return app.currentUser?.logOut().then(() => window.location.reload());
     const now = Date.now();
     if (body.includes('@rest')){
       const cDaT = currentUser?.customData?.access_token;
