@@ -104,7 +104,7 @@ function AppDrawer({ isDesktop, setOpen, open, subNav }){
         <ListItemButton key={2} component={NLink} to="/wearers">  <ListItemIcon><KeyIcon/></ListItemIcon>    <ListItemText primary="My Wearers Locks"/></ListItemButton>
         <ListItemButton key={3} component={NLink} to="/locks">    <ListItemIcon><Lock2Icon/></ListItemIcon>  <ListItemText primary="Public Lock Profiles"/></ListItemButton>
         <Divider key={-2}/>
-        <ListItemButton key={4} component={NLink} to="/event">    <ListItemIcon><EmojiEventsTwoTone/></ListItemIcon>  <ListItemText primary="Locktober 2022"/></ListItemButton>
+        <ListItemButton key={4} component={NLink} to="/event">    <ListItemIcon><EmojiEventsTwoTone/></ListItemIcon>  <ListItemText primary="Locktober 2023"/></ListItemButton>
         <ListItemButton key={5} component={NLink} to="/charts">   <ListItemIcon><ChartIcon/></ListItemIcon>  <ListItemText primary="Public Lock Charts"/></ListItemButton>
         <ListItemButton key={7} component={NLink} to="/trans">    <ListItemIcon><CompareIcon/></ListItemIcon><ListItemText primary="Lock Transfer"/></ListItemButton>
         <Divider key={-3}/>

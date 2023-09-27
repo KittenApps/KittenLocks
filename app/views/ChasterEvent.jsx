@@ -29,39 +29,26 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
   const handleRefresh = useCallback(() => refetch(), [refetch]);
   const handleViewSource = useCallback(() => setViewSource(!viewSource), [viewSource]);
   const tooltipProps = useMemo(() => ({ tooltip: { sx: { mt: '6px !important' } } }), []);
-  const total = useMemo(() => data && data.chasterEvent.categories.extensions + data.chasterEvent.categories.votes + data.chasterEvent.categories.receive_votes +
-                                      data.chasterEvent.categories.task_votes + data.chasterEvent.categories.peer_verifications, [data]);
+  const total = useMemo(() => data && data.chasterEvent.categories.extensions + data.chasterEvent.categories.interaction + data.chasterEvent.categories.community, [data]);
   const rainbowProgress = useMemo(() => data && (
     <Stack direction="row" flexGrow={1} mx={1}>
-      <Tooltip title={`Extensions points: ${data.chasterEvent.categories.extensions}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${data.chasterEvent.categories.extensions / 6.1}%`}><LinearProgress variant="determinate" color="error" value={100}/></Box>
+      <Tooltip title={`Interact with locks: ${data.chasterEvent.categories.extensions}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${data.chasterEvent.categories.extensions / 2.2}%`}><LinearProgress variant="determinate" color="error" value={100}/></Box>
       </Tooltip>
-      <Tooltip title={`Votes points: ${data.chasterEvent.categories.votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${data.chasterEvent.categories.votes / 6.1}%`}><LinearProgress variant="determinate" color="warning" value={100}/></Box>
+      <Tooltip title={`Activity: ${data.chasterEvent.categories.interaction}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${data.chasterEvent.categories.interaction / 2.2}%`}><LinearProgress variant="determinate" color="warning" value={100}/></Box>
       </Tooltip>
-      <Tooltip title={`Received votes points: ${data.chasterEvent.categories.receive_votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${data.chasterEvent.categories.receive_votes / 6.1}%`}><LinearProgress variant="determinate" color="success" value={100}/></Box>
+      <Tooltip title={`Participate in the community: ${data.chasterEvent.categories.community}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${data.chasterEvent.categories.community / 2.2}%`}><LinearProgress variant="determinate" color="success" value={100}/></Box>
       </Tooltip>
-      <Tooltip title={`Vote for user tasks points: ${data.chasterEvent.categories.task_votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${data.chasterEvent.categories.task_votes / 6.1}%`}><LinearProgress variant="determinate" color="info" value={100}/></Box>
+      <Tooltip title={`missing Interact with locks points: ${100 - data.chasterEvent.categories.extensions}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${(100 - data.chasterEvent.categories.extensions) / 2.2}%`}><LinearProgress variant="determinate" color="error" value={0}/></Box>
       </Tooltip>
-      <Tooltip title={`Peer verification points: ${data.chasterEvent.categories.peer_verifications}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${data.chasterEvent.categories.peer_verifications / 6.1}%`}><LinearProgress variant="determinate" color="primary" value={100}/></Box>
+      <Tooltip title={`missing Activity points: ${100 - data.chasterEvent.categories.interaction}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${(100 - data.chasterEvent.categories.interaction) / 2.2}%`}><LinearProgress variant="determinate" color="warning" value={0}/></Box>
       </Tooltip>
-      <Tooltip title={`missing extensions points: ${60 - data.chasterEvent.categories.extensions}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${(60 - data.chasterEvent.categories.extensions) / 6.1}%`}><LinearProgress variant="determinate" color="error" value={0}/></Box>
-      </Tooltip>
-      <Tooltip title={`missing votes points: ${100 - data.chasterEvent.categories.votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${(100 - data.chasterEvent.categories.votes) / 6.1}%`}><LinearProgress variant="determinate" color="warning" value={0}/></Box>
-      </Tooltip>
-      <Tooltip title={`missing received votes points: ${200 - data.chasterEvent.categories.receive_votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${(200 - data.chasterEvent.categories.receive_votes) / 6.1}%`}><LinearProgress variant="determinate" color="success" value={0}/></Box>
-      </Tooltip>
-      <Tooltip title={`missing vote for user tasks points: ${50 - data.chasterEvent.categories.task_votes}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${(50 - data.chasterEvent.categories.task_votes) / 6.1}%`}><LinearProgress variant="determinate" color="info" value={0}/></Box>
-      </Tooltip>
-      <Tooltip title={`missing peer verification points: ${200 - data.chasterEvent.categories.peer_verifications}`} arrow componentsProps={tooltipProps} placement="bottom">
-        <Box py={1} width={`${(200 - data.chasterEvent.categories.peer_verifications) / 6.1}%`}><LinearProgress variant="determinate" color="primary" value={0}/></Box>
+      <Tooltip title={`missing Participate in the community points: ${20 - data.chasterEvent.categories.community}`} arrow componentsProps={tooltipProps} placement="bottom">
+        <Box py={1} width={`${(20 - data.chasterEvent.categories.community) / 2.2}%`}><LinearProgress variant="determinate" color="success" value={0}/></Box>
       </Tooltip>
     </Stack>
   ), [data, tooltipProps]);
@@ -76,18 +63,16 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
               <Tooltip
                 title={
                   <ul style={{ margin: '4px', paddingLeft: '8px' }}>
-                    <li>Extensions points: {data.chasterEvent.categories.extensions}/60</li>
-                    <li>Votes points: {data.chasterEvent.categories.votes}/100</li>
-                    <li>Received votes points: {data.chasterEvent.categories.receive_votes}/200</li>
-                    <li>Vote for user tasks points: {data.chasterEvent.categories.task_votes}/50</li>
-                    <li>Peer verification points: {data.chasterEvent.categories.peer_verifications}/200</li>
+                    <li>Interact with locks points: {data.chasterEvent.categories.extensions}/100</li>
+                    <li>Activity points: {data.chasterEvent.categories.interaction}/100</li>
+                    <li>Participate in the community: {data.chasterEvent.categories.community}/20</li>
                   </ul>
                 }
                 arrow
                 placement="bottom-end"
                 componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
               >
-                <Typography variant="caption" color={total === 610 ? 'lightgreen' : 'white'} width={52}>{total}/610</Typography>
+                <Typography variant="caption" color={total === 220 ? 'lightgreen' : 'white'} width={52}>{total}/220</Typography>
               </Tooltip>
             </>
           ) }
@@ -107,61 +92,104 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
         {data ? (viewSource ? <JsonView src={data.chasterEvent} collapsed={2}/> : (
           <>
             <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>Extensions:</b></Box>
-              <Stack direction="row" flexGrow={1} mx={1}>
-                <Tooltip title={`Verifications Pictures: ${data.chasterEvent.actions.verification_picture}`} arrow componentsProps={tooltipProps} placement="bottom">
-                  <Box py={1} width={`${data.chasterEvent.actions.verification_picture / 20 * 33.3333333}%`}><LinearProgress variant="determinate" color="error" value={100}/></Box>
-                </Tooltip>
-                <Tooltip title={`Completed Tasks: ${data.chasterEvent.actions.complete_task}`} arrow componentsProps={tooltipProps} placement="bottom">
-                  <Box py={1} width={`${data.chasterEvent.actions.complete_task / 20 * 33.3333333}%`}><LinearProgress variant="determinate" color="warning" value={100}/></Box>
-                </Tooltip>
-                <Tooltip title={`Wheel of Fortune: ${data.chasterEvent.actions.wheel_of_fortune}`} arrow componentsProps={tooltipProps} placement="bottom">
-                  <Box py={1} width={`${data.chasterEvent.actions.wheel_of_fortune / 20 * 33.3333333}%`}><LinearProgress variant="determinate" color="success" value={100}/></Box>
-                </Tooltip>
-                <Tooltip title={`Dice: ${data.chasterEvent.actions.dice}`} arrow componentsProps={tooltipProps} placement="bottom">
-                  <Box py={1} width={`${data.chasterEvent.actions.dice / 20 * 33.3333333}%`}><LinearProgress variant="determinate" color="info" value={100}/></Box>
-                </Tooltip>
-                <Tooltip title={`missing points: ${60 - data.chasterEvent.categories.extensions}`} arrow componentsProps={tooltipProps} placement="bottom">
-                  <Box py={1} width={`${(60 - data.chasterEvent.categories.extensions) / 20 * 33.3333333}%`}><LinearProgress variant="determinate" color="primary" value={0}/></Box>
-                </Tooltip>
-              </Stack>
+              <Box minWidth={140} textAlign="right"><b>Interact with locks:</b></Box>
+              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.categories.extensions === 100 ? 'success' : 'primary'} value={data.chasterEvent.categories.extensions}/></Box>
               <Box minWidth={50}>
                 <Tooltip
                   title={
                     <ul style={{ margin: '4px', paddingLeft: '8px' }}>
-                      <li>Verifications Pictures: {data.chasterEvent.actions.verification_picture}</li>
-                      <li>Completed Tasks: {data.chasterEvent.actions.complete_task}</li>
-                      <li>Wheel of Fortune: {data.chasterEvent.actions.wheel_of_fortune}</li>
-                      <li>Dice: {data.chasterEvent.actions.dice}</li>
+                      <li>Wearer:
+                        <ul>
+                          <li>Roll the dice: {data.chasterEvent.actions.dice}</li>
+                          <li>Turn the Wheel of Fortune: {data.chasterEvent.actions.wheel_of_fortune}</li>
+                          <li>Complete a task: {data.chasterEvent.actions.complete_task}</li>
+                          <li>Post a verification picture: {data.chasterEvent.actions.verification_picture}</li>
+                        </ul>
+                      </li>
+                      <li>Keyholder:
+                        <ul>
+                          <li>Add or remove time on a lock: {data.chasterEvent.actions.change_time}</li>
+                          <li>Freeze or unfreeze a lock: {data.chasterEvent.actions.toggle_freeze}</li>
+                          <li>Show or hide the timer: {data.chasterEvent.actions.toggle_timer_visibility}</li>
+                          <li>Assign a task: {data.chasterEvent.actions.assign_task}</li>
+                          <li>Request a verification picture: {data.chasterEvent.actions.request_verification_picture}</li>
+                        </ul>
+                      </li>
                     </ul>
                   }
                   arrow
                   placement="bottom-end"
                   componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
                 >
-                  <Typography variant="caption" color={data.chasterEvent.categories.extensions === 60 ? 'lightgreen' : 'white'}>{data.chasterEvent.categories.extensions}/60</Typography>
+                  <Typography variant="caption" color={data.chasterEvent.categories.extensions === 100 ? 'lightgreen' : 'white'}>{data.chasterEvent.categories.extensions}/100</Typography>
                 </Tooltip>
               </Box>
             </Box>
             <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>Votes:</b></Box>
-              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote === 100 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote}/></Box>
-              <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.vote === 100 ? 'lightgreen' : 'white'}>{data.chasterEvent.actions.vote}/100</Typography></Box>
+              <Box minWidth={140} textAlign="right"><b>Activity:</b></Box>
+              <Stack direction="row" flexGrow={1} mx={1}>
+                <Tooltip title={`Add or remove time to another user: ${data.chasterEvent.actions.vote}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.vote}%`}><LinearProgress variant="determinate" color="error" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`Receive a vote from another user: ${data.chasterEvent.actions.receive_vote}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.receive_vote}%`}><LinearProgress variant="determinate" color="warning" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`Vote for a user task: ${data.chasterEvent.actions.vote_task}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.vote_task}%`}><LinearProgress variant="determinate" color="success" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`Verify a picture: ${data.chasterEvent.actions.verify_picture}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.verify_picture}%`}><LinearProgress variant="determinate" color="info" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`missing points: ${100 - data.chasterEvent.categories.interaction}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${100 - data.chasterEvent.categories.interaction}%`}><LinearProgress variant="determinate" color="primary" value={0}/></Box>
+                </Tooltip>
+              </Stack>
+              <Box minWidth={50}>
+                <Tooltip
+                  title={
+                    <ul style={{ margin: '4px', paddingLeft: '8px' }}>
+                      <li>Add or remove time to another user: {data.chasterEvent.actions.vote}</li>
+                      <li>Receive a vote from another user: {data.chasterEvent.actions.receive_vote}</li>
+                      <li>Vote for a user task: {data.chasterEvent.actions.vote_task}</li>
+                      <li>Verify a picture: {data.chasterEvent.actions.verify_picture}</li>
+                    </ul>
+                  }
+                  arrow
+                  placement="bottom-end"
+                  componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
+                >
+                  <Typography variant="caption" color={data.chasterEvent.categories.interaction === 100 ? 'lightgreen' : 'white'}>{data.chasterEvent.categories.interaction}/100</Typography>
+                </Tooltip>
+              </Box>
             </Box>
             <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>Receive votes:</b></Box>
-              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.receive_vote === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.receive_vote / 2}/></Box>
-              <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.receive_vote === 200 ? 'lightgreen' : 'white'}>{data.chasterEvent.actions.receive_vote}/200</Typography></Box>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>User tasks votes:</b></Box>
-              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.vote_task === 50 ? 'success' : 'primary'} value={data.chasterEvent.actions.vote_task * 2}/></Box>
-              <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.vote_task === 50 ? 'lightgreen' : 'white'}>{data.chasterEvent.actions.vote_task}/50</Typography></Box>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <Box minWidth={135} textAlign="right"><b>Peer verifications:</b></Box>
-              <Box width="100%" mx={1}><LinearProgress variant="determinate" color={data.chasterEvent.actions.verify_picture === 200 ? 'success' : 'primary'} value={data.chasterEvent.actions.verify_picture / 2}/></Box>
-              <Box minWidth={50}><Typography variant="caption" color={data.chasterEvent.actions.verify_picture === 200 ? 'lightgreen' : 'white'}>{data.chasterEvent.actions.verify_picture}/200</Typography></Box>
+              <Box minWidth={140} textAlign="right"><b>community:</b></Box>
+              <Stack direction="row" flexGrow={1} mx={1}>
+                <Tooltip title={`Log in to Chaster: ${data.chasterEvent.actions.log_in}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.log_in * 5}%`}><LinearProgress variant="determinate" color="error" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`Post on our Discord server: ${data.chasterEvent.actions.post_on_discord}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${data.chasterEvent.actions.post_on_discord * 5}%`}><LinearProgress variant="determinate" color="warning" value={100}/></Box>
+                </Tooltip>
+                <Tooltip title={`missing points: ${20 - data.chasterEvent.categories.community}`} arrow componentsProps={tooltipProps} placement="bottom">
+                  <Box py={1} width={`${(20 - data.chasterEvent.categories.community) * 5}%`}><LinearProgress variant="determinate" color="primary" value={0}/></Box>
+                </Tooltip>
+              </Stack>
+              <Box minWidth={50}>
+                <Tooltip
+                  title={
+                    <ul style={{ margin: '4px', paddingLeft: '8px' }}>
+                      <li>Log in to Chaster: {data.chasterEvent.actions.log_in}</li>
+                      <li>Post on our Discord server: {data.chasterEvent.actions.post_on_discord}</li>
+                    </ul>
+                  }
+                  arrow
+                  placement="bottom-end"
+                  componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
+                >
+                  <Typography variant="caption" color={data.chasterEvent.categories.community === 20 ? 'lightgreen' : 'white'}>{data.chasterEvent.categories.community}/20</Typography>
+                </Tooltip>
+              </Box>
             </Box>
           </>
         )) : <Skeleton variant="rectangular" width="100%" height={144}/>}
@@ -175,14 +203,14 @@ const ChasterEvent = memo(() => {
   const app = useRealmApp();
   const accordion = useMemo(() => {
     const a = [];
-    const start = 1664611200000; // 2022-10-01T08:00:00.000Z
-    const now = Math.min(Date.now(), 1667289599999); // 2022-11-01T07:59:59.999Z
+    const start = 1696147200000; // 2023-10-01T08:00:00.000Z
+    const now = Math.min(Date.now(), 1698825599999); // 2023-11-01T07:59:59.999Z
     for (let i = now; i > start; i -= 86400000) a.push(<EventDay expanded={i === now} day={new Date(i)} app={app} key={i}/>);
     return a;
   }, [app]);
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <Typography variant="h4" gutterBottom component="p">Your Locktober 2022 Event Progress 🎃:</Typography>
+      <Typography variant="h4" gutterBottom component="p">Your Locktober 2023 Event Progress 🎃:</Typography>
       {accordion}
     </Paper>
   );
