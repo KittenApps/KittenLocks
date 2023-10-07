@@ -1,5 +1,5 @@
 import { forwardRef, memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Grid, LinearProgress,
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Grid, LinearProgress,
          Paper, Skeleton, Stack, ToggleButton, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { Code, CodeOff, ExpandMore, Refresh } from '@mui/icons-material';
 import RequiredScopes from '../components/RequiredScopes';
@@ -7,6 +7,7 @@ import JsonView from '../components/JsonView';
 import { useRealmApp } from '../RealmApp';
 import { useQuery } from '@apollo/client';
 import GetChasterEvent from '../graphql/GetChasterEventQuery.graphql';
+import GetPublicProfile from '../graphql/GetPublicProfileQuery.graphql';
 import { useSnackbar } from 'notistack';
 
 const Progress = forwardRef((props, ref) => <div ref={ref}><LinearProgress {...props}/></div>);
@@ -66,13 +67,14 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
                     <li>Interact with locks points: {data.chasterEvent.categories.extensions}/100</li>
                     <li>Activity points: {data.chasterEvent.categories.interaction}/100</li>
                     <li>Participate in the community: {data.chasterEvent.categories.community}/20</li>
+                    { data.chasterEvent.categories.challenges > 0 && <li>Complete a weekly challenge: {data.chasterEvent.categories.challenges} per week</li> }
                   </ul>
                 }
                 arrow
                 placement="bottom-end"
                 componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
               >
-                <Typography variant="caption" color={total === 220 ? 'lightgreen' : 'white'} width={52}>{total}/220</Typography>
+                <Typography variant="caption" color={total === 220 ? 'lightgreen' : 'white'} width={64}>{total}/220{data.chasterEvent.categories.challenges > 0 && ' ★'}</Typography>
               </Tooltip>
             </>
           ) }
@@ -191,6 +193,22 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
                 </Tooltip>
               </Box>
             </Box>
+            { data.chasterEvent.categories.challenges > 0 && (
+              <Box display="flex" alignItems="center">
+                <Box minWidth={140} textAlign="right"><b>weekly challenges:</b></Box>
+                <Box width="100%" mx={1}><LinearProgress variant="determinate" color="success" value={100}/></Box>
+                <Box minWidth={50}>
+                  <Tooltip
+                    title="Complete a weekly challenge. Only counted once per week on the day of completion."
+                    arrow
+                    placement="bottom-end"
+                    componentsProps={{ tooltip: { sx: { mt: '7px !important' } } }}
+                  >
+                    <Typography variant="caption" color="lightgreen">{data.chasterEvent.categories.challenges}/w</Typography>
+                  </Tooltip>
+                </Box>
+              </Box>
+            ) }
           </>
         )) : <Skeleton variant="rectangular" width="100%" height={144}/>}
       </AccordionDetails>
@@ -198,6 +216,28 @@ const EventDay = memo(({ day, app, expanded }) => { // eslint-disable-line sonar
   );
 });
 EventDay.displayName = 'EventDay';
+
+const TotalPoints = memo(({ app }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const isTinyScreen = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
+  const { data, error, refetch } = useQuery(GetPublicProfile, { variables: { username: app.currentUser.customData.username }, fetchPolicy: 'cache-and-network', nextFetchPolicy: 'cache-first' });
+  useEffect(() => {
+    if (error){
+      enqueueSnackbar(error.toString(), { variant: 'error' });
+      console.error(error);
+    }
+  }, [error, enqueueSnackbar]);
+  const handleRefresh = useCallback(() => refetch(), [refetch]);
+  if (!data) return <Skeleton variant="rectangular" width="100%" height={36.5}/>;
+  return (
+    <Typography variant="h6" gutterBottom>
+      { !isTinyScreen && 'Your current '}total points:
+      <Chip color="primary" variant="elevated" label={`${data.profile.user.metadata.locktober2023Points.toLocaleString()} XP`} sx={{ mx: 2, '& .MuiChip-label': { fontWeight: 'bold' } }}/>
+      <Button variant="outlined" startIcon={<Refresh/>} onClick={handleRefresh}>refresh</Button>
+    </Typography>
+  );
+});
+TotalPoints.displayName = 'TotalPoints';
 
 const ChasterEvent = memo(() => {
   const app = useRealmApp();
@@ -211,6 +251,7 @@ const ChasterEvent = memo(() => {
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
       <Typography variant="h4" gutterBottom component="p">Your Locktober 2023 Event Progress 🎃:</Typography>
+      <TotalPoints app={app}/>
       {accordion}
     </Paper>
   );
