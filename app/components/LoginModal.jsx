@@ -9,7 +9,7 @@ import { Close, ExpandMore } from '@mui/icons-material';
 import ScopeBadges from './ScopeBadges';
 
 const componentMap = { lock: 'My Lock Profile', wearer: 'My Wearers Locks', charts: 'Public Lock Charts', trans: 'Lock Transfer' };
-const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)' };
+const scopeMap = { profile: 'Your Identity (profile)', locks: 'Your Locks (locks)', keyholder: 'Your Keyholding (keyholder)', 'shared_locks': 'Your Shared Locks (shared_locks)', messaging: 'Your Messaging (messaging)' };
 
 const ScopeSwitch = memo(({ s, scopes, setScopes, reqScopes, val, mb, text, i }) => {
   const handleChange = useCallback(e => {
@@ -37,7 +37,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
   const misScopes = useMemo(() => reqScopes.filter(s => !app.currentUser?.customData?.scopes.includes(s)), [app.currentUser?.customData?.scopes, reqScopes]);
   const fullScreen = useMediaQuery(theme => theme.breakpoints.down('md'), { noSsr: true });
   const navigate = useNavigate();
-  const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks'].map(s => {
+  const val = useMemo(() => ['profile', 'locks', 'keyholder', 'shared_locks', 'messaging'].map(s => {
     if (new Set(app.currentUser?.customData?.scopes).has(s)){
       if (new Set(reqScopes).has(s)) return 3;
       return component ? 2 : 3;
@@ -48,7 +48,7 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
 
   const [scopes, setScopes] = useState(new Set([...exScopes, ...reqScopes]));
 
-  const [advanced, setAdvanced] = useState(scopes.has('shared_locks'));
+  const [advanced, setAdvanced] = useState(scopes.has('shared_locks') || scopes.has('messaging'));
   const handleAdvancedChange = useCallback(() => setAdvanced(!advanced), [advanced]);
 
   const missingScopesAction = useCallback(grantedScopes => {
@@ -68,7 +68,8 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
 
   const handleLogin = useCallback(() => {
     const state = window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16);
-    const ks = new Set(['profile', 'offline_access', 'email', 'locks', 'keyholder', 'shared_locks']);
+    // "access_token,expires_in,refresh_expires_in,refresh_token,token_type,id_token,not-before-policy,session_state,scope"
+    const ks = new Set(['profile', 'offline_access', 'locks', 'keyholder', 'shared_locks', 'messaging', 'email', 'openid']);
     const sc = ['profile', 'offline_access', ...scopes].filter(x => ks.has(x)).join('%20');
     const redUrl = `${window.location.origin}/static/html/oauthcb/`;
     const rUrl = encodeURIComponent(redUrl);
@@ -124,14 +125,15 @@ function Login({ rScopes, component, onMissingScopes, showLogin, onClose }){
         <FormGroup sx={{ my: 2, ml: 2 }}>
           <FormControlLabel disabled control={<Switch defaultChecked color={val[0] === 0 ? 'primary' : (val[0] === 1 ? 'warning' : 'success')}/>} label={scopeMap.profile}/>
           <FormHelperText disabled sx={{ mb: 1, mt: 0 }}>to access your Chaster identity, linked to your KittenLocks account { val[0] && <b>({val[0] > 1 ? 'granted' : 'always required to login'})</b>}</FormHelperText>
-          <ScopeSwitch s="locks" i={1} mb={1} text="the data and manage your Chaster locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
-          <ScopeSwitch s="keyholder" i={2} mb={0} text="the data and manage your Chaster lockees" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
+          <ScopeSwitch s="locks" i={1} mb={1} text="and manage your Chaster locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
+          <ScopeSwitch s="keyholder" i={2} mb={0} text="and manage your Chaster lockees" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
         </FormGroup>
         <Accordion expanded={advanced} onChange={handleAdvancedChange} disableGutters>
           <AccordionSummary expandIcon={<ExpandMore/>}>more advanced scopes</AccordionSummary>
           <AccordionDetails>
             <FormGroup>
               <ScopeSwitch s="shared_locks" i={3} mb={1} text="and manage your Chaster shared locks" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
+              <ScopeSwitch s="messaging" i={4} mb={0} text="and manage your Chaster messages" scopes={scopes} setScopes={setScopes} reqScopes={reqScopes} val={val}/>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
