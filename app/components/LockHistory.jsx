@@ -19,7 +19,7 @@ const HistoryList = memo(({ history }) => {
           <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {JSON.stringify(e)}
+          <JsonView src={e}/>
         </AccordionDetails>
       </Accordion>
       <Divider/>
