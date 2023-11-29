@@ -28,6 +28,9 @@ function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock,
       { title: { text: 'remaining days' } }
     ],
     legend: { enabled: true, align: 'center', verticalAlign: 'bottom' },
+    time: {
+      useUTC: false,
+    },
     exporting: {
       filename: 'lockChart', sourceWidth: 1800, sourceHeight: 600, fallbackToExportServer: false,
       buttons: { contextButton: { menuItems: ['downloadJSON', 'separator', 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG'] } },
