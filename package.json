@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "description": "a pawtastic WebApp to enchance your Chaster experience",
   "scripts": {
-    "start": "NODE_ENV=development webpack serve",
+    "start": "cross-env NODE_ENV=development webpack serve",
     "build": "webpack",
-    "build:dev": "NODE_ENV=development webpack",
-    "build:prod": "NODE_ENV=production webpack",
-    "serve": "NODE_ENV=production webpack && npx http-server -c-1 --proxy=http://127.0.0.1:8080?",
-    "stats": "NODE_ENV=production webpack --profile --json > schema/stats.json && npx webpack-bundle-analyzer schema/stats.json public",
+    "build:dev": "cross-env NODE_ENV=development webpack",
+    "build:prod": "cross-env NODE_ENV=production webpack",
+    "serve": "cross-env NODE_ENV=production webpack && npx http-server -c-1 --proxy=http://127.0.0.1:8080?",
+    "stats": "cross-env NODE_ENV=production webpack --profile --json > schema/stats.json && npx webpack-bundle-analyzer schema/stats.json public",
     "lint": "eslint . --ext .js,.jsx --ignore-path=.gitignore",
     "api": "cd schema && curl https://api.chaster.app/api-json > api.json && npx @openapitools/openapi-generator-cli generate -i api.json -g graphql-schema --global-property skipFormModel=false"
   },
@@ -79,6 +79,7 @@
   },
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.20.1",
+    "cross-env": "^7.0.3",
     "eslint": "^8.52.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
