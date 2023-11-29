@@ -9,12 +9,21 @@ import GetLockHistory from '../graphql/GetLockHistoryQuery.graphql';
 import { useSnackbar } from 'notistack';
 import { Virtuoso } from 'react-virtuoso';
 
+function historyUserName(e){
+  if (e.role === 'extension'){
+    // Capitalise the first character of the extension name
+    const extensionName = e.extension.charAt(0).toUpperCase() + e.extension.slice(1);
+    return extensionName.replace('-', ' ');
+  }
+  return e.user?.username || 'unknown';
+}
+
 const HistoryList = memo(({ history }) => {
   const itemContent = useCallback((i, e) => (
     <>
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMore/>}>
-          <Typography flexGrow={1}>{e.title}</Typography>
+          <Typography flexGrow={1}>{e.title.replace('%USER%', historyUserName(e))}</Typography>
           <Avatar alt={e.role === 'extension' ? e.extension : e.user?.username || 'unknown'} sx={{ width: 24, height: 24, mr: 1 }} src={e.role === 'extension' ? null : e.user?.avatarUrl || null}><SmartToyTwoTone/></Avatar>
           <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
         </AccordionSummary>
