@@ -29,7 +29,7 @@ function Chart({ unlockDate, remTime, timeChanges, pillory, freeze, timer, lock,
     ],
     legend: { enabled: true, align: 'center', verticalAlign: 'bottom' },
     time: {
-      useUTC: false,
+      useUTC: false
     },
     exporting: {
       filename: 'lockChart', sourceWidth: 1800, sourceHeight: 600, fallbackToExportServer: false,
