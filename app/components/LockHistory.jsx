@@ -12,7 +12,7 @@ import { Virtuoso } from 'react-virtuoso';
 const HistoryList = memo(({ history }) => {
   const itemContent = useCallback((i, e) => (
     <>
-      <Accordion>
+      <Accordion TransitionProps={{ mountOnEnter: true }}>
         <AccordionSummary expandIcon={<ExpandMore/>}>
           <Typography flexGrow={1}>{e.title}</Typography>
           <Avatar alt={e.role === 'extension' ? e.extension : e.user?.username || 'unknown'} sx={{ width: 24, height: 24, mr: 1 }} src={e.role === 'extension' ? null : e.user?.avatarUrl || null}><SmartToyTwoTone/></Avatar>
