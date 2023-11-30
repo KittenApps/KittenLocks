@@ -23,7 +23,7 @@ const HistoryList = memo(({ history }) => {
     <>
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMore/>}>
-          <Typography flexGrow={1}>{e.title.replace('%USER%', historyUserName(e))}</Typography>
+          <Typography flexGrow={1}>{e.title.replace('%USER%', e.role === 'extension' ? e.extension : e.user?.username || 'unknown')}</Typography>
           <Avatar alt={e.role === 'extension' ? e.extension : e.user?.username || 'unknown'} sx={{ width: 24, height: 24, mr: 1 }} src={e.role === 'extension' ? null : e.user?.avatarUrl || null}><SmartToyTwoTone/></Avatar>
           <Typography variant="caption">{e.createdAt.toLocaleString()}</Typography>
         </AccordionSummary>
