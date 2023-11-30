@@ -9,15 +9,6 @@ import GetLockHistory from '../graphql/GetLockHistoryQuery.graphql';
 import { useSnackbar } from 'notistack';
 import { Virtuoso } from 'react-virtuoso';
 
-function historyUserName(e){
-  if (e.role === 'extension'){
-    // Capitalise the first character of the extension name
-    const extensionName = e.extension.charAt(0).toUpperCase() + e.extension.slice(1);
-    return extensionName.replace('-', ' ');
-  }
-  return e.user?.username || 'unknown';
-}
-
 const HistoryList = memo(({ history }) => {
   const itemContent = useCallback((i, e) => (
     <>
