@@ -42,13 +42,13 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
-    "@mui/icons-material": "^5.15.9",
+    "@mui/icons-material": "^5.15.10",
     "@mui/lab": "^5.0.0-alpha.165",
-    "@mui/material": "^5.15.9",
-    "@sentry/react": "^7.100.1",
+    "@mui/material": "^5.15.10",
+    "@sentry/react": "^7.101.0",
     "@sentry/webpack-plugin": "^2.14.0",
     "@silizia/react-viewer": "^4.2.1",
-    "@textea/json-viewer": "^3.3.1",
+    "@textea/json-viewer": "^3.3.2",
     "apollo-link-rest": "^0.9.0",
     "apollo3-cache-persist": "^0.14.1",
     "autosuggest-highlight": "^3.3.4",
@@ -59,6 +59,7 @@
     "favicons": "^7.1.5",
     "favicons-webpack-plugin": "^6.0.1",
     "graphql": "^16.8.1",
+    "graphql-config": "^5.0.3",
     "highcharts": "^11.3.0",
     "highcharts-react-official": "^3.2.1",
     "html-webpack-plugin": "^5.6.0",
@@ -84,8 +85,13 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-sonarjs": "^0.23.0",
+    "eslint-plugin-sonarjs": "^0.24.0",
     "eslint-plugin-unicorn": "^51.0.1",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^5.0.1"
+  },
+  "overrides": {
+    "@graphql-eslint/eslint-plugin": {
+      "graphql-config": "$graphql-config"
+    }
   }
 }

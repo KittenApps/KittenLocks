@@ -123,7 +123,7 @@ const config = {
       chunks: 'all'
     }
   },
-  devServer: { historyApiFallback: true, port: 5000 },
+  devServer: { historyApiFallback: true, port: 5555 },
   devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map'
 };
 
