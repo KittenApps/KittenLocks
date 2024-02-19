@@ -13,7 +13,7 @@ import LoadingPage from './components/LoadingPage';
 const VERSION = '0.1.2';
 localForage.config({ name: 'KittenLocks', storeName: 'kittenlocks' });
 const RealmAppContext = createContext();
-const retryLink = new RetryLink({ delay: { initial: 300, max: Number.POSITIVE_INFINITY, jitter: true } });
+const retryLink = new RetryLink({ delay: count => (count === 5 ? 60000 : 300 * 2 ** count * Math.random()) });
 const parseDate = { read: d => d && new Date(d) };
 const Lock = data => {
   for (const e of data.extensions){

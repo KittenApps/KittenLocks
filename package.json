@@ -35,7 +35,7 @@
   ],
   "homepage": "https://github.com/KittenApps/KittenLocks#readme",
   "dependencies": {
-    "@apollo/client": "^3.9.4",
+    "@apollo/client": "^3.9.5",
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
@@ -45,10 +45,10 @@
     "@mui/icons-material": "^5.15.10",
     "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.10",
-    "@sentry/react": "^7.101.0",
-    "@sentry/webpack-plugin": "^2.14.0",
+    "@sentry/react": "^7.101.1",
+    "@sentry/webpack-plugin": "^2.14.1",
     "@silizia/react-viewer": "^4.2.1",
-    "@textea/json-viewer": "^3.3.2",
+    "@textea/json-viewer": "^3.4.0",
     "apollo-link-rest": "^0.9.0",
     "apollo3-cache-persist": "^0.14.1",
     "autosuggest-highlight": "^3.3.4",
@@ -68,13 +68,13 @@
     "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.0",
+    "react-router-dom": "^6.22.1",
     "react-scroll": "^1.9.0",
-    "react-virtuoso": "^4.6.3",
+    "react-virtuoso": "4.6.3",
     "realm-web": "^2.0.0",
     "style-loader": "^3.3.4",
     "victory": "^36.9.1",
-    "webpack": "^5.90.1",
+    "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
     "workbox-webpack-plugin": "^7.0.0"
   },
@@ -87,7 +87,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.24.0",
     "eslint-plugin-unicorn": "^51.0.1",
-    "webpack-dev-server": "^5.0.1"
+    "webpack-dev-server": "^5.0.2"
   },
   "overrides": {
     "@graphql-eslint/eslint-plugin": {
