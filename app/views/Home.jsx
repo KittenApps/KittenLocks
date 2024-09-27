@@ -20,7 +20,7 @@ function Home(){
         <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
           <h3>Changelog v0.2 (WIP):</h3>
           <ul>
-            <li key="4"><b>(NEW)Chaster Event page currently featuring Locktober 2023</b></li>
+            <li key="4"><b>(NEW)Chaster Event page currently featuring Locktober 2024</b></li>
             <li key="1">KittenLocks.de is now a PWA and will be updated with bigger version updates from now on</li>
             <li key="2">use <Link href="https://beta.kittenlocks.de" target="_blank" rel="noreferrer">beta.KittenLocks.de</Link> to follow the latest development version (no PWA mode)</li>
             <li key="3">My Wearers Locks</li>

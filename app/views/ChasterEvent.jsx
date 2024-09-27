@@ -232,7 +232,7 @@ const TotalPoints = memo(({ app }) => {
   return (
     <Typography variant="h6" gutterBottom>
       { !isTinyScreen && 'Your current '}total points:
-      <Chip color="primary" variant="elevated" label={`${data.profile.user.metadata.locktober2023Points.toLocaleString()} XP`} sx={{ mx: 2, '& .MuiChip-label': { fontWeight: 'bold' } }}/>
+      <Chip color="primary" variant="elevated" label={`${data.profile.user.metadata.locktober2024Points.toLocaleString()} XP`} sx={{ mx: 2, '& .MuiChip-label': { fontWeight: 'bold' } }}/>
       <Button variant="outlined" startIcon={<Refresh/>} onClick={handleRefresh}>refresh</Button>
     </Typography>
   );
@@ -243,14 +243,14 @@ const ChasterEvent = memo(() => {
   const app = useRealmApp();
   const accordion = useMemo(() => {
     const a = [];
-    const start = 1696147200000; // 2023-10-01T08:00:00.000Z
-    const now = Math.min(Date.now(), 1698825599999); // 2023-11-01T07:59:59.999Z
+    const start = 1727769600000; // 2024-10-01T08:00:00.000Z
+    const now = Math.min(Date.now(), 1730447999999); // 2024-11-01T07:59:59.999Z
     for (let i = now; i > start; i -= 86400000) a.push(<EventDay expanded={i === now} day={new Date(i)} app={app} key={i}/>);
     return a;
   }, [app]);
   return (
     <Paper elevation={6} sx={{ p: 2, backgroundColor: '#1b192a' }}>
-      <Typography variant="h4" gutterBottom component="p">Your Locktober 2023 Event Progress 🎃:</Typography>
+      <Typography variant="h4" gutterBottom component="p">Your Locktober 2024 Event Progress 🎃:</Typography>
       <TotalPoints app={app}/>
       {accordion}
     </Paper>
