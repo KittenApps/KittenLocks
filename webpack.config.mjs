@@ -84,8 +84,8 @@ const config = {
       description: 'a pawtastic WebApp to enchance your Chaster experience',
       OGtitle: { property: 'og:title', content: 'KittenLocks' },
       OGtype: { property: 'og:type', content: 'website' },
-      OGurl: { property: 'og:url', content: 'https://www.kittenlocks.de/' },
-      OGimage: { property: 'og:image', content: 'https://www.kittenlocks.de/static/images/android-chrome-512x512.png' },
+      OGurl: { property: 'og:url', content: 'https://kittenlocks.netlify.app/' },
+      OGimage: { property: 'og:image', content: 'https://kittenlocks.netlify.app/static/images/android-chrome-512x512.png' },
       OGdescription: { property: 'og:description', content: 'KittenLocks is a pawtastic WebApp to enchance your Chaster experience, built with ❤ by Silizia ~ Stella.' }
     } }),
     new HtmlWebpackPlugin({ filename: 'static/html/oauthcb/index.html', publicPath: '/static/html/oauthcb', templateContent: () => `

@@ -21,8 +21,7 @@ function Home(){
           <h3>Changelog v0.2 (WIP):</h3>
           <ul>
             <li key="4"><b>(NEW)Chaster Event page currently featuring Locktober 2024</b></li>
-            <li key="1">KittenLocks.de is now a PWA and will be updated with bigger version updates from now on</li>
-            <li key="2">use <Link href="https://beta.kittenlocks.de" target="_blank" rel="noreferrer">beta.KittenLocks.de</Link> to follow the latest development version (no PWA mode)</li>
+            <li key="1">KittenLocks is now a PWA and will be updated with bigger version updates from now on</li>
             <li key="3">My Wearers Locks</li>
             <li key="5">improved Verification Picture Gallery</li>
             <li key="6">many bug fixes and optimizations (I'm very precise here 😹)</li>

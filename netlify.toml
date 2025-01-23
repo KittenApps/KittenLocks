@@ -2,12 +2,6 @@
     publish = "public"
     command = "npm run build"
 
-[[redirects]]
-    from = "https://kittenlocks.netlify.app/*"
-    to = "https://www.kittenlocks.de/:splat"
-    status = 301
-    force = true
-
 [[headers]]
     for = "/service-worker.js"
     [headers.values]

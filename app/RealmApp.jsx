@@ -41,7 +41,6 @@ const Lock = data => {
 };
 const restLink = new RestLink({
   uri: 'https://api.chaster.app',
-  endpoints: { silizia: 'https://silizia.kittenlocks.de' },
   typePatcher: {
     Lock,
     Wearers(data){
@@ -53,7 +52,7 @@ const restLink = new RestLink({
     }
   }
  });
-const httpLink = new HttpLink({ uri: 'https://api.kittenlocks.de/graphql' });
+const httpLink = new HttpLink({ uri: 'https://services.cloud.mongodb.com/api/client/v2.0/app/kittenlocks-gcfgb/graphql' });
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
@@ -160,7 +159,7 @@ export function useRealmApp(){
 let accessTokenPromise = { accessToken: null, accessExpires: new Date(0) };
 
 export function RealmAppProvider({ children }){
-  const app = useMemo(() => new RealmApp({ id: 'kittenlocks-gcfgb', baseUrl: 'https://api.kittenlocks.de', skipLocationRequest: true }), []);
+  const app = useMemo(() => new RealmApp({ id: 'kittenlocks-gcfgb', skipLocationRequest: true }), []);
   const [currentUser, setCurrentUser] = useState(app.currentUser ? immutableCurrentUser(app.currentUser) : null);
   const [lastAuth, setLastAuth] = useState(0);
 
